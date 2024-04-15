@@ -4,13 +4,12 @@
 	import { page } from '$app/stores';
 
 	import Settings from '$lib/icons/Settings.svelte';
+	import Menu from '$lib/icons/Menu.svelte';
+	import Cross from '$lib/icons/Cross.svelte';
 
 	let open = false;
 	let currentUrl: string;
 	$: currentUrl = $page.url.pathname.split('/').filter(Boolean).pop() as string;
-
-	const dashboardAction = writable<string | null>(null);
-	setContext('dashboardActionStore', dashboardAction);
 
 	function openRail() {
 		open = true;
@@ -22,13 +21,11 @@
 
 {#if open}
 	<button class="btn-icon button-div" on:click={closeRail}
-		><object class="button" data="/images/icons/cross.svg" type="image/svg+xml" aria-label="zoom in"
-		></object></button
+		><Cross size="26px" color="#9c9c9c" /></button
 	>
 {:else}
 	<button class="btn-icon button-div" on:click={openRail}
-		><object class="button" data="/images/icons/menu.svg" type="image/svg+xml" aria-label="zoom in"
-		></object></button
+		><Menu size="26px" color="#9c9c9c" /></button
 	>
 {/if}
 
@@ -38,7 +35,6 @@
 			<div class="h-0 w-[42px] ml-auto mr-auto border-b-[.3px] border-gray-500 mb-1" />
 			<a
 				href="/home/docs"
-				on:click={() => dashboardAction.set('handle-destroy')}
 				class="tab {currentUrl === 'docs' ? 'bg-[#454545]' : 'hover:bg-[#45454570]'}">Docs</a
 			>
 			<a
@@ -47,28 +43,22 @@
 			>
 			<a
 				href="/home/plan"
-				on:click={() => dashboardAction.set('handle-destroy')}
 				class="tab {currentUrl === 'plan' ? 'bg-[#454545]' : 'hover:bg-[#45454570]'}">Plan</a
 			>
 			<a
 				href="/home/team"
-				on:click={() => dashboardAction.set('handle-destroy')}
 				class="tab {currentUrl === 'team' ? 'bg-[#454545]' : 'hover:bg-[#45454570]'}">Team</a
 			>
 			<a
 				href="/home/ideas"
-				on:click={() => dashboardAction.set('handle-destroy')}
 				class="tab {currentUrl === 'ideas' ? 'bg-[#454545]' : 'hover:bg-[#45454570]'}">Ideas</a
 			>
 			<a
 				href="/home/learn"
-				on:click={() => dashboardAction.set('handle-destroy')}
 				class="tab {currentUrl === 'learn' ? 'bg-[#454545]' : 'hover:bg-[#45454570]'}">Learn</a
 			>
-			<a
-				href="/home/settings"
-				on:click={() => dashboardAction.set('handle-destroy')}
-				class="mt-auto ml-auto mr-auto mb-[14px]"><Settings color="#9c9c9c" size="33px" /></a
+			<a href="/home/settings" class="mt-auto ml-auto mr-auto mb-[14px]"
+				><Settings color="#9c9c9c" size="33px" /></a
 			>
 		</div>
 	{/if}
@@ -76,11 +66,6 @@
 </div>
 
 <style>
-	.button {
-		pointer-events: none;
-		margin: auto;
-	}
-
 	.button-div {
 		position: fixed;
 		top: -1px;

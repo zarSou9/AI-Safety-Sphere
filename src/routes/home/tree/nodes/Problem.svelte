@@ -138,6 +138,7 @@
 					}
 				}
 				if (name === 'tldr' && quill.getText().split('\n').length > 13) {
+					quill.blur();
 					let text = quill.getText();
 					const newline = '\n';
 					let count = 0;
@@ -388,7 +389,7 @@
 		if (isSaving) {
 			setTimeout(() => {
 				saving();
-			}, 4000);
+			}, 2000);
 			if (sectionsChanged.length) {
 				save();
 			}

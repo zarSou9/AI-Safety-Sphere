@@ -3,7 +3,6 @@
 	import { createTree } from '$lib/stores/nodes.ts';
 	import { setContext, getContext, tick } from 'svelte';
 	import { writable, type Writable } from 'svelte/store';
-	import Dashboard from './Dashboard.svelte';
 	import TitleModal from '$lib/components/TitleModal.svelte';
 
 	export let data;
@@ -70,8 +69,6 @@
 		);
 	setContext('tree', tree);
 
-	const dashboardAction: Writable<string | null> = getContext('dashboardActionStore');
-
 	function noImage(e: any) {
 		e.target.src = '';
 		initials = true;
@@ -102,8 +99,6 @@
 	$: if ($titleModal.visible) {
 		modalInput?.focus();
 	}
-
-	let openTab = 0;
 </script>
 
 {#if $titleModal.visible}
@@ -143,70 +138,10 @@
 	</div>
 {/if}
 <div class="flex flex-col h-full w-full">
-	<div class="relative flex items-center w-full h-[40px] bg-[#272727]">
-		{#if openTab === 0}
-			<div
-				class="tab self-end flex items-center justify-left w-[150px] h-[34px] ml-auto mr-[4.5px] rounded-tl-[10px] rounded-tr-[10px] bg-[#151515] border-t-[.9px] border-l-[.9px] border-r-[.9px] border-[#70747c]"
-			>
-				<p class="text-[14px] ml-[14px] mb-[3.5px]">Tree</p>
-				<div
-					class="absolute origin-bottom-left size-[20px] bg-[#272727] left-[-20px] bottom-[-.6px] border-[.9px] border-[#70747c] rounded-full"
-				>
-					<div class="curve-l-part-h border-r-[.8px] border-[#70747c]"></div>
-					<div class="curve-l-part-v border-b-[.8px] border-[#70747c]"></div>
-				</div>
-
-				<div
-					class="z-[2] absolute origin-bottom-right size-[20px] bg-[#272727] right-[-20px] bottom-[-.6px] border-[.9px] border-[#70747c] rounded-full"
-				>
-					<div class="curve-r-part-h border-l-[.8px] border-[#70747c]"></div>
-					<div class="curve-r-part-v border-b-[.8px] border-[#70747c]"></div>
-				</div>
-			</div>
-		{:else}
-			<button
-				on:click={() => {
-					dashboardAction.set('handle-destroy');
-					tick().then(() => {
-						openTab = 0;
-					});
-				}}
-				class="self-end z-[3] flex items-center justify-left w-[150px] h-[29.5px] ml-auto mr-[3.5px] bg-inherit mb-[4px] rounded-[10px] hover:bg-[#424242]"
-			>
-				<p class="text-[14px] ml-[14px]">Tree</p>
-			</button>
-		{/if}
-		{#if openTab === 1}
-			<div
-				class="tab self-end flex items-center justify-left w-[150px] h-[34px] mr-[23px] rounded-tl-[10px] rounded-tr-[10px] bg-[#151515] border-t-[.9px] border-l-[.9px] border-r-[.9px] border-[#70747c]"
-			>
-				<p class="text-[14px] ml-[14px] mb-[3.5px]">Dashboard</p>
-				<div
-					class="absolute origin-bottom-left size-[20px] bg-[#272727] left-[-20px] bottom-[-.6px] border-[.9px] border-[#70747c] rounded-full"
-				>
-					<div class="curve-l-part-h border-r-[.8px] border-[#70747c]"></div>
-					<div class="curve-l-part-v border-b-[.8px] border-[#70747c]"></div>
-				</div>
-
-				<div
-					class="z-[2] absolute origin-bottom-right size-[20px] bg-[#272727] right-[-20px] bottom-[-.6px] border-[.9px] border-[#70747c] rounded-full"
-				>
-					<div class="curve-r-part-h border-l-[.8px] border-[#70747c]"></div>
-					<div class="curve-r-part-v border-b-[.8px] border-[#70747c]"></div>
-				</div>
-			</div>
-		{:else}
-			<button
-				on:click={() => {
-					openTab = 1;
-				}}
-				class="self-end z-[3] flex items-center justify-left w-[150px] h-[29.5px] mr-[22.5px] bg-inherit mb-[4px] rounded-[10px] hover:bg-[#424242]"
-			>
-				<p class="text-[14px] ml-[14px]">Dashboard</p>
-			</button>
-		{/if}
-
-		<div class="w-[.6px] h-[26px] bg-[#70747c] mr-[20px]" />
+	<div
+		class="relative flex items-center w-full h-[40px] bg-[#272727] border-b-[.3px] border-b-[#70747c]"
+	>
+		<div class="w-[.6px] h-[26px] bg-[#70747c] mr-[20px] ml-auto" />
 		<button
 			class="flex items-center mr-[10px] rounded-full size-[25px] overflow-hidden {initials
 				? 'bg-[#525555]'
@@ -220,20 +155,9 @@
 			{/if}
 		</button>
 	</div>
-	<div class="flex w-full h-[.3px] bg-[#151515]">
-		<div
-			class="h-full mr-auto bg-[#70747c]"
-			style="width: calc(100% - {openTab === 0 ? 393 : 239}px);"
-		/>
-		<div class="h-full ml-auto bg-[#70747c]" style="width: {openTab === 0 ? 223 : 69}px;" />
+	<div class="flex-1 overflow-hidden">
+		<InfiniteCanvas />
 	</div>
-	{#if openTab === 0}
-		<div class="flex-1 overflow-hidden">
-			<InfiniteCanvas />
-		</div>
-	{:else if openTab === 1}
-		<Dashboard />
-	{/if}
 </div>
 
 <style>

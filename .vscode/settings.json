@@ -1,7 +1,5 @@
 {
-	"prettier.documentSelectors": [
-		"**/*.svelte"
-	],
+	"prettier.documentSelectors": ["**/*.svelte"],
 	"tailwindCSS.classAttributes": [
 		"class",
 		"accent",
@@ -116,5 +114,7 @@
 		"transition",
 		"width",
 		"zIndex"
-	]
+	],
+	"gitlens.currentLine.enabled": false,
+	"gitlens.currentLine.pullRequests.enabled": false
 }

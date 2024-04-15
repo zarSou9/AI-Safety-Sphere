@@ -368,7 +368,7 @@
 		if (isSaving) {
 			setTimeout(() => {
 				saving();
-			}, 4000);
+			}, 2000);
 			if (sectionsChanged.length) {
 				save();
 			}
