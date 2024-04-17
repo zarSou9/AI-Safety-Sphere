@@ -23,15 +23,8 @@ export const load: LayoutServerLoad = async ({
 		.single();
 
 	const hierPromise = supabase.from('Tree').select('data').eq('id', 1);
-	const ownedPromise = supabase.rpc('get_owned_node_ids', {
-		user_id: user?.id
-	});
 
-	const [profileResult, hierResult, ownedResult] = await Promise.all([
-		profilePromise,
-		hierPromise,
-		ownedPromise
-	]);
+	const [profileResult, hierResult] = await Promise.all([profilePromise, hierPromise]);
 
 	if (profileResult?.error) {
 		return fail(400, {
@@ -44,18 +37,12 @@ export const load: LayoutServerLoad = async ({
 			message: hierResult.error.message
 		});
 	}
-	if (ownedResult?.error) {
-		return fail(400, {
-			message: ownedResult.error.message
-		});
-	}
 
 	return {
 		session,
 		props: {
 			profile: profileResult.data,
-			hier: hierResult.data,
-			ownedIds: ownedResult.data
+			hier: hierResult.data
 		}
 	};
 };

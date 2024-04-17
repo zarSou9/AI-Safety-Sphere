@@ -4,25 +4,28 @@ const delta = Joi.object({
 	ops: Joi.array()
 		.items(
 			Joi.object({
-				insert: Joi.alternatives().try(
-					Joi.string(),
-					Joi.object({ image: Joi.string().required() })
-				),
+				insert: Joi.string(),
 				delete: Joi.number().positive(),
 				retain: Joi.number().positive(),
 				attributes: Joi.object({
-					link: Joi.string(),
-					header: Joi.number().min(1).max(3),
-					'code-block': Joi.string(),
 					bold: true,
-					underline: true,
-					list: Joi.string().valid('bullet', 'ordered'),
-					align: Joi.string()
+					italic: true
 				}).min(1)
 			}).xor('insert', 'delete', 'retain')
 		)
 		.min(1)
 		.required()
+});
+
+const changeSchema = Joi.object({
+	d: delta,
+	cd: delta,
+	pos: Joi.object({ i: Joi.number(), l: Joi.number() }),
+	color: Joi.string(),
+	owner: Joi.string(),
+	attributes: Joi.array(),
+	children: Joi.array(),
+	deleteChildren: Joi.array()
 });
 
 const problemEdit = Joi.object({
@@ -70,4 +73,4 @@ const strategies = Joi.array().items(
 	})
 );
 
-export { problems, strategies, strategyEdit, problemEdit };
+export { problems, strategies, strategyEdit, problemEdit, delta, changeSchema };

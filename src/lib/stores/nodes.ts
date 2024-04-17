@@ -3,8 +3,7 @@ import type { Problem, Tree, TrackChanges, SelectedStrategy } from '../types/nod
 export function createTree() {
 	let tree: Tree = {};
 	let changes: TrackChanges = {
-		nodes: [],
-		new: []
+		nodes: []
 	};
 	let ySpace = 560;
 	let selectedStrategies: SelectedStrategy[];
@@ -111,16 +110,16 @@ export function createTree() {
 				changes = JSON.parse(JSON.stringify(c));
 				selectedStrategies = sS;
 
-				changes.new.forEach((id) => {
-					const type = this.getNodeType(id);
-					if (type === 'p')
-						this.createProblem(this.getParent(id) as string, undefined, false, undefined, [owner]);
-					else if (type === 's')
-						this.createStrategy(this.getParent(id) as string, undefined, false, undefined, [owner]);
-				});
 				changes.nodes.forEach((n) => {
-					let obj = this.getObjFromId(n.id);
-					if (n.quills?.title) obj.data.title = n.quills.title;
+					const type = this.getNodeType(n.id);
+					if (type === 'p')
+						this.createProblem(this.getParent(n.id) as string, undefined, false, undefined, [
+							owner
+						]);
+					else if (type === 's')
+						this.createStrategy(this.getParent(n.id) as string, undefined, false, undefined, [
+							owner
+						]);
 				});
 				updateTreeStrategySelections(tree.problem);
 			}
@@ -237,8 +236,7 @@ export function createTree() {
 			}
 
 			if (user) {
-				changes.new.push(id);
-				changes.nodes.push({ id, quills: { title, tldr } });
+				changes.nodes.push({ id, sections: { title, tldr } });
 			}
 		},
 		createStrategy(
@@ -256,8 +254,7 @@ export function createTree() {
 			problemTreeObj.strategies.push({ id, data: { title, tldr }, owners, problems: [] });
 
 			if (user) {
-				changes.new.push(id);
-				changes.nodes.push({ id, quills: { title, tldr } });
+				changes.nodes.push({ id, sections: { title, tldr } });
 			}
 		},
 		deleteProblem(probId: string) {

@@ -90,18 +90,12 @@ interface TreeInterface {
 	getSelections: () => SelectedStrategy[];
 }
 
-interface nodeEdit {
-	owner: string;
+interface NodeChange {
+	id: string;
 	sections: any;
 }
 
-interface NodeChange {
-	id: string;
-	quills: any;
-}
-
 interface TrackChanges {
-	new: string[];
 	nodes: NodeChange[];
 }
 

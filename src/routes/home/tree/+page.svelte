@@ -1,14 +1,21 @@
 <script lang="ts">
 	import InfiniteCanvas from './InfiniteCanvas.svelte';
 	import { createTree } from '$lib/stores/nodes.ts';
-	import { setContext, getContext, tick } from 'svelte';
+	import { setContext, getContext, tick, onMount } from 'svelte';
 	import { writable, type Writable } from 'svelte/store';
 	import TitleModal from '$lib/components/TitleModal.svelte';
+	import Bold from '$lib/icons/Bold.svelte';
+	import Italic from '$lib/icons/Italic.svelte';
+	import Endnote from '$lib/icons/Endnote.svelte';
+	import Cross from '$lib/icons/Cross.svelte';
+	import { fly } from 'svelte/transition';
+	import { quintOut } from 'svelte/easing';
 
 	export let data;
 
 	let profileDropE: HTMLDivElement;
 	let modalInput: HTMLInputElement;
+	let pageActionUnsubscribe: any;
 
 	let initials = false;
 	let profDropdown = false;
@@ -19,6 +26,8 @@
 	setContext('canvasActionStore', canvasAction);
 	const treeAction = writable<string | null>(null);
 	setContext('treeActionStore', treeAction);
+	const pageAction = writable<string | null>(null);
+	setContext('pageActionStore', pageAction);
 	const charPos = { v: 0 };
 	setContext('charPos', charPos);
 	const viewPort = { height: 0, top: 0 };
@@ -57,6 +66,16 @@
 	setContext('nodeContextStore', nodeContext);
 	const quillsReady = writable(false);
 	setContext('quillsReadyStore', quillsReady);
+	const toolBarShown = writable(false);
+	setContext('toolBarShownStore', toolBarShown);
+	const bolded = writable(false);
+	setContext('boldedStore', bolded);
+	const italicized = writable(false);
+	setContext('italicizedStore', italicized);
+	const successPopUp = writable(false);
+	setContext('successPopUpStore', successPopUp);
+	const failurePopUp = writable(false);
+	setContext('failurePopUpStore', failurePopUp);
 	setContext('data', data);
 
 	const tree = createTree();
@@ -68,6 +87,19 @@
 			data.props.profile.username
 		);
 	setContext('tree', tree);
+
+	// onMount(() => {
+	// 	pageActionUnsubscribe = pageAction.subscribe((action) => {
+	// 		if (action) {
+
+	// 			pageAction.set(null);
+	// 		}
+	// 	});
+
+	// 	return () => {
+	// 		if (pageActionUnsubscribe) pageActionUnsubscribe();
+	// 	};
+	// });
 
 	function noImage(e: any) {
 		e.target.src = '';
@@ -98,6 +130,15 @@
 	}
 	$: if ($titleModal.visible) {
 		modalInput?.focus();
+	}
+
+	function successWait() {
+		setTimeout(() => ($successPopUp = false), 4000);
+		return true;
+	}
+	function failureWait() {
+		setTimeout(() => ($failurePopUp = false), 4000);
+		return true;
 	}
 </script>
 
@@ -137,10 +178,62 @@
 		</form>
 	</div>
 {/if}
+{#if $successPopUp && successWait()}
+	<div
+		in:fly={{ duration: 300, x: 0, y: 200, opacity: 0.5, easing: quintOut }}
+		class="fixed left-0 bottom-[20px] w-[100vw] flex items-center justify-center"
+	>
+		<div class="flex bg-[#ffffff] py-[10px] rounded-[6px]" style="box-shadow: -4px 4px #4ad36c;">
+			<p class="text-[#000000] mr-[20px] ml-[25px]">{$successPopUp}</p>
+			<button class="mr-[15px]" on:click={() => ($successPopUp = false)}
+				><Cross color="#70747c" size="16px" /></button
+			>
+		</div>
+	</div>
+{/if}
+{#if $failurePopUp && failureWait()}
+	<div
+		in:fly={{ duration: 300, x: 0, y: 200, opacity: 0.5, easing: quintOut }}
+		class="fixed left-0 bottom-[20px] w-[100vw] flex items-center justify-center"
+	>
+		<div class="flex bg-[#ffffff] py-[10px] rounded-[6px]" style="box-shadow: -4px 4px #be4141;">
+			<p class="text-[#000000] mr-[20px] ml-[25px]">{$failurePopUp}</p>
+			<button class="mr-[15px]" on:click={() => ($failurePopUp = false)}
+				><Cross color="#70747c" size="16px" /></button
+			>
+		</div>
+	</div>
+{/if}
+
 <div class="flex flex-col h-full w-full">
 	<div
 		class="relative flex items-center w-full h-[40px] bg-[#272727] border-b-[.3px] border-b-[#70747c]"
 	>
+		{#if $toolBarShown}
+			<button
+				on:click={() => {
+					nodeAction.set('bold');
+				}}
+				class="ml-[260px] p-[5px] rounded-[5px] {$bolded
+					? 'bg-[#7db1ff25]'
+					: ' hover:bg-[#353535]'}"><Bold color="#9c9c9c" size="20px" /></button
+			>
+			<button
+				on:click={() => {
+					nodeAction.set('italic');
+				}}
+				class="ml-[8px] p-[5px] rounded-[5px] {$italicized
+					? 'bg-[#7db1ff25]'
+					: ' hover:bg-[#353535]'}"><Italic color="#9c9c9c" size="20px" /></button
+			>
+			<button
+				on:click={() => {
+					nodeAction.set('endnote');
+				}}
+				class="ml-[20px] hover:bg-[#353535] p-[6.4px] rounded-[5px]"
+				><Endnote color="#9c9c9c" size="18px" /></button
+			>
+		{/if}
 		<div class="w-[.6px] h-[26px] bg-[#70747c] mr-[20px] ml-auto" />
 		<button
 			class="flex items-center mr-[10px] rounded-full size-[25px] overflow-hidden {initials
@@ -159,69 +252,3 @@
 		<InfiniteCanvas />
 	</div>
 </div>
-
-<style>
-	.curve-r-part-v {
-		content: '';
-		position: absolute;
-		bottom: 0;
-		background: #272727;
-		width: 10px;
-		height: 20px;
-		top: -0.6px;
-		left: 10px;
-	}
-	.curve-r-part-h {
-		position: absolute;
-		bottom: 0;
-		background: #272727;
-		width: 20px;
-		height: 11px;
-		top: -1px;
-		left: -0.6px;
-	}
-
-	.curve-l-part-v {
-		content: '';
-		position: absolute;
-		bottom: 0;
-		background: #272727;
-		width: 11px;
-		height: 20px;
-		top: -0.6px;
-		left: -1px;
-	}
-	.curve-l-part-h {
-		position: absolute;
-		bottom: 0;
-		background: #272727;
-		width: 20px;
-		height: 11px;
-		top: -1px;
-		left: -0.6px;
-	}
-
-	.tab {
-		position: relative;
-		/* Other styles... */
-	}
-
-	.tab::before,
-	.tab::after {
-		content: '';
-		position: absolute;
-		bottom: 0;
-		width: 10px;
-		height: 10px;
-		background: inherit;
-	}
-	.tab::before {
-		left: -10px;
-		transform-origin: top right;
-	}
-
-	.tab::after {
-		right: -10px;
-		transform-origin: top left;
-	}
-</style>

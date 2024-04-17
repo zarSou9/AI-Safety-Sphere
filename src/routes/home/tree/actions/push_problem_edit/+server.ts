@@ -1,40 +1,104 @@
 import type { RequestHandler } from './$types';
 import { json } from '@sveltejs/kit';
-import { problemEdit } from '$lib/server/schemas';
+import { changeSchema, delta } from '$lib/server/schemas';
+import Joi from 'joi';
+import { createTree } from '$lib/stores/nodes';
 
-export const POST: RequestHandler = async ({ request, locals: { supabase, supabaseService } }) => {
+export const POST: RequestHandler = async ({
+	request,
+	locals: { supabase, supabaseService, getSession }
+}) => {
 	try {
-		const data: { problemChange: any } = await request.json();
+		const { id, base, newChanges, section, userId } = await request.json();
 
-		const { data: userData } = await supabase.auth.getUser();
+		const idValid = Joi.string().validate(id);
+		const sectionValid = Joi.string().validate(id);
+		const userIdValid = Joi.string().validate(id);
+		if (idValid.error || sectionValid.error || userIdValid.error)
+			throw { status: 400, message: 'Bad request: missing or incorrect fields' };
 
-		const userId = userData.user?.id;
-
-		const editsPromise = supabase.from('Problems').select('edits').eq('id', data.problemChange.id);
-		const usernamePromise = supabase.from('Profiles').select('username').eq('user_id', userId);
-
-		const [editsResult, usernameResult] = await Promise.all([editsPromise, usernamePromise]);
-
-		if (editsResult?.error) throw { status: 400, message: editsResult.error.message };
-		if (usernameResult?.error) throw { status: 400, message: usernameResult.error.message };
-
-		const edits = editsResult.data[0].edits;
-		const username = usernameResult.data[0].username;
-
-		const pe = problemEdit.validate(data.problemChange.quills);
-
-		if (pe?.error) throw { status: 400, message: pe.error.message };
-
-		edits.push({ owner: username, sections: pe.value });
-
-		const { error } = await supabaseService
+		const problemPromise = supabase
 			.from('Problems')
-			.update({ edits })
-			.eq('id', data.problemChange.id);
+			.select('tldr, content, suggestions')
+			.eq('id', id);
+		const usernamePromise = supabase.from('Profiles').select('username').eq('user_id', userId);
+		const treePromise = supabase.from('Tree').select('data').eq('id', 1);
 
-		if (error) throw { status: 400, message: error.message };
+		const [problemResult, usernameResult, treeResult] = await Promise.all([
+			problemPromise,
+			usernamePromise,
+			treePromise
+		]);
 
-		return json({ message: 'Edit successfully pushed' }, { status: 200 });
+		if (problemResult?.error) throw { status: 400, message: problemResult.error.message };
+		if (usernameResult?.error) throw { status: 400, message: usernameResult.error.message };
+		if (treeResult?.error) throw { status: 400, message: treeResult.error.message };
+
+		const suggestions = problemResult.data[0].suggestions;
+		const username = usernameResult.data[0].username;
+		const tree = createTree();
+
+		tree.setTree(treeResult.data[0].data);
+		const treeNode = tree.getObjFromId(id);
+		const owners = treeNode?.owners;
+		if (!owners?.includes(username)) {
+			throw { status: 400, message: 'Unauthorized' };
+		}
+
+		let suggestion = suggestions.find((s: any) => s.title === section);
+		if (!suggestion) {
+			suggestion = { title: section, changes: [] };
+			suggestions.push(suggestion);
+		}
+
+		for (let newChange of newChanges) {
+			const changeValid = changeSchema.validate(newChange);
+			if (changeValid.error)
+				throw { status: 400, message: 'Bad request: missing or incorrect fields' };
+		}
+		suggestion.changes = newChanges;
+
+		let baseValid;
+		if (section === 'TL;DR') {
+			baseValid = delta.validate(base);
+			if (baseValid.error)
+				throw { status: 400, message: 'Bad request: missing or incorrect fields' };
+			treeNode.data.tldr = base;
+			const treePostPromise = supabaseService
+				.from('Tree')
+				.update({ data: tree.getTree() })
+				.eq('id', 1);
+			const problemPostPromise = supabaseService
+				.from('Problems')
+				.update({ tldr: base, suggestions })
+				.eq('id', id);
+
+			const [problemPostResult, treePostResult] = await Promise.all([
+				problemPostPromise,
+				treePostPromise
+			]);
+			if (problemPostResult?.error) throw { status: 400, message: problemPostResult.error.message };
+			if (treePostResult?.error) throw { status: 400, message: treePostResult.error.message };
+		} else {
+			const content = problemResult.data[0].content;
+			baseValid = delta.validate(base);
+			if (baseValid.error)
+				throw { status: 400, message: 'Bad request: missing or incorrect fields' };
+
+			const sect = content.find((s: any) => s.title === section);
+			if (sect) {
+				sect.delta = base;
+			} else {
+				content.push({ title: section, delta: base });
+			}
+			const { error } = await supabaseService
+				.from('Problems')
+				.update({ content, suggestions })
+				.eq('id', id);
+			if (error) throw { status: 400, message: error.message };
+		}
+
+		return json({ message: 'Edit successfully pushed!' }, { status: 200 });
 	} catch (error: any) {
 		return json(
 			{ error: error.message || 'An unexpected error occurred' },

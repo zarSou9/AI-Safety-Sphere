@@ -41,6 +41,7 @@
 		left: number;
 		parent: any;
 		last: boolean;
+		owners: Array<string>;
 	}[] = [];
 	let strategies: {
 		id: string;
@@ -49,6 +50,7 @@
 		top: number;
 		left: number;
 		probs: any[];
+		owners: Array<string>;
 	}[] = [];
 	let openTree = false;
 	let extraShown = true;
@@ -160,7 +162,8 @@
 				top: obj.top,
 				left: obj.left,
 				parent: parent,
-				last: last
+				last: last,
+				owners: obj.owners
 			});
 		} else {
 			const probs: any[] = [];
@@ -177,7 +180,8 @@
 				data: obj.data,
 				top: obj.top,
 				left: obj.left,
-				probs: probs
+				probs: probs,
+				owners: obj.owners
 			});
 		}
 	}
@@ -402,7 +406,7 @@
 							</button>
 						</div>
 					{/if}
-					<Problem id={problem.id} treeData={problem.data}></Problem>
+					<Problem treeData={problem}></Problem>
 				</div>
 				{#if $quillsReady && !problem.last}
 					<Curve
@@ -440,7 +444,7 @@
 						role="presentation"
 						bind:this={strategy.div}
 					>
-						<Strategy id={strategy.id} treeData={strategy.data}></Strategy>
+						<Strategy treeData={tree.getObjFromId(strategy.id)}></Strategy>
 						{#if $quillsReady}
 							<div
 								class="absolute flex w-[800px] justify-center"
