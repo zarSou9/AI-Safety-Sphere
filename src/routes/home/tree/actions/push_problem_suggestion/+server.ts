@@ -11,8 +11,8 @@ export const POST: RequestHandler = async ({
 		const { id, newChanges, section, userId } = await request.json();
 
 		const idValid = Joi.string().validate(id);
-		const sectionValid = Joi.string().validate(id);
-		const userIdValid = Joi.string().validate(id);
+		const sectionValid = Joi.string().validate(section);
+		const userIdValid = Joi.string().validate(userId);
 		if (idValid.error || sectionValid.error || userIdValid.error)
 			throw { status: 400, message: 'Bad request: missing or incorrect fields' };
 

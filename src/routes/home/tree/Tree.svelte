@@ -490,13 +490,5 @@
 			{/if}
 		{/each}
 	</div>
-{:else}
-	<input
-		on:focus={() => ($shortCutsEnabled = false)}
-		on:blur={() => ($shortCutsEnabled = true)}
-		class="text-black"
-		bind:value={newProbTitle}
-	/>
-	<button on:click={createRootProblemNode}>Create Root Problem Node!</button>
 {/if}
 <div class="h-[20px]" />

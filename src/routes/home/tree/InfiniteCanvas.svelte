@@ -22,12 +22,15 @@
 	const nodeContext: Writable<any> = getContext('nodeContextStore');
 	const tree: TreeInterface = getContext('tree');
 	const stratChange: { l: number; t: number; pl: number; pt: number } = getContext('stratChange');
+	const sectionContextE: Writable<any> = getContext('sectionContextEStore');
 
 	const zoomIntensity = 0.016;
 
 	let canvas: HTMLDivElement;
 	let viewPort: HTMLDivElement;
 	let rightClickDropdown: HTMLDivElement;
+	let sectionContextDropdown: HTMLDivElement;
+	let sectionContextOpen = false;
 
 	let homeX: number;
 	let homeY: number;
@@ -99,7 +102,7 @@
 
 	function scrollEditing(e: WheelEvent) {
 		e.preventDefault();
-		if (!smoothMoving) {
+		if (!smoothMoving && !sectionContextOpen) {
 			y = Math.max(Math.min(y - e.deltaY, viewingNodeRect.t), viewingNodeRect.h);
 			canvas.style.transform = `translate(${x}px, ${y}px) scale(${z})`;
 			$nodeAction = 'handle-caret-out-of-view';
@@ -169,6 +172,14 @@
 					x = x - stratChange.l + stratChange.pl;
 					y = y - stratChange.t + stratChange.pt;
 					canvas.style.transform = `translate(${x}px, ${y}px) scale(${z})`;
+				} else if (action === 'handle-section-context') {
+					if (sectionContextOpen) closeContext();
+					sectionContextOpen = true;
+					setTimeout(() => {
+						window.addEventListener('click', closeSectionContext);
+						sectionContextDropdown.style.top = `${$sectionContextE.clientY}px`;
+						sectionContextDropdown.style.left = `${$sectionContextE.clientX}px`;
+					}, 0);
 				}
 				$canvasAction = null;
 			}
@@ -442,6 +453,10 @@
 		$nodeContext = undefined;
 		window.removeEventListener('click', closeContext);
 	}
+	function closeSectionContext() {
+		sectionContextOpen = false;
+		window.removeEventListener('click', closeSectionContext);
+	}
 	function createNode() {
 		treeAction.set('create-node');
 	}
@@ -471,6 +486,16 @@
 				class="hover:bg-[#3c72ca] rounded-[4px] flex items-center px-[6px]">Add Strategy</button
 			>
 		{/if}
+	</div>
+{:else if sectionContextOpen}
+	<div
+		class="fixed z-[200] w-auto top-[-100px] left-[-100px] rounded-md bg-[#282828] grid text-[12px] text-nowrap px-[5px] py-[5px] h-auto outline outline-[1px] outline-[#535353]"
+		bind:this={sectionContextDropdown}
+	>
+		<button
+			on:click={() => nodeAction.set('delete-section')}
+			class="hover:bg-[#c44747] rounded-[4px] flex items-center px-[6px]">Delete Section</button
+		>
 	</div>
 {/if}
 

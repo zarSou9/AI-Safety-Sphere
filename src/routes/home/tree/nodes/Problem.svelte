@@ -2,7 +2,7 @@
 	import { onMount, onDestroy, tick, getContext } from 'svelte';
 	import Edit from '$lib/icons/Edit.svelte';
 	import View from '$lib/icons/View.svelte';
-	import type { TreeInterface, Problem, TrackChanges } from '$lib/types/nodes';
+	import type { TreeInterface } from '$lib/types/nodes';
 	import { get, type Writable } from 'svelte/store';
 	import type { PageData } from '../$types';
 
@@ -10,8 +10,20 @@
 	const charPos: { v: number } = getContext('charPos');
 	const titleModal: Writable<{
 		visible: boolean;
-		title: string | undefined;
+		title: string;
 	}> = getContext('titleModalStore');
+	const sectionTitleModal: Writable<{
+		visible: boolean;
+		title: string;
+		i: number;
+	}> = getContext('sectionTitleModalStore');
+	const sectionModal: Writable<{
+		visible: boolean;
+		title: string;
+		suggestions: any;
+		sections: any;
+		after: number;
+	}> = getContext('sectionModalStore');
 	const viewingNode: Writable<any> = getContext('viewingNodeStore');
 	const nodeAction: Writable<string | null> = getContext('nodeActionStore');
 	const canvasAction: Writable<string | null> = getContext('canvasActionStore');
@@ -25,6 +37,7 @@
 	const italicized: Writable<boolean> = getContext('italicizedStore');
 	const successPopUp: Writable<any> = getContext('successPopUpStore');
 	const failurePopUp: Writable<any> = getContext('failurePopUpStore');
+	const sectionContextE: Writable<any> = getContext('sectionContextEStore');
 
 	export let treeData: any;
 
@@ -39,8 +52,9 @@
 			eventFunction: undefined
 		}
 	];
-	let restOfSections: any = [];
 	let unpublished = tree.getChanges().nodes.find((n) => n.id === id)?.sections;
+
+	let deleteI = 1;
 
 	let id = treeData.id;
 	let Quill: any;
@@ -52,13 +66,13 @@
 	let outChar = '';
 	let editIconActive = false;
 	let editable = false;
-	let title: string | undefined;
-	let userIndex: any;
-	let prevLength: any = 0;
+	let title: string;
 	let isSaving = false;
+	let posting = false;
 	let saved = true;
 	let sectionsReady = false;
 	let nodeReady = false;
+	let savingTimeout: any;
 
 	let nodeActionUnsubscribe: any;
 	let colors = ['#63f774', '#6388f7', '#006161', '#63b7f7'];
@@ -84,8 +98,10 @@
 	const quillOptions = {
 		theme: 'bubble',
 		modules: {
-			toolbar: ''
+			toolbar: false,
+			history: { userOnly: true, maxStack: 0 }
 		},
+		formats: ['italic', 'bold', 'color', 'underline', 'strike', 'script'],
 		placeholder: 'Write here...'
 	};
 
@@ -98,63 +114,33 @@
 		oldQuill: any,
 		source: any
 	) {
-		if (quill.hasFocus()) {
+		if (quill.hasFocus() && source === 'user') {
 			if (currentQuill !== quill) {
-				currentQuill = quill;
-				currentEditor = editor;
-				prevLength = quill.getLength();
+				switchCurrent(sections.find((s: any) => s.title === title));
 			}
-			if (eventName === 'selection-change' && range && source !== 'api') {
-				userIndex = range.index;
+			if (eventName === 'selection-change') {
 				if (source === 'user') {
+					const format = quill.getFormat();
+					if (format?.bold) bolded.set(true);
+					else bolded.set(false);
+					if (format?.italic) italicized.set(true);
+					else italicized.set(false);
+
 					const pos =
 						editor.getBoundingClientRect().top + quill.getBounds(range.index + range.length).bottom;
 					if (pos > viewPort.height) {
 						canvasAction.set('move-page-up');
 					}
 				}
-			} else if (eventName === 'text-change' && source !== 'api') {
-				const deltaLength = quill.getLength() - prevLength;
-				if (deltaLength > 0) {
-					const pos =
-						editor.getBoundingClientRect().top + quill.getBounds(userIndex + deltaLength).bottom;
-					if (pos > viewPort.height + 24) {
-						quill.enable(false);
-						quill.deleteText(0, quill.getLength());
-						const quillData = oldQuill.compose(range);
-						setTimeout(() => {
-							quill.setContents(quillData);
-							quill.enable(true);
-							treeAction.set('calibrate-node-height');
-							prevLength = quill.getLength();
-						}, 30);
-					} else if (pos > viewPort.height - 4) {
-						canvasAction.set('move-page-up');
-					}
-				}
-				if (title === 'TL;DR' && quill.getText().split('\n').length > 13) {
-					let text = quill.getText();
-					const newline = '\n';
-					let count = 0;
-					let index = -1;
-
-					for (let i = 0; i < text.length; i++) {
-						if (text[i] === newline) {
-							count++;
-							if (count === 12) {
-								index = i;
-								break;
-							}
-						}
-					}
-					text = text.substring(0, index + 1);
-					quill.setText(text);
+			} else if (eventName === 'text-change') {
+				if (title === 'TL;DR' && quill.getText().split('\n').length > 14) {
+					quill.setContents(oldQuill);
 					failurePopUp.set('The TL;DR section is limited to 12 lines');
 					setTimeout(() => quill.blur(), 10);
-				} else if (source === 'user') {
-					saved = false;
+				} else {
 					let delta = range;
 					let oldDelta = oldQuill;
+					saved = false;
 					if (pasting) {
 						pasting = false;
 						if (!delta.ops[0]?.retain) {
@@ -187,7 +173,7 @@
 					let { index } = quill.getSelection();
 					if (
 						(quill.getText(index - 1, 1) === '\n' && !delta.ops[1]?.delete) ||
-						(oldDelta.ops.length === 1 && oldDelta.ops[0].insert === '\n')
+						(index === 0 && oldDelta.ops[0].insert.slice(0, 1) === '\n')
 					) {
 						index += 1;
 					}
@@ -212,6 +198,15 @@
 					if (delta.ops[1]?.retain && delta.ops.length === 3) {
 						delta.ops[2].attributes = { ...delta.ops[2]?.attributes, ...delta.ops[1].attributes };
 						delta.ops = [delta.ops[0], delta.ops[2]];
+					}
+
+					if (delta.ops[1]?.insert) {
+						const pos =
+							editor.getBoundingClientRect().top +
+							quill.getBounds(delta.ops[0].retain + delta.ops[1]?.insert.length).bottom;
+						if (pos > viewPort.height) {
+							canvasAction.set('move-page-up');
+						}
 					}
 
 					let ud = new Delta(JSON.parse(JSON.stringify(delta)));
@@ -2178,7 +2173,6 @@
 						}
 					}
 				}
-				prevLength = quill.getLength();
 				treeAction.set('calibrate-node-height');
 			}
 		}
@@ -2227,6 +2221,7 @@
 			save(true);
 			isSaving = false;
 			enableQuills(false);
+			toolBarShown.set(false);
 			editable = false;
 			editIconActive = false;
 			canvasAction.set('zoom-out-from-node');
@@ -2323,71 +2318,6 @@
 			canvasAction.set('return-to-caret');
 		}
 	}
-	function save(closing = false) {
-		if (!saved) {
-			if (userColor === 'owner') {
-				pushToProblemEdit({
-					id,
-					base,
-					newChanges: changes,
-					section: currentSection,
-					userId: data.session?.user.id
-				});
-			} else {
-				pushToProblemSuggestions({
-					id,
-					newChanges: changes,
-					section: currentSection,
-					userId: data.session?.user.id
-				});
-			}
-		}
-
-		if (closing) {
-			const treeDataTemp = tree.getObjFromId(id).data;
-			treeDataTemp.title = title;
-			treeDataTemp.tldr = sections[0].quill.getContents();
-		}
-	}
-	async function pushToProblemSuggestions(d: any): Promise<void> {
-		try {
-			const response = await fetch('/home/tree/actions/push_problem_suggestion', {
-				method: 'POST',
-				headers: {
-					'Content-Type': 'application/json'
-				},
-				body: JSON.stringify(d)
-			});
-
-			const result = await response.json();
-
-			if (!response.ok) {
-				throw new Error(result.error || 'Failed to submit data');
-			}
-		} catch (error: any) {
-			failurePopUp.set('Error: ' + error.message);
-		}
-	}
-	async function pushToProblemEdit(d: any): Promise<void> {
-		try {
-			const response = await fetch('/home/tree/actions/push_problem_edit', {
-				method: 'POST',
-				headers: {
-					'Content-Type': 'application/json'
-				},
-				body: JSON.stringify(d)
-			});
-
-			const result = await response.json();
-
-			if (!response.ok) {
-				throw new Error(result.error || 'Failed to submit data');
-			}
-			console.log('success');
-		} catch (error: any) {
-			failurePopUp.set('Error: ' + error.message);
-		}
-	}
 	function startListening() {
 		nodeActionUnsubscribe = nodeAction.subscribe((action) => {
 			if (action) {
@@ -2421,23 +2351,46 @@
 						out
 					) {
 						currentQuill.focus({ preventScroll: true });
-						currentQuill.insertText(
-							currentQuill.getSelection().index + currentQuill.getSelection().length,
-							outChar,
-							'user'
-						);
+						currentQuill.insertText(currentQuill.getSelection().index, outChar, 'user');
+						currentQuill.setSelection(currentQuill.getSelection().index + 1);
 						out = false;
 					}
 				} else if (action === 'save-title') {
 					title = get(titleModal).title;
+					changeTitle(title as string);
 				} else if (action === 'expand-node') {
 					nodeReady = true;
 					if (sectionsReady) fillQuills();
 				} else if (action === 'clean-up') {
+					stopListening();
 					$viewingNode = false;
 					emptyQuills();
 					$shortCutsEnabled = true;
-					stopListening();
+				} else if (action === 'bold') {
+					handleBold();
+				} else if (action === 'italic') {
+					handleItalic();
+				} else if (action === 'save-new-section') {
+					newSection($sectionModal.title, $sectionModal.after);
+				} else if (action === 'start-new-section') {
+					const newSects = [];
+					for (let sect of sections) {
+						newSects.push(sect.title);
+					}
+					$sectionModal.sections = newSects;
+					$sectionModal.suggestions = [
+						'Prerequisites',
+						'Measurable Objective',
+						'Skills Needed',
+						'Existing Work',
+						'References'
+					];
+					$sectionModal.visible = true;
+				} else if (action === 'save-section-title') {
+					const store = get(sectionTitleModal);
+					changeSectionTitle(store.i, store.title);
+				} else if (action === 'delete-section') {
+					deleteSection(deleteI);
 				}
 				nodeAction.set(null);
 			}
@@ -2453,12 +2406,14 @@
 	function fillQuills() {
 		tick().then(() => {
 			for (let section of sections) {
+				section.quill = new Quill(section.editor, quillOptions);
 				section.eventFunction = (eventName: any, range: any, oR: any, source: any) => {
 					quillEvent(section.title, section.quill, section.editor, eventName, range, oR, source);
 				};
 				section.quill.setContents(section.base);
 				section.quill.on('editor-change', section.eventFunction);
 			}
+			switchCurrent(sections[0]);
 			window.addEventListener('keydown', handleKeyDown);
 			treeAction.set('calibrate-node-height');
 		});
@@ -2481,7 +2436,7 @@
 		currentQuill = section.quill;
 		currentEditor = section?.editor;
 		base = section.base;
-		changes = section?.suggestions;
+		changes = section?.suggestions ?? [];
 		currentSection = section.title;
 	}
 	function loadData() {
@@ -2508,10 +2463,6 @@
 						}
 						sections.find((s: any) => s.title === c.title).suggestions = c.changes;
 					}
-					base = sections[0].base;
-					if (suggestions.length) changes = sections[0].suggestions;
-					currentSection = sections[0].title;
-					restOfSections = sections.slice(1);
 					sectionsReady = true;
 					if (nodeReady) fillQuills();
 				}
@@ -2980,24 +2931,24 @@
 	}
 
 	function emptyQuills() {
-		for (let key in sections) {
-			if (key !== 'TL;DR') {
-				delete sections[key];
-			}
-		}
+		sections = [sections[0]];
 	}
 	function handleBold() {
 		if (currentQuill.getFormat()?.bold) {
 			currentQuill.format('bold', null, 'user');
+			bolded.set(false);
 		} else {
 			currentQuill.format('bold', true, 'user');
+			bolded.set(true);
 		}
 	}
 	function handleItalic() {
 		if (currentQuill.getFormat()?.italic) {
 			currentQuill.format('italic', null, 'user');
+			italicized.set(false);
 		} else {
 			currentQuill.format('italic', true, 'user');
+			italicized.set(true);
 		}
 	}
 	function endNote() {
@@ -3034,11 +2985,221 @@
 		}
 	}
 
-	function saving() {
+	function saving(start: boolean = false) {
+		if (start) isSaving = true;
 		if (isSaving) {
 			save();
-			setTimeout(saving, 2000);
+			savingTimeout = setTimeout(saving, 1600);
 		}
+	}
+	function save(closing = false) {
+		if (!saved && !posting) {
+			if (userColor === 'owner') {
+				pushToProblemEdit({
+					id,
+					base,
+					newChanges: changes,
+					section: currentSection,
+					userId: data.session?.user.id
+				});
+			} else {
+				pushToProblemSuggestions({
+					id,
+					newChanges: changes,
+					section: currentSection,
+					userId: data.session?.user.id
+				});
+			}
+			saved = true;
+		}
+
+		if (closing) {
+			const treeDataTemp = tree.getObjFromId(id).data;
+			treeDataTemp.title = title;
+			treeDataTemp.tldr = sections[0].quill.getContents();
+		}
+	}
+	async function pushToProblemSuggestions(d: any): Promise<void> {
+		if (posting) await waitForServer();
+		posting = true;
+		try {
+			const response = await fetch('/home/tree/actions/push_problem_suggestion', {
+				method: 'POST',
+				headers: {
+					'Content-Type': 'application/json'
+				},
+				body: JSON.stringify(d)
+			});
+
+			const result = await response.json();
+
+			if (!response.ok) {
+				throw new Error(result.error || 'Failed to submit data');
+			}
+		} catch (error: any) {
+			failurePopUp.set('Error: ' + error.message);
+		}
+		posting = false;
+	}
+	async function pushToProblemEdit(d: any): Promise<void> {
+		if (posting) await waitForServer();
+		posting = true;
+		try {
+			const response = await fetch('/home/tree/actions/push_problem_edit', {
+				method: 'POST',
+				headers: {
+					'Content-Type': 'application/json'
+				},
+				body: JSON.stringify(d)
+			});
+
+			const result = await response.json();
+
+			if (!response.ok) {
+				throw new Error(result.error || 'Failed to submit data');
+			}
+		} catch (error: any) {
+			failurePopUp.set('Error: ' + error.message);
+		}
+		posting = false;
+	}
+	async function changeTitle(newTitle: string): Promise<void> {
+		if (posting) await waitForServer();
+		posting = true;
+		try {
+			const response = await fetch('/home/tree/actions/change_problem_title', {
+				method: 'POST',
+				headers: {
+					'Content-Type': 'application/json'
+				},
+				body: JSON.stringify({ id, newTitle, userId: data.session?.user.id })
+			});
+
+			const result = await response.json();
+
+			if (!response.ok) {
+				throw new Error(result.error || 'Failed to submit data');
+			}
+		} catch (error: any) {
+			failurePopUp.set('Error: ' + error.message);
+		}
+		posting = false;
+	}
+	async function newSection(sectionTitle: string, after: number): Promise<void> {
+		if (sections.find((s: any) => s.title === sectionTitle)) {
+			failurePopUp.set('Error: Sections must be unique!');
+			return;
+		}
+		if (posting) await waitForServer();
+		posting = true;
+		sections.splice(after + 1, 0, {
+			title: sectionTitle,
+			editor: undefined,
+			base: { ops: [] },
+			suggestions: [],
+			history: [],
+			quill: undefined,
+			eventFunction: undefined
+		});
+		sections = sections;
+		tick().then(() => {
+			const section = sections[after + 1];
+			section.quill = new Quill(section.editor, quillOptions);
+			section.eventFunction = (eventName: any, range: any, oR: any, source: any) => {
+				quillEvent(section.title, section.quill, section.editor, eventName, range, oR, source);
+			};
+			section.quill.setContents(section.base);
+			section.quill.on('editor-change', section.eventFunction);
+			sections = sections;
+		});
+		try {
+			const response = await fetch('/home/tree/actions/new_section', {
+				method: 'POST',
+				headers: {
+					'Content-Type': 'application/json'
+				},
+				body: JSON.stringify({ id, sectionTitle, after, userId: data.session?.user.id })
+			});
+
+			const result = await response.json();
+
+			if (!response.ok) {
+				throw new Error(result.error || 'Failed to submit data');
+			}
+		} catch (error: any) {
+			sections = [...sections.slice(0, after + 1), ...sections.slice(after + 2)];
+			failurePopUp.set('Error: ' + error.message);
+		}
+		posting = false;
+	}
+	async function changeSectionTitle(i: number, sectionTitle: string) {
+		if (sections.find((s: any) => s.title === sectionTitle)) {
+			failurePopUp.set('Error: Sections must be unique!');
+			return;
+		}
+		if (posting) await waitForServer();
+		posting = true;
+		const prevTitle = sections[i].title;
+		sections[i].title = sectionTitle;
+		try {
+			const response = await fetch('/home/tree/actions/change_section_title', {
+				method: 'POST',
+				headers: {
+					'Content-Type': 'application/json'
+				},
+				body: JSON.stringify({ id, i, sectionTitle, userId: data.session?.user.id })
+			});
+
+			const result = await response.json();
+
+			if (!response.ok) {
+				throw new Error(result.error || 'Failed to submit data');
+			}
+		} catch (error: any) {
+			sections[i].title = prevTitle;
+			failurePopUp.set('Error: ' + error.message);
+		}
+		posting = false;
+	}
+	async function deleteSection(i: number) {
+		if (posting) await waitForServer();
+		posting = true;
+		const prevSect = sections[i];
+		sections = [...sections.slice(0, i), ...sections.slice(i + 1)];
+		try {
+			const response = await fetch('/home/tree/actions/delete_section', {
+				method: 'POST',
+				headers: {
+					'Content-Type': 'application/json'
+				},
+				body: JSON.stringify({ id, i, userId: data.session?.user.id })
+			});
+
+			const result = await response.json();
+
+			if (!response.ok) {
+				throw new Error(result.error || 'Failed to submit data');
+			}
+		} catch (error: any) {
+			sections.splice(i, 0, prevSect);
+			sections = [...sections];
+			failurePopUp.set('Error: ' + error.message);
+		}
+		posting = false;
+	}
+	function waitForServer() {
+		return new Promise<void>((resolve, reject) => {
+			const intervalId = setInterval(() => {
+				if (!posting) {
+					clearInterval(intervalId);
+					resolve();
+				}
+			}, 50);
+			setTimeout(() => {
+				clearInterval(intervalId);
+				reject(new Error('Condition not met within time limit'));
+			}, 4000);
+		});
 	}
 
 	function changeEditable() {
@@ -3051,15 +3212,20 @@
 			treeAction.set('find-node-position');
 		} else if (nodeReady && quillsReady) {
 			if (editable) {
+				isSaving = false;
+				clearTimeout(savingTimeout);
 				editable = false;
 				enableQuills(false);
 				editIconActive = true;
 				emptyQuillsOfSuggestions();
+				toolBarShown.set(false);
 			} else {
+				saving(true);
 				editable = true;
 				enableQuills(true);
 				editIconActive = false;
 				fillQuillsWithSuggestions();
+				toolBarShown.set(true);
 			}
 		}
 	}
@@ -3067,6 +3233,21 @@
 		if (editable) {
 			$titleModal.title = title;
 			$titleModal.visible = true;
+		}
+	}
+	function editSectionTitle(i: number, currentTitle: string) {
+		if (i && editable) {
+			$sectionTitleModal.title = currentTitle;
+			$sectionTitleModal.i = i;
+			$sectionTitleModal.visible = true;
+		}
+	}
+	function handleSectionTitleContext(e: any, i: any) {
+		if (i) {
+			e.preventDefault();
+			deleteI = i;
+			sectionContextE.set(e);
+			canvasAction.set('handle-section-context');
 		}
 	}
 </script>
@@ -3085,21 +3266,25 @@
 			<View color="#9c9c9c" size="36px" />
 		{/if}
 	</button>
-	<p class="ml-[14px] mr-[50px] title" on:dblclick={editTitle}>
+	<p class="ml-[14px] mr-[50px] title mb-[25px]" on:dblclick={editTitle}>
 		{title ?? 'untitled'}
 	</p>
-	<p class="ml-[14px] pt-[35px] sub-header-text">{sections[0].title}:</p>
-	<div class="pt-[5px] editor-wrapper">
-		<div bind:this={sections[0].editor} />
-	</div>
-	{#if sectionsReady}
-		{#each restOfSections as section}
-			<p class="ml-[14px] pt-[35px] sub-header-text">{section.title}:</p>
-			<div class="pt-[5px] editor-wrapper">
-				<div bind:this={section.editor} />
-			</div>
-		{/each}
-	{/if}
+	{#each sections as section, i (section.title)}
+		<p
+			class="ml-[14px] mt-[10px] sub-header-text"
+			on:dblclick={() => {
+				editSectionTitle(i, section.title);
+			}}
+			on:contextmenu={(e) => {
+				handleSectionTitleContext(e, i);
+			}}
+		>
+			{section.title}:
+		</p>
+		<div class="mt-[5px] editor-wrapper">
+			<div bind:this={section.editor} />
+		</div>
+	{/each}
 </div>
 
 <style>

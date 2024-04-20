@@ -8,12 +8,11 @@ const delta = Joi.object({
 				delete: Joi.number().positive(),
 				retain: Joi.number().positive(),
 				attributes: Joi.object({
-					bold: true,
-					italic: true
+					bold: Joi.alternatives().try(true, null, false),
+					italic: Joi.alternatives().try(true, null, false)
 				}).min(1)
 			}).xor('insert', 'delete', 'retain')
 		)
-		.min(1)
 		.required()
 });
 
