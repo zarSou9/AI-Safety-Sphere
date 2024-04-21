@@ -12,10 +12,11 @@ function wait(ms: number) {
 	return new Promise((resolve) => setTimeout(resolve, ms));
 }
 
-export const POST: any = async (
-	{ request, locals: { supabase, supabaseService } }: any,
-	context: RequestContext
-) => {
+export const POST: any = async ({
+	request,
+	locals: { supabase, supabaseService },
+	context
+}: any) => {
 	console.log(context);
 	context.waitUntil(
 		wait(11000).then(() => {
