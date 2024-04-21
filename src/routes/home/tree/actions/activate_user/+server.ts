@@ -7,8 +7,14 @@ import type { RequestContext } from '@sveltejs/adapter-vercel';
 export const config = {
 	runtime: 'edge'
 };
+function wait(ms: number) {
+	return new Promise((resolve) => setTimeout(resolve, ms));
+}
 
-export const POST: RequestHandler = async ({ request, locals: { supabase, supabaseService } }) => {
+export const POST: any = async (
+	{ request, locals: { supabase, supabaseService } }: any,
+	context: any
+) => {
 	try {
 		const { id, color, username, userColors } = await request.json();
 
@@ -19,9 +25,11 @@ export const POST: RequestHandler = async ({ request, locals: { supabase, supaba
 		// if (idValid.error || usernameValid.error || colorValid.error)
 		// 	throw { status: 400, message: 'Bad request: missing or incorrect fields' };
 
-		setTimeout(() => {
-			supabaseService.from('Problems').update({ testing: true }).eq('id', id);
-		}, 15000);
+		context.waitUntil(
+			wait(15000).then(() => {
+				supabaseService.from('Problems').update({ testing: true }).eq('id', id);
+			})
+		);
 
 		if (color) userColors.push({ color, user: username });
 
