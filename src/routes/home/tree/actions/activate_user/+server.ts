@@ -1,6 +1,6 @@
 import type { RequestHandler } from './$types';
 import { json } from '@sveltejs/kit';
-import Joi from 'joi';
+//import Joi from 'joi';
 import { createTree } from '$lib/stores/nodes';
 import type { RequestContext } from '@sveltejs/adapter-vercel';
 
@@ -8,30 +8,20 @@ export const config = {
 	runtime: 'edge'
 };
 
-function wait(ms: number) {
-	return new Promise((resolve) => setTimeout(resolve, ms));
-}
-
-export const POST: any = async ({
-	request,
-	locals: { supabase, supabaseService },
-	context
-}: any) => {
-	console.log(context);
-	context.waitUntil(
-		wait(11000).then(() => {
-			console.log('hi');
-		})
-	);
+export const POST: RequestHandler = async ({ request, locals: { supabase, supabaseService } }) => {
 	try {
 		const { id, color, username, userColors } = await request.json();
 
-		const idValid = Joi.string().validate(id);
-		const usernameValid = Joi.string().validate(username);
-		const colorValid = Joi.string().validate(color);
+		// const idValid = Joi.string().validate(id);
+		// const usernameValid = Joi.string().validate(username);
+		// const colorValid = Joi.string().validate(color);
 
-		if (idValid.error || usernameValid.error || colorValid.error)
-			throw { status: 400, message: 'Bad request: missing or incorrect fields' };
+		// if (idValid.error || usernameValid.error || colorValid.error)
+		// 	throw { status: 400, message: 'Bad request: missing or incorrect fields' };
+
+		setTimeout(() => {
+			supabaseService.from('Problems').update({ testing: true }).eq('id', id);
+		}, 15000);
 
 		if (color) userColors.push({ color, user: username });
 
