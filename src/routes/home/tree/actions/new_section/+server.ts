@@ -41,7 +41,7 @@ export const POST: RequestHandler = async ({ request, locals: { supabase, supaba
 		if (content.find((sect: any) => sect.title === sectionTitle))
 			throw { status: 400, message: 'Sections must be unique' };
 
-		content.splice(after + 1, 0, { delta: { ops: [] }, title: sectionTitle });
+		content.splice(after, 0, { delta: { ops: [] }, title: sectionTitle });
 
 		const { error } = await supabaseService.from('Problems').update({ content }).eq('id', id);
 		if (error) throw { status: 400, message: error.message };

@@ -1,29 +1,29 @@
 import { fail, type Actions } from '@sveltejs/kit';
+import Joi from 'joi';
 
 export const actions: Actions = {
 	signup: async ({ request, locals: { supabase, supabaseService } }) => {
+		const signUpSchema = Joi.object({
+			username: Joi.string().required().max(28),
+			email: Joi.string().email().required(),
+			password: Joi.string()
+				.required()
+				.min(6)
+				.pattern(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).+$/)
+				.max(30)
+		});
+
 		const formData = await request.formData();
 
 		const username = formData.get('username') as string;
 		const email = formData.get('email') as string;
 		const password = formData.get('password') as string;
 
-		if (!username || !email || !password) {
-			let mess = '';
-			if (!username) mess += 'username';
-			for (let i = 0; i < 2; i++) {
-				if (i === 0 && !email) {
-					if (mess.length) mess += ', ';
-					mess += 'email';
-				} else if (i === 1 && !password) {
-					if (mess.length) mess += ', ';
-					mess += 'password';
-				}
-			}
+		const requestValid = signUpSchema.validate({ username, email, password });
+		if (requestValid.error)
 			return fail(500, {
-				message: 'Missing required field/s: ' + mess
+				message: requestValid.error.message
 			});
-		}
 
 		const usernamePromise = supabaseService
 			.from('Profiles')
