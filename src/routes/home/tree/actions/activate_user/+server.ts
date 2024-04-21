@@ -11,10 +11,11 @@ function wait(ms: number) {
 	return new Promise((resolve) => setTimeout(resolve, ms));
 }
 
-export const POST: any = async (
-	{ request, locals: { supabase, supabaseService } }: any,
-	context: any
-) => {
+export const POST: any = async ({
+	request,
+	locals: { supabase, supabaseService },
+	context
+}: any) => {
 	try {
 		const { id, color, username, userColors } = await request.json();
 
