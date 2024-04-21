@@ -17,11 +17,11 @@ export const POST: any = async (
 	context: RequestContext
 ) => {
 	console.log(context);
-	// context.waitUntil(
-	// 	wait(11000).then(() => {
-	// 		console.log('hi');
-	// 	})
-	// );
+	context.waitUntil(
+		wait(11000).then(() => {
+			console.log('hi');
+		})
+	);
 	try {
 		const { id, color, username, userColors } = await request.json();
 
