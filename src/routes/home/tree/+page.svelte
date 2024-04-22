@@ -64,6 +64,11 @@
 		title: ''
 	});
 	setContext('titleModalStore', titleModal);
+	const newStrategyTitleModal = writable({
+		visible: false,
+		title: ''
+	});
+	setContext('newStrategyTitleModalStore', newStrategyTitleModal);
 	const sectionModal: any = writable({
 		visible: false,
 		title: '',
@@ -79,12 +84,12 @@
 	setContext('sectionTitleModalStore', sectionTitleModal);
 	const shortCutsEnabled = writable(true);
 	setContext('shortCutsEnabledStore', shortCutsEnabled);
-	const nodeContext = writable(undefined);
-	setContext('nodeContextStore', nodeContext);
 	const quillsReady = writable(false);
 	setContext('quillsReadyStore', quillsReady);
 	const toolBarShown = writable(false);
 	setContext('toolBarShownStore', toolBarShown);
+	const toolBarDotsShown = writable(false);
+	setContext('toolBarDotsShownStore', toolBarDotsShown);
 	const bolded = writable(false);
 	setContext('boldedStore', bolded);
 	const italicized = writable(false);
@@ -138,6 +143,10 @@
 		titleResult.title = $titleModal.title;
 		tick().then(() => titleResult.div?.focus());
 	}
+	$: if ($newStrategyTitleModal.visible) {
+		titleResult.title = $newStrategyTitleModal.title;
+		tick().then(() => titleResult.div?.focus());
+	}
 	$: if ($sectionModal.visible) {
 		tick().then(() => toolbarResult.div?.focus());
 	}
@@ -147,11 +156,11 @@
 	}
 
 	function successWait() {
-		setTimeout(() => ($successPopUp = false), 4000);
+		setTimeout(() => ($successPopUp = false), 5000);
 		return true;
 	}
 	function failureWait() {
-		setTimeout(() => ($failurePopUp = false), 4000);
+		setTimeout(() => ($failurePopUp = false), 5000);
 		return true;
 	}
 
@@ -217,6 +226,19 @@
 			$sectionTitleModal.title = titleResult.title;
 			nodeAction.set('save-section-title');
 			$sectionTitleModal.visible = false;
+		}}
+	/>
+{:else if $newStrategyTitleModal.visible}
+	<TitleModal
+		{titleResult}
+		titleMessage="New Strategy Title"
+		on:close={() => {
+			$newStrategyTitleModal.visible = false;
+		}}
+		on:save={() => {
+			$newStrategyTitleModal.title = titleResult.title;
+			treeAction.set('create-new-strategy');
+			$newStrategyTitleModal.visible = false;
 		}}
 	/>
 {/if}
@@ -299,34 +321,36 @@
 					class="ml-[10px] mr-auto hover:bg-[#393939] p-[4px] px-[4.5px] rounded-[5px]"
 					><Endnote color="#9c9c9c" size="14px" /></button
 				>
-				<button
-					bind:this={toolBarDropE}
-					on:click={() => {
-						toolBarMenuDropdown = !toolBarMenuDropdown;
-						if (toolBarMenuDropdown) {
-							window.addEventListener('click', handleMouseOut);
-						}
-					}}
-					class="p-[4px] px-[4.5px] rounded-[5px] mr-[16px] relative {toolBarMenuDropdown
-						? 'bg-[#3f3f3f]'
-						: 'hover:bg-[#393939]'}"
-				>
-					<ThreeDots color="#9c9c9c" size="14px" />
-					{#if toolBarMenuDropdown}
-						<div
-							in:slide={{ duration: 100, easing: quintOut }}
-							out:slide={{ delay: 100, duration: 100, easing: quintOut }}
-							class="absolute w-[150px] bg-[#474747] rounded-[6px] top-[25px] right-[0px] flex flex-col text-[12px] py-[8px]"
-						>
-							<button
-								on:click={() => {
-									nodeAction.set('start-new-section');
-								}}
-								class="hover:bg-[#626262] pl-[10px] flex justify-start">New Section</button
+				{#if $toolBarDotsShown}
+					<button
+						bind:this={toolBarDropE}
+						on:click={() => {
+							toolBarMenuDropdown = !toolBarMenuDropdown;
+							if (toolBarMenuDropdown) {
+								window.addEventListener('click', handleMouseOut);
+							}
+						}}
+						class="p-[4px] px-[4.5px] rounded-[5px] mr-[16px] relative {toolBarMenuDropdown
+							? 'bg-[#3f3f3f]'
+							: 'hover:bg-[#393939]'}"
+					>
+						<ThreeDots color="#9c9c9c" size="14px" />
+						{#if toolBarMenuDropdown}
+							<div
+								in:slide={{ duration: 100, easing: quintOut }}
+								out:slide={{ delay: 100, duration: 100, easing: quintOut }}
+								class="absolute w-[150px] bg-[#474747] rounded-[6px] top-[25px] right-[0px] flex flex-col text-[12px] py-[8px]"
 							>
-						</div>
-					{/if}
-				</button>
+								<button
+									on:click={() => {
+										nodeAction.set('start-new-section');
+									}}
+									class="hover:bg-[#626262] pl-[10px] flex justify-start">New Section</button
+								>
+							</div>
+						{/if}
+					</button>
+				{/if}
 			</div>
 		{/if}
 		<div class="w-[.6px] h-[26px] bg-[#70747c] mr-[15px] ml-auto" />

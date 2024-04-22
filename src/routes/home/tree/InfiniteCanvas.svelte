@@ -19,7 +19,6 @@
 	const nodeAction: Writable<string | null> = getContext('nodeActionStore');
 	const treeAction: Writable<string | null> = getContext('treeActionStore');
 	const viewPortContext: { height: number; top: number } = getContext('viewPort');
-	const nodeContext: Writable<any> = getContext('nodeContextStore');
 	const tree: TreeInterface = getContext('tree');
 	const stratChange: { l: number; t: number; pl: number; pt: number } = getContext('stratChange');
 	const sectionContextE: Writable<any> = getContext('sectionContextEStore');
@@ -450,7 +449,6 @@
 	}
 	function closeContext() {
 		contextOpen = false;
-		$nodeContext = undefined;
 		window.removeEventListener('click', closeContext);
 	}
 	function closeSectionContext() {
@@ -473,19 +471,6 @@
 		<button on:click={goHome} class="hover:bg-[#3c72ca] rounded-[4px] flex items-center px-[6px]"
 			>Go Home <p class="ml-auto">(<kbd>h</kbd>)</p></button
 		>
-		{#if tree.getNodeType($nodeContext) === 's'}
-			<div class="ml-auto mr-auto w-[109px] h-[.8px] bg-[#454545] my-[4px]" />
-			<button
-				on:click={createNode}
-				class="hover:bg-[#3c72ca] rounded-[4px] flex items-center px-[6px]">Add Problem</button
-			>
-		{:else if tree.getNodeType($nodeContext) === 'p' || tree.getNodeType($nodeContext) === 'r'}
-			<div class="ml-auto mr-auto w-[109px] h-[.8px] bg-[#454545] my-[4px]" />
-			<button
-				on:click={createNode}
-				class="hover:bg-[#3c72ca] rounded-[4px] flex items-center px-[6px]">Add Strategy</button
-			>
-		{/if}
 	</div>
 {:else if sectionContextOpen}
 	<div

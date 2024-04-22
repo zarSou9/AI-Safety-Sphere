@@ -5,6 +5,9 @@
 	import type { TreeInterface } from '$lib/types/nodes';
 	import { get, type Writable } from 'svelte/store';
 	import type { PageData } from '../$types';
+	import Check from '$lib/icons/Check.svelte';
+	import Cross from '$lib/icons/Cross.svelte';
+	import Paragraph from '$lib/icons/Paragraph.svelte';
 
 	const tree: TreeInterface = getContext('tree');
 	const charPos: { v: number } = getContext('charPos');
@@ -33,6 +36,7 @@
 	const data: PageData = getContext('data');
 	const quillsReady: Writable<boolean> = getContext('quillsReadyStore');
 	const toolBarShown: Writable<boolean> = getContext('toolBarShownStore');
+	const toolBarDotsShown: Writable<boolean> = getContext('toolBarDotsShownStore');
 	const bolded: Writable<boolean> = getContext('boldedStore');
 	const italicized: Writable<boolean> = getContext('italicizedStore');
 	const successPopUp: Writable<any> = getContext('successPopUpStore');
@@ -130,7 +134,7 @@
 					else italicized.set(false);
 
 					const pos =
-						editor.getBoundingClientRect().top + quill.getBounds(range.index + range.length).bottom;
+						currentEditor.getBoundingClientRect().top + quill.getBounds(range.index + range.length).bottom;
 					if (pos > viewPort.height) {
 						canvasAction.set('move-page-up');
 					}
@@ -205,7 +209,7 @@
 
 					if (delta.ops[1]?.insert) {
 						const pos =
-							editor.getBoundingClientRect().top +
+							currentEditor.getBoundingClientRect().top +
 							quill.getBounds(delta.ops[0].retain + delta.ops[1]?.insert.length).bottom;
 						if (pos > viewPort.height) {
 							canvasAction.set('move-page-up');
@@ -2176,6 +2180,8 @@
 						}
 					}
 					sections.find((s: any) => s.title === title).base = base;
+					sections = sections.map((section: any) => ({ ...section, suggestions: section.suggestions.map((suggestion: any) => ({ ...suggestion })) }));
+					switchCurrent(sections.find((s: any) => s.title === title));
 				}
 				treeAction.set('calibrate-node-height');
 			}
@@ -2232,7 +2238,9 @@
 			sectionsReady = false;
 			nodeReady = false;
 			enableQuills(false);
+			if (editable) emptyQuillsOfSuggestions();
 			toolBarShown.set(false);
+			toolBarDotsShown.set(false);
 			editable = false;
 			editIconActive = false;
 			canvasAction.set('zoom-out-from-node');
@@ -2419,6 +2427,7 @@
 		await tick();
 		for (let section of sections) {
 			section.quill = new Quill(section.editor, quillOptions);
+			section.quill.enable(false);
 			section.eventFunction = (eventName: any, range: any, oR: any, source: any) => {
 				quillEvent(section.title, section.quill, section.editor, eventName, range, oR, source);
 			};
@@ -2446,7 +2455,7 @@
 	function fillQuillsWithSuggestions() {
 		for (let section of sections) {
 			if (section?.suggestions) {
-				updateQuillWithChanges(section.suggestions, section.base, section.quill, section.title);
+				updateQuillWithChanges(section.suggestions, section.base, section.quill);
 			}
 		}
 	}
@@ -2477,8 +2486,23 @@
 				},
 				(payload) => {
 					currentUser = payload.new.active_user;
-					if (currentUser === username || !currentUser) editBtnActive = true;
-					else editBtnActive = false;
+					if (editable) {
+						if (currentUser !== username) {
+							isSaving = false;
+							clearTimeout(savingTimeout);
+							editable = false;
+							enableQuills(false);
+							editIconActive = true;
+							emptyQuillsOfSuggestions();
+							toolBarShown.set(false);
+							toolBarDotsShown.set(false);
+							if (currentUser) editBtnActive = false;
+							failurePopUp.set('Session expired');
+						}
+					} else {
+						if (currentUser === username || !currentUser) editBtnActive = true;
+						else editBtnActive = false;
+					}
 				}
 			)
 			.subscribe();
@@ -2506,7 +2530,9 @@
 		);
 	}
 
-	function approveChange(change: any, i: number) {
+	function approveChange(change: any, i: number, section: any) {
+		saved = false;
+		switchCurrent(section);
 		changes.splice(i, 1);
 		if (change.pos.l) {
 			const toAdd = [];
@@ -2821,9 +2847,14 @@
 				base = base.compose({ ops: [{ delete: dl }] });
 			}
 		}
+		sections.find((s: any) => s.title === section.title).base = base;
+		sections = sections.map((section: any) => ({ ...section, suggestions: section.suggestions.map((suggestion: any) => ({ ...suggestion })) }));
+		switchCurrent(sections.find((s: any) => s.title === section.title));
 		updateQuillWithChanges();
 	}
-	function denyChange(change: any, i: number) {
+	function denyChange(change: any, i: number, section: any) {
+		saved = false;
+		switchCurrent(section);
 		changes.splice(i, 1);
 		if (change.pos.l) {
 			const cp = { s: change.pos.i, f: change.pos.i + change.pos.l };
@@ -2851,9 +2882,12 @@
 				}
 			}
 		}
+		sections.find((s: any) => s.title === section.title).base = base;
+		sections = sections.map((section: any) => ({ ...section, suggestions: section.suggestions.map((suggestion: any) => ({ ...suggestion })) }));
+		switchCurrent(sections.find((s: any) => s.title === section.title));
 		updateQuillWithChanges();
 	}
-	function updateQuillWithChanges(ch: any = changes, b: any = base, cq: any = currentQuill, cs: any = currentSection) {
+	function updateQuillWithChanges(ch: any = changes, b: any = base, cq: any = currentQuill) {
 		let l = 0;
 		for (let change of ch) {
 			if (change.pos.l) {
@@ -2965,7 +2999,6 @@
 			}
 		}
 		cq.setContents(b);
-		sections.find((s: any) => s.title === cs).base = b;
 	}
 
 	function emptyQuills() {
@@ -3311,6 +3344,7 @@
 				editIconActive = true;
 				emptyQuillsOfSuggestions();
 				toolBarShown.set(false);
+				toolBarDotsShown.set(false);
 			} else {
 				editIconActive = false;
 				editBtnActive = false;
@@ -3351,6 +3385,9 @@
 										enableQuills(true);
 										editable = true;
 										toolBarShown.set(true);
+										if (userColor === 'owner') {
+											toolBarDotsShown.set(true);
+										}
 										editBtnActive = true;
 									})
 								});
@@ -3365,30 +3402,60 @@
 		}
 	}
 	function editTitle() {
-		if (editable) {
+		if (editable && userColor==='owner') {
 			$titleModal.title = title;
 			$titleModal.visible = true;
 		}
 	}
 	function editSectionTitle(i: number, currentTitle: string) {
-		if (i && editable) {
+		if (i && editable && userColor==='owner') {
 			$sectionTitleModal.title = currentTitle;
 			$sectionTitleModal.i = i;
 			$sectionTitleModal.visible = true;
 		}
 	}
 	function handleSectionTitleContext(e: any, i: any) {
-		if (i) {
+		if (i && editable && userColor==='owner') {
 			e.preventDefault();
 			deleteI = i;
 			sectionContextE.set(e);
 			canvasAction.set('handle-section-context');
 		}
 	}
+	function handleSuggestionClick(change: any, i: number, section: any, pi: number) {
+		change.selected = true;
+		if (change.pos.l) {
+			let l = 0;
+			let k = 0;
+			for (let ch of section.suggestions) {
+				if (ch.pos.l && k >= i) break;
+				l += ch.pos.l;
+				k++;
+			}
+			section.quill.setSelection(change.pos.i + l, change.pos.l, 'user');
+		} else {
+			section.quill.setSelection(change.pos.i, change.cd.ops[0].delete , 'user');
+		}
+		function handleSuggestionCleanup() {
+			console.log('clean up');
+			sections[pi].suggestions[i].selected = undefined;
+			window.removeEventListener('click', handleSuggestionCleanup);
+			sections = sections.map((section: any) => ({ ...section, suggestions: section.suggestions.map((suggestion: any) => ({ ...suggestion })) }));
+			switchCurrent(sections.find((s: any) => s.title === section.title));
+		}
+		setTimeout(() => {
+			window.addEventListener('click', handleSuggestionCleanup);
+		}, 2);
+		sections = sections.map((section: any) => ({ ...section, suggestions: section.suggestions.map((suggestion: any) => ({ ...suggestion })) }));
+		switchCurrent(sections.find((s: any) => s.title === section.title));
+	}
+	function checkWorking() {
+		return true;
+	}
 </script>
 
 <div
-	class="grid bg-[#1f1f1f] rounded-[20px] w-[800px] p-[60px] relative overflow-hidden selection:bg-[#6a87b389]"
+	class="grid bg-[#1f1f1f] rounded-[20px] w-[800px] p-[60px] relative selection:bg-[#6a87b389]"
 	style="box-shadow: -2px 2px #a53a3a;"
 >
 	<button
@@ -3406,19 +3473,35 @@
 		{title ?? 'untitled'}
 	</p>
 	{#each sections as section, i (section.title)}
-		<p
-			class="ml-[14px] mt-[10px] sub-header-text"
-			on:dblclick={() => {
-				editSectionTitle(i, section.title);
-			}}
-			on:contextmenu={(e) => {
-				handleSectionTitleContext(e, i);
-			}}
-		>
-			{section.title}:
-		</p>
-		<div class="mt-[5px] editor-wrapper">
-			<div bind:this={section.editor} />
+		<div class="relative">
+			<p
+				class="ml-[14px] mt-[10px] sub-header-text"
+				on:dblclick={() => {
+					editSectionTitle(i, section.title);
+				}}
+				on:contextmenu={(e) => {
+					handleSectionTitleContext(e, i);
+				}}
+			>
+				{section.title}:
+			</p>
+			<div class="mt-[5px] mb-[5px] overflow-hidden w-[670px]">
+				<div bind:this={section.editor} />
+			</div>
+			{#if editable && userColor === 'owner'}
+				<div class="absolute top-[15px] right-[-185px] flex flex-col space-y-[5px]">
+					{#if section?.suggestions}
+						{#each section.suggestions as change, k}
+							<div class="flex p-[2px] bg-[#252525] space-x-[3px] rounded-[2px] {change?.selected && checkWorking() ? 'border-[.5px] border-[#758ed2]' : ''}">
+								<button class="p-[2px] rounded-[2px] hover:bg-[#303030]" on:click={() => approveChange(change, k, section)}><Check size="12px" color="#6e6e6e"/></button>
+								<button class="p-[2px] rounded-[2px] hover:bg-[#303030]" on:click={() => denyChange(change, k, section)}><Cross size="12px" color="#6e6e6e"/></button>
+								<button class="p-[2px] rounded-[2px] hover:bg-[#303030]" on:click={() => handleSuggestionClick(change, k, section, i)}><Paragraph size="12px" color="#6e6e6e"/></button>
+							</div>
+						{/each}
+					{/if}
+				</div>
+			{/if}
+		
 		</div>
 	{/each}
 </div>

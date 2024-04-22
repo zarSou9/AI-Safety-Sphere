@@ -21,8 +21,11 @@
 	const treeAction: Writable<string | null> = getContext('treeActionStore');
 	const data: PageData = getContext('data');
 	const viewingNode: Writable<any> = getContext('viewingNodeStore');
-	const nodeContext: Writable<any> = getContext('nodeContextStore');
 	const quillsReady: Writable<boolean> = getContext('quillsReadyStore');
+	const newStrategyTitleModal: Writable<{
+		visible: boolean;
+		title: string;
+	}> = getContext('newStrategyTitleModalStore');
 
 	let newProbTitle: string;
 	let viewingNodeDiv: HTMLDivElement | undefined;
@@ -57,6 +60,7 @@
 	let titleSpacingReady = false;
 	let moving = false;
 	let lastNavigatedNode = 'r';
+	let newStrategyProblemId = '';
 	viewingNode.set(undefined);
 	$quillsReady = false;
 	$: if (openTree) {
@@ -122,18 +126,12 @@
 				} else if (action === 'fade-out-extra') {
 					extraShown = false;
 					$quillsReady = false;
-				} else if (action === 'create-node') {
-					const nodeType = tree.getNodeType($nodeContext);
-					$quillsReady = false;
-					if (nodeType === 's') {
-						createProblemNode($nodeContext);
-					} else if (nodeType === 'p' || nodeType === 'r') {
-						createStrategyNode($nodeContext);
-					}
+				} else if (action === 'create-new-strategy') {
+					createStrategyNode(newStrategyProblemId, $newStrategyTitleModal.title);
 					setTimeout(() => {
 						$quillsReady = true;
 					}, 40);
-					$nodeContext = undefined;
+					$newStrategyTitleModal.title = '';
 				}
 				treeAction.set(null);
 			}
@@ -387,9 +385,6 @@
 		{#each problems as problem (problem.id)}
 			{#if extraShown || problem.id === $viewingNode}
 				<div
-					on:contextmenu={() => {
-						$nodeContext = problem.id;
-					}}
 					role="presentation"
 					bind:this={problem.div}
 					class="absolute"
@@ -405,6 +400,14 @@
 								>{problem.parent.data.title}
 							</button>
 						</div>
+						<button
+							on:click={() => {
+								newStrategyProblemId = problem.id;
+								$newStrategyTitleModal.visible = true;
+							}}
+							class="absolute left-[22px] bottom-[-25px] text-[#5f66a0] text-[12px] underline hover:text-[#8a93eb]"
+							>New Strategy</button
+						>
 					{/if}
 					<Problem treeData={problem}></Problem>
 				</div>
@@ -436,14 +439,7 @@
 					{:else}
 						<div class="h-[40px] w-[40px]" />
 					{/if}
-					<div
-						on:contextmenu={() => {
-							if (tree.getObjFromId(strategy.id)?.owners?.includes(data.props?.profile.username))
-								$nodeContext = strategy.id;
-						}}
-						role="presentation"
-						bind:this={strategy.div}
-					>
+					<div role="presentation" bind:this={strategy.div}>
 						<Strategy treeData={tree.getObjFromId(strategy.id)}></Strategy>
 						{#if $quillsReady}
 							<div
