@@ -49,7 +49,7 @@
 		</form>
 	</div>
 {/if}
-<div class="h-full w-full bg-[#151515]">
+<div class="h-full w-full bg-[#151515] relative">
 	<div
 		class="relative flex items-center w-full h-[40px] bg-[#272727] border-b-[.3px] border-b-[#70747c] flex-shrink-0"
 	>
@@ -68,7 +68,7 @@
 		</button>
 	</div>
 	<div class="h-full w-full overflow-y-auto flex flex-col items-center">
-		<div class="w-[800px] flex flex-col items-start mt-[80px] mb-[160px]">
+		<div class="w-[800px] flex flex-col items-start mt-[80px] mb-[120px]">
 			<p class="c4">
 				<span class="c14">Thank you for participating in this </span>
 			</p>
@@ -211,6 +211,11 @@
 				</li>
 			</ul>
 			<p class="c2"><span class="c5"></span></p>
+			<a
+				class="hover:underline text-[#1155cc] text-[13px] mt-[40px] ml-auto"
+				href="https://docs.google.com/document/d/1SYBkAybnBulbF5w7YbxMIzVngomiCMs_6k7tDjz29Hk/edit?usp=sharing"
+				target="_blank">Edit this page</a
+			>
 		</div>
 	</div>
 </div>
