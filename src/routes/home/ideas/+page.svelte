@@ -67,5 +67,28 @@
 			{/if}
 		</button>
 	</div>
-	<p class="mt-[200px]">hello</p>
+	<div class="flex flex-col items-start">
+		<p class="mt-[100px] mb-[10px]">This is where someone might go to:</p>
+		<ul class="text-[#d6d6d6] ml-[30px]">
+			<li>Propose random ideas</li>
+			<li>Voice concerns</li>
+			<li>Answer questions</li>
+		</ul>
+	</div>
 </div>
+
+<style>
+	ul {
+		list-style: none;
+		padding-left: 0;
+	}
+
+	li::before {
+		content: '• ';
+		color: #dfdfdf;
+	}
+
+	a {
+		color: inherit;
+	}
+</style>

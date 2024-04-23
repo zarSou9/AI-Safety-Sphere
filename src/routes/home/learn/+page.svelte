@@ -67,5 +67,40 @@
 			{/if}
 		</button>
 	</div>
-	<p class="mt-[200px]">hello</p>
+	<div class="flex flex-col items-start">
+		<p class="mt-[100px] mb-[10px]">This is a resource page list of helpful resouce page lists:</p>
+		<ul class="text-[#479dff] ml-[30px]">
+			<li>
+				<a class="hover:underline" href="https://vkrakovna.wordpress.com/ai-safety-resources/"
+					>Long List of AI alignment resources</a
+				>
+			</li>
+			<li>
+				<a class="hover:underline" href="https://www.aisafetysupport.org/lots-of-links"
+					>Another Long List of AI alignment resources</a
+				>
+			</li>
+			<li>
+				<a class="hover:underline" href="https://aisafetyfundamentals.com/resources/"
+					>BlueDot's Resources page</a
+				>
+			</li>
+		</ul>
+	</div>
 </div>
+
+<style>
+	ul {
+		list-style: none;
+		padding-left: 0;
+	}
+
+	li::before {
+		content: '• ';
+		color: #479dff;
+	}
+
+	a {
+		color: inherit;
+	}
+</style>

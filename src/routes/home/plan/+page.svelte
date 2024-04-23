@@ -67,5 +67,5 @@
 			{/if}
 		</button>
 	</div>
-	<p class="mt-[200px]">hello</p>
+	<p class="mt-[100px]">Action Steps:</p>
 </div>
