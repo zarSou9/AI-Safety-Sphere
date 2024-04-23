@@ -1,8 +1,4 @@
-<div class="flex size-full justify-center items-center">
-	<p>You can't sign up quite yet. Come back soon!</p>
-</div>
-
-<!-- <script lang="ts">
+<script lang="ts">
 	import Joi from 'joi';
 	import { enhance } from '$app/forms';
 	import { fly } from 'svelte/transition';
@@ -154,4 +150,4 @@
 			{/if}
 		</div>
 	</div>
-</body> -->
+</body>
