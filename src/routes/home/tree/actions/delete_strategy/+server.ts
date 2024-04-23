@@ -36,9 +36,6 @@ export const POST: RequestHandler = async ({ request, locals: { supabase, supaba
 			throw { status: 400, message: 'Unauthorized' };
 		}
 
-		const selectedFound = selected_strategies.findIndex((ss: any) => ss.id === tree.getParent(id));
-		if (selectedFound >= 0) selected_strategies.splice(selectedFound, 1);
-
 		const deleteResult = tree.deleteStrategy(id);
 		if (deleteResult?.error) throw { status: 400, message: deleteResult.error };
 
@@ -54,7 +51,7 @@ export const POST: RequestHandler = async ({ request, locals: { supabase, supaba
 		}
 		postPromises.push(supabaseService.from('Tree').update({ data: tree.getTree() }).eq('id', 1));
 		postPromises.push(
-			supabase.from('Profiles').update({ selected_strategies }).eq('user_id', userId)
+			supabase.from('Profiles').update({ selected_strategies: [] }).eq('user_id', userId)
 		);
 
 		await Promise.all(postPromises);
@@ -62,7 +59,7 @@ export const POST: RequestHandler = async ({ request, locals: { supabase, supaba
 		return json(
 			{
 				message: 'Data submitted successfully',
-				data: { tree: tree.getTree(), ss: selected_strategies }
+				data: { tree: tree.getTree(), ss: undefined }
 			},
 			{ status: 200 }
 		);

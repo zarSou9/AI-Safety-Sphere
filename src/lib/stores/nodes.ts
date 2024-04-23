@@ -306,6 +306,9 @@ export function createTree() {
 		},
 		getSelections() {
 			return selectedStrategies;
+		},
+		setSelections(newSelects: any) {
+			selectedStrategies = newSelects;
 		}
 	};
 }

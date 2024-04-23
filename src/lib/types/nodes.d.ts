@@ -100,6 +100,7 @@ interface TreeInterface {
 	updateSelected: (id: string | undefined, selection: number) => void;
 	updateSelections: () => void;
 	getSelections: () => SelectedStrategy[];
+	setSelections: (newSelects: any) => void;
 }
 
 interface NodeChange {

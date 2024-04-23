@@ -288,7 +288,7 @@
 			quillsReady.set(false);
 			problems = [];
 			strategies = [];
-			tree.setTree(result.data.tree, result.data.ss);
+			tree.setTree(result.data.tree, []);
 			tick().then(() => {
 				treeContainer = tree.calculateSpacing();
 				updateTreeArrays();
