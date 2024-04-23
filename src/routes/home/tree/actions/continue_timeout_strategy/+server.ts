@@ -5,15 +5,15 @@ export const POST: RequestHandler = async ({ request, locals: { supabase, supaba
 	try {
 		const { id, timeElapsed, uuid } = await request.json();
 
-		const { data, error } = await supabase.from('Problems').select('last_edit').eq('id', id);
+		const { data, error } = await supabase.from('Strategies').select('last_edit').eq('id', id);
 		if (error) throw {};
 
 		if (data[0].last_edit === uuid) {
 			if (timeElapsed > 10000) {
-				await supabaseService.from('Problems').update({ active_user: null }).eq('id', id);
+				await supabaseService.from('Strategies').update({ active_user: null }).eq('id', id);
 			} else {
 				setTimeout(() => {
-					fetch('https://aisafetysphere.com/home/tree/actions/continue_timeout', {
+					fetch('https://aisafetysphere.com/home/tree/actions/continue_timeout_strategy', {
 						method: 'POST',
 						headers: {
 							'Content-Type': 'application/json'

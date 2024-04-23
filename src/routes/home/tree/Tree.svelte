@@ -16,7 +16,6 @@
 	const navNodeRect: { l: number; t: number; w: number; h: number } = getContext('navNodeRect');
 	const stratChange: { l: number; t: number; pl: number; pt: number } = getContext('stratChange');
 	const nodeHeight: any = getContext('nodeHeightStore');
-	const shortCutsEnabled: any = getContext('shortCutsEnabledStore');
 	const canvasAction: Writable<string | null> = getContext('canvasActionStore');
 	const treeAction: Writable<string | null> = getContext('treeActionStore');
 	const data: PageData = getContext('data');
@@ -26,6 +25,10 @@
 		visible: boolean;
 		title: string;
 	}> = getContext('newStrategyTitleModalStore');
+	const failurePopUp: Writable<any> = getContext('failurePopUpStore');
+	const nodeIdToRemove: Writable<string | undefined> = getContext('nodeIdToRemoveStore');
+	const successPopUp: Writable<any> = getContext('successPopUpStore');
+	const redoTree: Writable<boolean> = getContext('redoTreeStore');
 
 	let newProbTitle: string;
 	let viewingNodeDiv: HTMLDivElement | undefined;
@@ -89,6 +92,13 @@
 			if (v) {
 				viewingNodeDiv = findNodeInTreeArrays(v)?.div;
 			} else if (v === false) {
+				if ($redoTree) {
+					problems = [];
+					strategies = [];
+					treeContainer = tree.calculateSpacing();
+					updateTreeArrays();
+					redoTree.set(false);
+				}
 				extraShown = true;
 				setTimeout(() => {
 					$quillsReady = true;
@@ -132,6 +142,13 @@
 						$quillsReady = true;
 					}, 40);
 					$newStrategyTitleModal.title = '';
+				} else if (action === 'remove-node') {
+					if (tree.getNodeType($nodeIdToRemove) === 's') {
+						deleteStrategy($nodeIdToRemove as string);
+					} else {
+						deleteProblem($nodeIdToRemove as string);
+					}
+					nodeIdToRemove.set(undefined);
 				}
 				treeAction.set(null);
 			}
@@ -212,31 +229,96 @@
 		tree.createProblem(stratId, title, true, undefined, data.props?.profile.username);
 		treeContainer = tree.calculateSpacing();
 		updateTreeArrays();
-		data.supabase
-			.from('Profiles')
-			.update({ changes: tree.getChanges() })
-			.eq('user_id', data.session?.user.id)
-			.then(({ error }) => {
-				if (error) {
-					console.log(error);
-				}
-			});
 	}
-	function createStrategyNode(probId: string, title: string | undefined = undefined) {
+	function createStrategyNode(probId: string, title: string) {
+		quillsReady.set(false);
 		problems = [];
 		strategies = [];
-		tree.createStrategy(probId, title, true, undefined, data.props?.profile.username);
+		tree.createStrategy(probId, title, true, undefined, [data.props?.profile.username]);
 		treeContainer = tree.calculateSpacing();
 		updateTreeArrays();
-		data.supabase
-			.from('Profiles')
-			.update({ changes: tree.getChanges() })
-			.eq('user_id', data.session?.user.id)
-			.then(({ error }) => {
-				if (error) {
-					console.log(error);
-				}
+		tick().then(() => quillsReady.set(true));
+		publishStrategy(probId, title);
+	}
+	async function publishStrategy(probId: string, title: string): Promise<void> {
+		try {
+			const response = await fetch('/home/tree/actions/publish_strategy', {
+				method: 'POST',
+				headers: {
+					'Content-Type': 'application/json'
+				},
+				body: JSON.stringify({ probId, title, userId: data.session?.user.id })
 			});
+
+			const result: any = await response.json();
+
+			if (!response.ok) {
+				throw new Error(result.error || 'Failed to submit data');
+			}
+		} catch (error: any) {
+			failurePopUp.set('Error: ' + error.message);
+			setTimeout(() => {
+				location.reload();
+			}, 500);
+		}
+	}
+	async function deleteProblem(id: string): Promise<void> {
+		try {
+			const response = await fetch('/home/tree/actions/delete_problem', {
+				method: 'POST',
+				headers: {
+					'Content-Type': 'application/json'
+				},
+				body: JSON.stringify({ id, userId: data.session?.user.id })
+			});
+
+			const result: any = await response.json();
+
+			if (!response.ok) {
+				throw new Error(result.error || 'Failed to submit data');
+			}
+			quillsReady.set(false);
+			problems = [];
+			strategies = [];
+			tree.deleteProblem(id);
+			treeContainer = tree.calculateSpacing();
+			updateTreeArrays();
+			tick().then(() => quillsReady.set(true));
+			successPopUp.set('Problem successfully deleted');
+		} catch (error: any) {
+			failurePopUp.set('Error: ' + error.message);
+		}
+	}
+	async function deleteStrategy(id: string): Promise<void> {
+		try {
+			const response = await fetch('/home/tree/actions/delete_strategy', {
+				method: 'POST',
+				headers: {
+					'Content-Type': 'application/json'
+				},
+				body: JSON.stringify({ id, userId: data.session?.user.id })
+			});
+
+			const result: any = await response.json();
+
+			if (!response.ok) {
+				throw new Error(result.error || 'Failed to submit data');
+			}
+			quillsReady.set(false);
+			problems = [];
+			strategies = [];
+			const selections = tree.getSelections();
+			const selectedFound = selections.findIndex((ss: any) => ss.id === tree.getParent(id));
+			if (selectedFound >= 0) selections.splice(selectedFound, 1);
+			tree.updateSelections();
+			tree.deleteStrategy(id);
+			treeContainer = tree.calculateSpacing();
+			updateTreeArrays();
+			tick().then(() => quillsReady.set(true));
+			successPopUp.set('Strategy successfully deleted');
+		} catch (error: any) {
+			failurePopUp.set('Error: ' + error.message);
+		}
 	}
 
 	function changeOpenStrategy(direction: boolean, id: string) {

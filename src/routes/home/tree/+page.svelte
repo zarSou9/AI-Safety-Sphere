@@ -32,6 +32,8 @@
 	setContext('treeActionStore', treeAction);
 	const pageAction = writable<string | null>(null);
 	setContext('pageActionStore', pageAction);
+	const redoTree = writable<boolean>(false);
+	setContext('redoTreeStore', redoTree);
 	const charPos = { v: 0 };
 	setContext('charPos', charPos);
 	const viewPort = { height: 0, top: 0 };
@@ -69,6 +71,11 @@
 		title: ''
 	});
 	setContext('newStrategyTitleModalStore', newStrategyTitleModal);
+	const newProblemTitleModal = writable({
+		visible: false,
+		title: ''
+	});
+	setContext('newProblemTitleModalStore', newProblemTitleModal);
 	const sectionModal: any = writable({
 		visible: false,
 		title: '',
@@ -100,16 +107,13 @@
 	setContext('failurePopUpStore', failurePopUp);
 	const sectionContextE = writable(undefined);
 	setContext('sectionContextEStore', sectionContextE);
+	const nodeIdToRemove = writable<string | undefined>(undefined);
+	setContext('nodeIdToRemoveStore', nodeIdToRemove);
 	setContext('data', data);
 
 	const tree = createTree();
 	if (data.props?.hier[0]?.data?.problem)
-		tree.setTree(
-			data.props.hier[0].data,
-			data.props.profile.changes,
-			data.props.profile.selected_strategies,
-			data.props.profile.username
-		);
+		tree.setTree(data.props.hier[0].data, data.props.profile.selected_strategies);
 	setContext('tree', tree);
 
 	function noImage(e: any) {
@@ -145,6 +149,10 @@
 	}
 	$: if ($newStrategyTitleModal.visible) {
 		titleResult.title = $newStrategyTitleModal.title;
+		tick().then(() => titleResult.div?.focus());
+	}
+	$: if ($newProblemTitleModal.visible) {
+		titleResult.title = $newProblemTitleModal.title;
 		tick().then(() => titleResult.div?.focus());
 	}
 	$: if ($sectionModal.visible) {
@@ -218,6 +226,7 @@
 {:else if $sectionTitleModal.visible}
 	<TitleModal
 		{titleResult}
+		maxLength={28}
 		titleMessage="Section Title"
 		on:close={() => {
 			$sectionTitleModal.visible = false;
@@ -239,6 +248,19 @@
 			$newStrategyTitleModal.title = titleResult.title;
 			treeAction.set('create-new-strategy');
 			$newStrategyTitleModal.visible = false;
+		}}
+	/>
+{:else if $newProblemTitleModal.visible}
+	<TitleModal
+		{titleResult}
+		titleMessage="New Problem Title"
+		on:close={() => {
+			$newProblemTitleModal.visible = false;
+		}}
+		on:save={() => {
+			$newProblemTitleModal.title = titleResult.title;
+			nodeAction.set('create-new-problem');
+			$newProblemTitleModal.visible = false;
 		}}
 	/>
 {/if}
@@ -339,13 +361,19 @@
 							<div
 								in:slide={{ duration: 100, easing: quintOut }}
 								out:slide={{ delay: 100, duration: 100, easing: quintOut }}
-								class="absolute w-[150px] bg-[#474747] rounded-[6px] top-[25px] right-[0px] flex flex-col text-[12px] py-[8px]"
+								class="absolute z-[20] w-[150px] bg-[#474747] rounded-[6px] top-[25px] right-[0px] flex flex-col text-[12px] py-[8px]"
 							>
 								<button
 									on:click={() => {
 										nodeAction.set('start-new-section');
 									}}
 									class="hover:bg-[#626262] pl-[10px] flex justify-start">New Section</button
+								>
+								<button
+									on:click={() => {
+										nodeAction.set('delete');
+									}}
+									class="hover:bg-[#934a4a] pl-[10px] flex justify-start">Delete Node</button
 								>
 							</div>
 						{/if}

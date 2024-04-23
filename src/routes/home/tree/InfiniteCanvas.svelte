@@ -455,9 +455,6 @@
 		sectionContextOpen = false;
 		window.removeEventListener('click', closeSectionContext);
 	}
-	function createNode() {
-		treeAction.set('create-node');
-	}
 </script>
 
 {#if contextOpen}

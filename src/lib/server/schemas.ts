@@ -61,15 +61,9 @@ const problems = Joi.array().items(
 	})
 );
 
-const strategies = Joi.array().items(
-	Joi.object({
-		id: Joi.string().required(),
-		title: Joi.string().required(),
-		tldr: delta.required(),
-		prerequisites: delta.required(),
-		content: delta.required(),
-		references: delta
-	})
-);
+const strategySchema = Joi.object({
+	id: Joi.string().required(),
+	title: Joi.string().required()
+});
 
-export { problems, strategies, strategyEdit, problemEdit, delta, changeSchema };
+export { problems, strategySchema, strategyEdit, problemEdit, delta, changeSchema };

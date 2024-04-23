@@ -38,16 +38,16 @@ export const POST: RequestHandler = async ({
 			.from('Tree')
 			.update({ data: tree.getTree() })
 			.eq('id', 1);
-		const problemPostPromise = supabaseService
-			.from('Problems')
+		const strategyPostPromise = supabaseService
+			.from('Strategies')
 			.update({ title: newTitle })
 			.eq('id', id);
 
-		const [problemPostResult, treePostResult] = await Promise.all([
-			problemPostPromise,
+		const [strategyPostResult, treePostResult] = await Promise.all([
+			strategyPostPromise,
 			treePostPromise
 		]);
-		if (problemPostResult?.error) throw { status: 400, message: problemPostResult.error.message };
+		if (strategyPostResult?.error) throw { status: 400, message: strategyPostResult.error.message };
 		if (treePostResult?.error) throw { status: 400, message: treePostResult.error.message };
 
 		return json({ message: 'Edit successfully pushed!' }, { status: 200 });

@@ -20,9 +20,9 @@ export const POST: RequestHandler = async ({
 
 		setTimeout(async () => {
 			const uuid = randomUUID();
-			await supabaseService.from('Problems').update({ last_edit: uuid }).eq('id', id);
+			await supabaseService.from('Strategies').update({ last_edit: uuid }).eq('id', id);
 
-			fetch('https://aisafetysphere.com/home/tree/actions/continue_timeout', {
+			fetch('https://aisafetysphere.com/home/tree/actions/continue_timeout_strategy', {
 				method: 'POST',
 				headers: {
 					'Content-Type': 'application/json'
@@ -31,24 +31,24 @@ export const POST: RequestHandler = async ({
 			});
 		}, 9000);
 
-		const problemPromise = supabase
-			.from('Problems')
+		const strategiesPromise = supabase
+			.from('Strategies')
 			.select('tldr, content, suggestions')
 			.eq('id', id);
 		const usernamePromise = supabase.from('Profiles').select('username').eq('user_id', userId);
 		const treePromise = supabase.from('Tree').select('data').eq('id', 1);
 
-		const [problemResult, usernameResult, treeResult] = await Promise.all([
-			problemPromise,
+		const [strategyResult, usernameResult, treeResult] = await Promise.all([
+			strategiesPromise,
 			usernamePromise,
 			treePromise
 		]);
 
-		if (problemResult?.error) throw { status: 400, message: problemResult.error.message };
+		if (strategyResult?.error) throw { status: 400, message: strategyResult.error.message };
 		if (usernameResult?.error) throw { status: 400, message: usernameResult.error.message };
 		if (treeResult?.error) throw { status: 400, message: treeResult.error.message };
 
-		const suggestions = problemResult.data[0].suggestions;
+		const suggestions = strategyResult.data[0].suggestions;
 		const username = usernameResult.data[0].username;
 		const tree = createTree();
 
@@ -82,19 +82,20 @@ export const POST: RequestHandler = async ({
 				.from('Tree')
 				.update({ data: tree.getTree() })
 				.eq('id', 1);
-			const problemPostPromise = supabaseService
-				.from('Problems')
+			const strategyPostPromise = supabaseService
+				.from('Strategies')
 				.update({ tldr: base, suggestions })
 				.eq('id', id);
 
-			const [problemPostResult, treePostResult] = await Promise.all([
-				problemPostPromise,
+			const [strategyPostResult, treePostResult] = await Promise.all([
+				strategyPostPromise,
 				treePostPromise
 			]);
-			if (problemPostResult?.error) throw { status: 400, message: problemPostResult.error.message };
+			if (strategyPostResult?.error)
+				throw { status: 400, message: strategyPostResult.error.message };
 			if (treePostResult?.error) throw { status: 400, message: treePostResult.error.message };
 		} else {
-			const content = problemResult.data[0].content;
+			const content = strategyResult.data[0].content;
 			baseValid = delta.validate(base);
 			if (baseValid.error)
 				throw { status: 400, message: 'Bad request: missing or incorrect fields' };
@@ -106,7 +107,7 @@ export const POST: RequestHandler = async ({
 				content.push({ title: section, delta: base });
 			}
 			const { error } = await supabaseService
-				.from('Problems')
+				.from('Strategies')
 				.update({ content, suggestions })
 				.eq('id', id);
 			if (error) throw { status: 400, message: error.message };

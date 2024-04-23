@@ -42,6 +42,7 @@
 	const successPopUp: Writable<any> = getContext('successPopUpStore');
 	const failurePopUp: Writable<any> = getContext('failurePopUpStore');
 	const sectionContextE: Writable<any> = getContext('sectionContextEStore');
+	const nodeIdToRemove: Writable<string | undefined> = getContext('nodeIdToRemoveStore');
 
 	export let treeData: any;
 
@@ -56,7 +57,6 @@
 			eventFunction: undefined
 		}
 	];
-	let unpublished = tree.getChanges().nodes.find((n) => n.id === id)?.sections;
 
 	let deleteI = 1;
 
@@ -80,6 +80,7 @@
 
 	let nodeActionUnsubscribe: any;
 	let colors = ['#3dfc53', '#0040ff', '#9500ff', '#25faf6','#f7b757','#ff78d7','#b6ed34'];
+	let userColors: any = [];
 	let editBtnActive = true;
 	let currentUser = null;
 	let problemChannel: any = undefined;
@@ -2225,25 +2226,28 @@
 			section.quill.enable(enabled);
 		}
 	}
+	function escapeNode() {
+		editBtnActive = true;
+		if (problemChannel) data.supabase.removeChannel(problemChannel);
+		problemChannel = undefined;
+		window.removeEventListener('keydown', handleKeyDown);
+		out = false;
+		save(true);
+		isSaving = false;
+		sectionsReady = false;
+		nodeReady = false;
+		enableQuills(false);
+		if (editable) emptyQuillsOfSuggestions();
+		toolBarShown.set(false);
+		toolBarDotsShown.set(false);
+		editable = false;
+		editIconActive = false;
+		canvasAction.set('zoom-out-from-node');
+	}
 	function handleKeyDown(e: KeyboardEvent) {
 		if (e.key === 'Escape') {
 			e.preventDefault();
-			editBtnActive = true;
-			if (problemChannel) data.supabase.removeChannel(problemChannel);
-			problemChannel = undefined;
-			window.removeEventListener('keydown', handleKeyDown);
-			out = false;
-			save(true);
-			isSaving = false;
-			sectionsReady = false;
-			nodeReady = false;
-			enableQuills(false);
-			if (editable) emptyQuillsOfSuggestions();
-			toolBarShown.set(false);
-			toolBarDotsShown.set(false);
-			editable = false;
-			editIconActive = false;
-			canvasAction.set('zoom-out-from-node');
+			escapeNode();
 		} else if (e.key === 's' && (e.metaKey || e.ctrlKey)) {
 			e.preventDefault();
 			save();
@@ -2411,6 +2415,12 @@
 					changeSectionTitle(store.i, store.title);
 				} else if (action === 'delete-section') {
 					deleteSection(deleteI);
+				} else if (action === 'delete') {
+					escapeNode();
+					setTimeout(() => {
+						nodeIdToRemove.set(id);
+						treeAction.set('remove-node');
+					}, 300);
 				}
 				nodeAction.set(null);
 			}
@@ -2506,14 +2516,9 @@
 				}
 			)
 			.subscribe();
-		const problemsPromise = data.supabase.from('Problems').select('*').eq('id', id);
-		const profilePromise = data.supabase
-			.from('Profiles')
-			.select('changes')
-			.eq('user_id', data.session?.user.id);
-		Promise.all([problemsPromise, profilePromise]).then(
-			([{ data: problemData }, { data: changesData }]) => {
-				if (problemData && changesData) {
+		data.supabase.from('Problems').select('*').eq('id', id).then(
+			({ data: problemData }) => {
+				if (problemData) {
 					currentUser = problemData[0].active_user;
 					if (currentUser === username || !currentUser) editBtnActive = true;
 					else editBtnActive = false;
@@ -2851,6 +2856,7 @@
 		sections = sections.map((section: any) => ({ ...section, suggestions: section.suggestions.map((suggestion: any) => ({ ...suggestion })) }));
 		switchCurrent(sections.find((s: any) => s.title === section.title));
 		updateQuillWithChanges();
+		checkChangeInUserColors();
 	}
 	function denyChange(change: any, i: number, section: any) {
 		saved = false;
@@ -2886,6 +2892,7 @@
 		sections = sections.map((section: any) => ({ ...section, suggestions: section.suggestions.map((suggestion: any) => ({ ...suggestion })) }));
 		switchCurrent(sections.find((s: any) => s.title === section.title));
 		updateQuillWithChanges();
+		checkChangeInUserColors();
 	}
 	function updateQuillWithChanges(ch: any = changes, b: any = base, cq: any = currentQuill) {
 		let l = 0;
@@ -3054,6 +3061,11 @@
 				'user'
 			);
 		}
+	}
+	function checkChangeInUserColors() {
+		let updatedUsedColors = findAllUserColors();
+		userColors = userColors.filter((uc: any) => updatedUsedColors.find((uuc: any) => uuc === uc.color))
+		activateUser(undefined, userColors);
 	}
 
 	function saving(start: boolean = false) {
@@ -3258,37 +3270,34 @@
 		}
 		posting = false;
 	}
-		// function findAllUserColors() {
-		// 	const usedColors: any = [];
-		// 	let colorsUsed = 0;
+	function findAllUserColors() {
+		const usedColors: any = [];
 
-		// 	for (let section of sections) {
-		// 		let sugs = section.suggestions;
-		// 		for (let change of sugs) {
-		// 			if (!usedColors.includes(change.color)) {
-		// 				usedColors.push(change.color);
-		// 				colorsUsed++;
-		// 			}
-		// 			if (change?.children) {
-		// 				for (let child of change.children) {
-		// 					if (!usedColors.includes(child.owner)) {
-		// 						usedColors.push(child.owner);
-		// 						colorsUsed++;
-		// 					}
-		// 				}
-		// 			}
-		// 			if (change?.deleteChildren) {
-		// 				for (let deleteChild of change.deleteChildren) {
-		// 					if (!usedColors.includes(deleteChild.owner)) {
-		// 						usedColors.push(deleteChild.owner);
-		// 						colorsUsed++;
-		// 					}
-		// 				}
-		// 			}
-		// 		}
-		// 	}
-		// 	return colorsUsed;
-		// }
+		for (let section of sections) {
+			let sugs = section.suggestions;
+			for (let change of sugs) {
+				if (!usedColors.includes(change.color)) {
+					usedColors.push(change.color);
+				}
+				if (change?.children) {
+					for (let child of change.children) {
+						if (!usedColors.includes(child.owner)) {
+							usedColors.push(child.owner);
+						}
+					}
+				}
+				if (change?.deleteChildren) {
+					for (let deleteChild of change.deleteChildren) {
+						if (!usedColors.includes(deleteChild.owner)) {
+							usedColors.push(deleteChild.owner);
+						}
+					}
+				}
+			}
+		}
+
+		return usedColors;
+	}
 	async function activateUser(color: string | undefined, userColors: any) {
 		if (posting) await waitForServer();
 		posting = true;
@@ -3348,14 +3357,9 @@
 			} else {
 				editIconActive = false;
 				editBtnActive = false;
-				const problemsPromise = data.supabase.from('Problems').select('*').eq('id', id);
-				const profilePromise = data.supabase
-					.from('Profiles')
-					.select('changes')
-					.eq('user_id', data.session?.user.id);
-				Promise.all([problemsPromise, profilePromise]).then(
-					([{ data: problemData }, { data: changesData }]) => {
-						if (problemData && changesData) {
+				data.supabase.from('Problems').select('*').eq('id', id).then(
+					({ data: problemData }) => {
+						if (problemData) {
 							currentUser = problemData[0].active_user;
 							if (!currentUser || currentUser === username) {
 								const bases = JSON.parse(
@@ -3366,6 +3370,7 @@
 								fillQuills().then(() => {
 									fillQuillsWithSuggestions();
 									let color = undefined;
+									userColors = problemData[0].userColors;
 									if (userColor !== 'owner') {
 										let colorMatching = problemData[0].userColors.find((uc: any) => uc.user === username);
 										if (colorMatching) {

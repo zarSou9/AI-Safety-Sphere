@@ -16,9 +16,9 @@ export const POST: RequestHandler = async ({ request, locals: { supabaseService 
 
 		setTimeout(async () => {
 			const uuid = randomUUID();
-			await supabaseService.from('Problems').update({ last_edit: uuid }).eq('id', id);
+			await supabaseService.from('Strategies').update({ last_edit: uuid }).eq('id', id);
 
-			fetch('https://aisafetysphere.com/home/tree/actions/continue_timeout', {
+			fetch('https://aisafetysphere.com/home/tree/actions/continue_timeout_strategy', {
 				method: 'POST',
 				headers: {
 					'Content-Type': 'application/json'
@@ -30,7 +30,7 @@ export const POST: RequestHandler = async ({ request, locals: { supabaseService 
 		if (color) userColors.push({ color, user: username });
 
 		const { error } = await supabaseService
-			.from('Problems')
+			.from('Strategies')
 			.update({ active_user: username, userColors })
 			.eq('id', id);
 		if (error) throw { status: 400, message: error.message };

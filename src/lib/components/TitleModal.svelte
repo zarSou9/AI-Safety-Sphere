@@ -8,6 +8,7 @@
 
 	export let titleResult: any;
 	export let titleMessage: string = 'New Title';
+	export let maxLength: number = 22;
 
 	const dispatch = createEventDispatcher();
 
@@ -18,8 +19,8 @@
 		if (!titleResult.title) {
 			failurePopUp.set('Please provide a title');
 			return;
-		} else if (titleResult.title.length > 22) {
-			failurePopUp.set("Title can't be greater than 22 characters");
+		} else if (titleResult.title.length > maxLength) {
+			failurePopUp.set(`Title can't be greater than ${maxLength} characters`);
 			return;
 		}
 		dispatch('save');

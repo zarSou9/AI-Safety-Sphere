@@ -19,9 +19,9 @@ export const POST: RequestHandler = async ({
 
 		setTimeout(async () => {
 			const uuid = randomUUID();
-			await supabaseService.from('Problems').update({ last_edit: uuid }).eq('id', id);
+			await supabaseService.from('Strategies').update({ last_edit: uuid }).eq('id', id);
 
-			fetch('https://aisafetysphere.com/home/tree/actions/continue_timeout', {
+			fetch('https://aisafetysphere.com/home/tree/actions/continue_timeout_strategy', {
 				method: 'POST',
 				headers: {
 					'Content-Type': 'application/json'
@@ -30,25 +30,28 @@ export const POST: RequestHandler = async ({
 			});
 		}, 9000);
 
-		const problemPromise = supabase
-			.from('Problems')
+		const strategiesPromise = supabase
+			.from('Strategies')
 			.select('tldr, content, suggestions')
 			.eq('id', id);
 		const usernamePromise = supabase.from('Profiles').select('username').eq('user_id', userId);
 
-		const [problemResult, usernameResult] = await Promise.all([problemPromise, usernamePromise]);
+		const [strategyResult, usernameResult] = await Promise.all([
+			strategiesPromise,
+			usernamePromise
+		]);
 
-		if (problemResult?.error) throw { status: 400, message: problemResult.error.message };
+		if (strategyResult?.error) throw { status: 400, message: strategyResult.error.message };
 		if (usernameResult?.error) throw { status: 400, message: usernameResult.error.message };
 
-		const suggestions = problemResult.data[0].suggestions;
+		const suggestions = strategyResult.data[0].suggestions;
 		const username = usernameResult.data[0].username;
 
 		let suggestion = suggestions.find((s: any) => s.title === section);
 		if (!suggestion) {
 			if (
 				section === 'TL;DR' ||
-				problemResult.data[0].content.find((b: any) => b.title === section)
+				strategyResult.data[0].content.find((b: any) => b.title === section)
 			) {
 				suggestion = { title: section, changes: [] };
 				suggestions.push(suggestion);
@@ -72,7 +75,7 @@ export const POST: RequestHandler = async ({
 		}
 		suggestion.changes = newChanges;
 
-		const { error } = await supabaseService.from('Problems').update({ suggestions }).eq('id', id);
+		const { error } = await supabaseService.from('Strategies').update({ suggestions }).eq('id', id);
 
 		if (error) throw { status: 400, message: error.message };
 

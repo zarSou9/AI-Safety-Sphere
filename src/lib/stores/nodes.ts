@@ -1,10 +1,7 @@
-import type { Problem, Tree, TrackChanges, SelectedStrategy } from '../types/nodes';
+import type { Problem, Tree, SelectedStrategy } from '../types/nodes';
 
 export function createTree() {
 	let tree: Tree = {};
-	let changes: TrackChanges = {
-		nodes: []
-	};
 	let ySpace = 560;
 	let selectedStrategies: SelectedStrategy[];
 
@@ -99,28 +96,10 @@ export function createTree() {
 	}
 
 	return {
-		setTree(
-			t: Tree,
-			c: TrackChanges | undefined = undefined,
-			sS: SelectedStrategy[] | undefined = undefined,
-			owner: string | undefined = undefined
-		) {
+		setTree(t: Tree, sS: SelectedStrategy[] | undefined = undefined) {
 			tree.problem = JSON.parse(JSON.stringify(t.problem));
-			if (c && sS) {
-				changes = JSON.parse(JSON.stringify(c));
+			if (sS) {
 				selectedStrategies = sS;
-
-				changes.nodes.forEach((n) => {
-					const type = this.getNodeType(n.id);
-					if (type === 'p')
-						this.createProblem(this.getParent(n.id) as string, undefined, false, undefined, [
-							owner
-						]);
-					else if (type === 's')
-						this.createStrategy(this.getParent(n.id) as string, undefined, false, undefined, [
-							owner
-						]);
-				});
 				updateTreeStrategySelections(tree.problem);
 			}
 		},
@@ -146,7 +125,7 @@ export function createTree() {
 			let j = id.length - 1;
 			let c = '0';
 
-			while (c !== 's' && c !== 'p' && c !== 'f' && j >= 0) {
+			while (c !== 's' && c !== 'p' && j >= 0) {
 				c = id.charAt(j);
 				j--;
 			}
@@ -234,10 +213,7 @@ export function createTree() {
 					strategies: []
 				});
 			}
-
-			if (user) {
-				changes.nodes.push({ id, sections: { title, tldr } });
-			}
+			return id;
 		},
 		createStrategy(
 			problemID: string,
@@ -253,9 +229,7 @@ export function createTree() {
 
 			problemTreeObj.strategies.push({ id, data: { title, tldr }, owners, problems: [] });
 
-			if (user) {
-				changes.nodes.push({ id, sections: { title, tldr } });
-			}
+			return id;
 		},
 		deleteProblem(probId: string) {
 			let strategyTreeObj = this.getObjFromId(this.getParent(probId));
@@ -277,18 +251,15 @@ export function createTree() {
 			problemTreeObj.strategies = problemTreeObj.strategies.filter((s: any) => s.id !== stratId);
 			return { success: 'Strategy succesfully deleted from tree' };
 		},
-		getChanges() {
-			return changes;
-		},
-		setChanges(v: TrackChanges) {
-			changes = v;
-		},
 		updateSelected(id: string | undefined, selection: number) {
 			const obj = selectedStrategies.find((s) => s.id === id);
 			if (obj) obj.selection = selection;
 			else if (id) {
 				selectedStrategies.push({ id, selection });
 			}
+		},
+		updateSelections() {
+			updateTreeStrategySelections(tree.problem);
 		},
 		getSelections() {
 			return selectedStrategies;

@@ -58,15 +58,10 @@ interface TreeStrategy {
 
 interface TreeInterface {
 	getTree: () => Tree;
-	setTree: (
-		t: Tree,
-		c?: TrackChanges | undefined,
-		sS?: SelectedStrategy[] | undefined,
-		owner?: string | undefined
-	) => void;
+	setTree: (t: Tree, sS?: SelectedStrategy[] | undefined) => void;
 	getParent: (id: string | undefined) => string | undefined;
 	getNodeType: (id: string | undefined) => string | undefined;
-	getObjFromId: (id: string, tempTree: Tree | null = null) => any;
+	getObjFromId: (id: string) => any;
 	calculateSpacing: () => { width: number; height: number };
 	createRootProblem: (title?: string) => [Problem, Object];
 	createProblem: (
@@ -84,9 +79,26 @@ interface TreeInterface {
 		tldr?: any,
 		owners?: any
 	) => Strategy | false;
-	getChanges: () => TrackChanges;
-	setChanges: (v: TrackChanges) => void;
+	deleteProblem: (probId: string) =>
+		| {
+				error: string;
+				success?: undefined;
+		  }
+		| {
+				success: string;
+				error?: undefined;
+		  };
+	deleteStrategy: (stratId: string) =>
+		| {
+				error: string;
+				success?: undefined;
+		  }
+		| {
+				success: string;
+				error?: undefined;
+		  };
 	updateSelected: (id: string | undefined, selection: number) => void;
+	updateSelections: () => void;
 	getSelections: () => SelectedStrategy[];
 }
 

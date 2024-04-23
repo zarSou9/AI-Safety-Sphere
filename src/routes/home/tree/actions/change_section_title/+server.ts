@@ -58,8 +58,8 @@ export const POST: RequestHandler = async ({ request, locals: { supabase, supaba
 		return json({ message: 'Edit successfully pushed!' }, { status: 200 });
 	} catch (error: any) {
 		return json(
-			{ error: error.message || 'An unexpected error occurred' },
-			{ status: error.status || 500 }
+			{ error: error?.message || 'An unexpected error occurred' },
+			{ status: error?.status || 500 }
 		);
 	}
 };

@@ -61,7 +61,7 @@ export const actions: Actions = {
 			email,
 			password,
 			options: {
-				emailRedirectTo: 'http://localhost:5173/login',
+				emailRedirectTo: 'https://aisafetysphere.com/login',
 				data: { email, username }
 			}
 		});
