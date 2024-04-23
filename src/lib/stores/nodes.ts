@@ -238,8 +238,30 @@ export function createTree() {
 			if (this.getObjFromId(probId)?.strategies?.length)
 				return { error: 'Problem has child strategies' };
 
-			strategyTreeObj.problems = strategyTreeObj.problems.filter((p: any) => p.id !== probId);
-			return { success: 'Problem succesfully deleted from tree' };
+			const index = strategyTreeObj.problems.findIndex((prob: any) => prob.id === probId);
+			const data: any = { newProbIds: [] };
+
+			strategyTreeObj.problems.forEach((prob: any, i: number) => {
+				if (i > index) {
+					let updateProbId: any = { old: prob.id };
+					let j = prob.id.length - 1;
+					let c = '0';
+
+					while (c !== 's' && c !== 'p' && j >= 0) {
+						c = prob.id.charAt(j);
+						j--;
+					}
+					const newNum = Number(prob.id.substring(j + 2)) - 1;
+
+					prob.id = prob.id.substring(0, j + 2) + newNum;
+
+					updateProbId.new = prob.id;
+					data.newProbIds.push(updateProbId);
+				}
+			});
+			strategyTreeObj.problems.splice(index, 1);
+
+			return { success: 'Problem succesfully deleted from tree', data };
 		},
 		deleteStrategy(stratId: string) {
 			let problemTreeObj = this.getObjFromId(this.getParent(stratId));
@@ -248,8 +270,29 @@ export function createTree() {
 			if (this.getObjFromId(stratId)?.problems?.length)
 				return { error: 'Strategy has child problems' };
 
-			problemTreeObj.strategies = problemTreeObj.strategies.filter((s: any) => s.id !== stratId);
-			return { success: 'Strategy succesfully deleted from tree' };
+			const index = problemTreeObj.strategies.findIndex((strat: any) => strat.id === stratId);
+			const data: any = { newStratIds: [] };
+
+			problemTreeObj.strategies.forEach((strat: any, i: number) => {
+				if (i > index) {
+					let updateStratId: any = { old: strat.id };
+					let j = strat.id.length - 1;
+					let c = '0';
+
+					while (c !== 's' && c !== 'p' && j >= 0) {
+						c = strat.id.charAt(j);
+						j--;
+					}
+					const newNum = Number(strat.id.substring(j + 2)) - 1;
+
+					strat.id = strat.id.substring(0, j + 2) + newNum;
+
+					updateStratId.new = strat.id;
+					data.newStratIds.push(updateStratId);
+				}
+			});
+			problemTreeObj.strategies.splice(index, 1);
+			return { success: 'Strategy succesfully deleted from tree', data };
 		},
 		updateSelected(id: string | undefined, selection: number) {
 			const obj = selectedStrategies.find((s) => s.id === id);

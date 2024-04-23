@@ -29,6 +29,7 @@
 	const nodeIdToRemove: Writable<string | undefined> = getContext('nodeIdToRemoveStore');
 	const successPopUp: Writable<any> = getContext('successPopUpStore');
 	const redoTree: Writable<boolean> = getContext('redoTreeStore');
+	const processing: Writable<boolean> = getContext('processingStore');
 
 	let newProbTitle: string;
 	let viewingNodeDiv: HTMLDivElement | undefined;
@@ -201,35 +202,6 @@
 		}
 	}
 
-	function createRootProblemNode() {
-		if (newProbTitle) {
-			const newRootProblem = tree.createRootProblem(newProbTitle);
-			treeContainer = tree.calculateSpacing();
-			updateTreeArrays();
-			data.supabase
-				.from('Problems')
-				.insert([newRootProblem[0]])
-				.then(({ error }) => {
-					if (error) console.log(error);
-				});
-			data.supabase
-				.from('Tree')
-				.update({ data: newRootProblem[1] })
-				.eq('id', 1)
-				.then(({ error }) => {
-					if (error) console.log(error);
-					else openTree = true;
-				});
-			openTree = true;
-		}
-	}
-	function createProblemNode(stratId: string, title: string | undefined = undefined) {
-		problems = [];
-		strategies = [];
-		tree.createProblem(stratId, title, true, undefined, data.props?.profile.username);
-		treeContainer = tree.calculateSpacing();
-		updateTreeArrays();
-	}
 	function createStrategyNode(probId: string, title: string) {
 		quillsReady.set(false);
 		problems = [];
@@ -263,6 +235,7 @@
 		}
 	}
 	async function deleteProblem(id: string): Promise<void> {
+		$processing = true;
 		try {
 			const response = await fetch('/home/tree/actions/delete_problem', {
 				method: 'POST',
@@ -280,16 +253,24 @@
 			quillsReady.set(false);
 			problems = [];
 			strategies = [];
-			tree.deleteProblem(id);
-			treeContainer = tree.calculateSpacing();
-			updateTreeArrays();
-			tick().then(() => quillsReady.set(true));
+			tree.setTree(result.data.tree, tree.getSelections());
+			tick().then(() => {
+				treeContainer = tree.calculateSpacing();
+				updateTreeArrays();
+				setTimeout(() => {
+					quillsReady.set(true);
+					successPopUp.set('Problem successfully deleted');
+				}, 20);
+			});
 			successPopUp.set('Problem successfully deleted');
+			$processing = false;
 		} catch (error: any) {
 			failurePopUp.set('Error: ' + error.message);
+			$processing = false;
 		}
 	}
 	async function deleteStrategy(id: string): Promise<void> {
+		$processing = true;
 		try {
 			const response = await fetch('/home/tree/actions/delete_strategy', {
 				method: 'POST',
@@ -307,17 +288,19 @@
 			quillsReady.set(false);
 			problems = [];
 			strategies = [];
-			const selections = tree.getSelections();
-			const selectedFound = selections.findIndex((ss: any) => ss.id === tree.getParent(id));
-			if (selectedFound >= 0) selections.splice(selectedFound, 1);
-			tree.updateSelections();
-			tree.deleteStrategy(id);
-			treeContainer = tree.calculateSpacing();
-			updateTreeArrays();
-			tick().then(() => quillsReady.set(true));
-			successPopUp.set('Strategy successfully deleted');
+			tree.setTree(result.data.tree, result.data.ss);
+			tick().then(() => {
+				treeContainer = tree.calculateSpacing();
+				updateTreeArrays();
+				setTimeout(() => {
+					quillsReady.set(true);
+					successPopUp.set('Strategy successfully deleted');
+				}, 20);
+			});
+			$processing = false;
 		} catch (error: any) {
 			failurePopUp.set('Error: ' + error.message);
+			$processing = false;
 		}
 	}
 

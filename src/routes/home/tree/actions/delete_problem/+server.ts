@@ -35,15 +35,24 @@ export const POST: RequestHandler = async ({ request, locals: { supabase, supaba
 		const deleteResult = tree.deleteProblem(id);
 		if (deleteResult?.error) throw { status: 400, message: deleteResult.error };
 
-		const problemsPromise = supabaseService.from('Problems').delete().eq('id', id);
-		const treePromise = supabaseService.from('Tree').update({ data: tree.getTree() }).eq('id', 1);
+		const postPromises = [];
 
-		const [problemsResult, treeResult] = await Promise.all([problemsPromise, treePromise]);
+		await supabaseService.from('Problems').delete().eq('id', id);
 
-		if (problemsResult?.error) throw { status: 400, message: problemsResult.error.message };
-		if (treeResult?.error) throw { status: 400, message: treeResult.error.message };
+		for (let updateProbId of deleteResult.data.newProbIds) {
+			await supabaseService
+				.from('Problems')
+				.update({ id: updateProbId.new })
+				.eq('id', updateProbId.old);
+		}
+		postPromises.push(supabaseService.from('Tree').update({ data: tree.getTree() }).eq('id', 1));
 
-		return json({ message: 'Data submitted successfully' }, { status: 200 });
+		await Promise.all(postPromises);
+
+		return json(
+			{ message: 'Data submitted successfully', data: { tree: tree.getTree() } },
+			{ status: 200 }
+		);
 	} catch (error: any) {
 		return json(
 			{ error: error?.message || 'An unexpected error occurred' },

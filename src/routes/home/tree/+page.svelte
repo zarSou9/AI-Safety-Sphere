@@ -109,6 +109,8 @@
 	setContext('sectionContextEStore', sectionContextE);
 	const nodeIdToRemove = writable<string | undefined>(undefined);
 	setContext('nodeIdToRemoveStore', nodeIdToRemove);
+	const processing = writable(false);
+	setContext('processingStore', processing);
 	setContext('data', data);
 
 	const tree = createTree();
@@ -309,6 +311,9 @@
 		</div>
 	</div>
 {/if}
+{#if $processing}
+	<div class="spinner fixed bottom-[20px] right-[20px]" />
+{/if}
 
 <div class="flex flex-col h-full w-full">
 	<div
@@ -399,3 +404,23 @@
 		<InfiniteCanvas />
 	</div>
 </div>
+
+<style>
+	.spinner {
+		border: 2.5px solid #232323;
+		border-top: 2.5px solid #3498db;
+		border-radius: 50%;
+		width: 35px;
+		height: 35px;
+		animation: spin 0.8s linear infinite;
+	}
+
+	@keyframes spin {
+		0% {
+			transform: rotate(0deg);
+		}
+		100% {
+			transform: rotate(360deg);
+		}
+	}
+</style>

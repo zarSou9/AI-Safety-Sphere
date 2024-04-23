@@ -42,24 +42,30 @@ export const POST: RequestHandler = async ({ request, locals: { supabase, supaba
 		const deleteResult = tree.deleteStrategy(id);
 		if (deleteResult?.error) throw { status: 400, message: deleteResult.error };
 
-		const strategiesPromise = supabaseService.from('Strategies').delete().eq('id', id);
-		const treePromise = supabaseService.from('Tree').update({ data: tree.getTree() }).eq('id', 1);
-		const userPostPromise = supabase
-			.from('Profiles')
-			.update({ selected_strategies })
-			.eq('user_id', userId);
+		const postPromises = [];
 
-		const [strategiesResult, treeResult, userPostResult] = await Promise.all([
-			strategiesPromise,
-			treePromise,
-			userPostPromise
-		]);
+		await supabaseService.from('Strategies').delete().eq('id', id);
 
-		if (strategiesResult?.error) throw { status: 400, message: strategiesResult.error.message };
-		if (treeResult?.error) throw { status: 400, message: treeResult.error.message };
-		if (userPostResult?.error) throw { status: 400, message: userPostResult.error.message };
+		for (let updateStratId of deleteResult.data.newStratIds) {
+			await supabaseService
+				.from('Strategies')
+				.update({ id: updateStratId.new })
+				.eq('id', updateStratId.old);
+		}
+		postPromises.push(supabaseService.from('Tree').update({ data: tree.getTree() }).eq('id', 1));
+		postPromises.push(
+			supabase.from('Profiles').update({ selected_strategies }).eq('user_id', userId)
+		);
 
-		return json({ message: 'Data submitted successfully' }, { status: 200 });
+		await Promise.all(postPromises);
+
+		return json(
+			{
+				message: 'Data submitted successfully',
+				data: { tree: tree.getTree(), ss: selected_strategies }
+			},
+			{ status: 200 }
+		);
 	} catch (error: any) {
 		return json(
 			{ error: error?.message || 'An unexpected error occurred' },

@@ -3600,7 +3600,8 @@
 		</div>
 		<button
 			on:click={() => {
-				$newProblemTitleModal.visible = true;
+				if (children.length < 8) $newProblemTitleModal.visible = true;
+				else failurePopUp.set('Strategies have a maximum of 8 subproblems');
 			}}
 			class="absolute bottom-[-26px] right-[20px]"><Plus color="#c5c5c5" size="15px"></Plus></button
 		>

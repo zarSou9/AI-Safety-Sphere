@@ -40,6 +40,18 @@ export const POST: RequestHandler = async ({ request, locals: { supabase, supaba
 		const id = tree.createProblem(sId, title, false, undefined, [username], true);
 		if (!id) throw { status: 400, message: 'error occured while creating problem' };
 
+		let j = id.length - 1;
+		let c = '0';
+
+		while (c !== 's' && c !== 'p' && j >= 0) {
+			c = id.charAt(j);
+			j--;
+		}
+		const problemLen = Number(id.substring(j + 2));
+
+		if (problemLen > 8)
+			throw { status: 400, message: 'Strategies have a maximum of 8 subproblems' };
+
 		const problemsPromise = supabaseService
 			.from('Problems')
 			.insert({ id, title, tldr: { ops: [] } });
