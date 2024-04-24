@@ -20,6 +20,7 @@ export const POST: RequestHandler = async ({ request, locals: { supabase, supaba
 					},
 					body: JSON.stringify({ uuid, timeElapsed: timeElapsed + 8400, last_edit })
 				});
+				await new Promise((resolve) => setTimeout(resolve, 100));
 			}
 		}
 
