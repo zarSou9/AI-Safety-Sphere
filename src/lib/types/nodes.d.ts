@@ -39,6 +39,7 @@ interface Tree {
 
 interface TreeProblem {
 	id: string;
+	uuid: string;
 	data: { title: string; tldr?: Object };
 	owners?: string[];
 	strategies: TreeStrategy[];
@@ -49,6 +50,7 @@ interface TreeProblem {
 
 interface TreeStrategy {
 	id: string;
+	uuid: string;
 	data: { title: string; tldr?: Object };
 	owners?: string[];
 	problems: TreeProblem[];
@@ -61,21 +63,20 @@ interface TreeInterface {
 	setTree: (t: Tree, sS?: SelectedStrategy[] | undefined) => void;
 	getParent: (id: string | undefined) => string | undefined;
 	getNodeType: (id: string | undefined) => string | undefined;
-	getObjFromId: (id: string) => any;
+	getObjFromId: (id: string, UUID?: string) => any;
 	calculateSpacing: () => { width: number; height: number };
 	createRootProblem: (title?: string) => [Problem, Object];
 	createProblem: (
 		strategyID: string,
+		strategyUUID: string,
 		title?: string,
-		user?: boolean,
 		tldr?: any,
-		owners?: any,
-		api?: boolean
+		owners?: any
 	) => Problem | false;
 	createStrategy: (
 		problemID: string,
+		problemUUID: string,
 		title?: string,
-		user?: boolean,
 		tldr?: any,
 		owners?: any
 	) => Strategy | false;

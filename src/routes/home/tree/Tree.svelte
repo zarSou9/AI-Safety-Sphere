@@ -26,7 +26,7 @@
 		title: string;
 	}> = getContext('newStrategyTitleModalStore');
 	const failurePopUp: Writable<any> = getContext('failurePopUpStore');
-	const nodeIdToRemove: Writable<string | undefined> = getContext('nodeIdToRemoveStore');
+	const nodeToRemove: Writable<any> = getContext('nodeToRemoveStore');
 	const successPopUp: Writable<any> = getContext('successPopUpStore');
 	const redoTree: Writable<boolean> = getContext('redoTreeStore');
 	const processing: Writable<boolean> = getContext('processingStore');
@@ -42,6 +42,7 @@
 	let quillsReadyUnsubscribe: any;
 	let problems: {
 		id: string;
+		uuid: string;
 		data: { title: string; tldr?: Object };
 		div?: HTMLDivElement;
 		top: number;
@@ -52,6 +53,7 @@
 	}[] = [];
 	let strategies: {
 		id: string;
+		uuid: string;
 		data: { title: string; tldr?: Object };
 		div?: HTMLDivElement;
 		top: number;
@@ -64,7 +66,7 @@
 	let titleSpacingReady = false;
 	let moving = false;
 	let lastNavigatedNode = 'r';
-	let newStrategyProblemId = '';
+	let newStrategyProblem: any;
 	viewingNode.set(undefined);
 	$quillsReady = false;
 	$: if (openTree) {
@@ -138,18 +140,22 @@
 					extraShown = false;
 					$quillsReady = false;
 				} else if (action === 'create-new-strategy') {
-					createStrategyNode(newStrategyProblemId, $newStrategyTitleModal.title);
+					publishStrategy(
+						newStrategyProblem.id,
+						newStrategyProblem.uuid,
+						$newStrategyTitleModal.title
+					);
 					setTimeout(() => {
 						$quillsReady = true;
 					}, 40);
 					$newStrategyTitleModal.title = '';
 				} else if (action === 'remove-node') {
-					if (tree.getNodeType($nodeIdToRemove) === 's') {
-						deleteStrategy($nodeIdToRemove as string);
+					if (tree.getNodeType($nodeToRemove.id) === 's') {
+						deleteStrategy($nodeToRemove.id, $nodeToRemove.uuid);
 					} else {
-						deleteProblem($nodeIdToRemove as string);
+						deleteProblem($nodeToRemove.id, $nodeToRemove.uuid);
 					}
-					nodeIdToRemove.set(undefined);
+					nodeToRemove.set(undefined);
 				}
 				treeAction.set(null);
 			}
@@ -174,6 +180,7 @@
 			} else last = true;
 			problems.push({
 				id: obj.id,
+				uuid: obj.uuid,
 				data: obj.data,
 				top: obj.top,
 				left: obj.left,
@@ -193,6 +200,7 @@
 			}
 			strategies.push({
 				id: obj.id,
+				uuid: obj.uuid,
 				data: obj.data,
 				top: obj.top,
 				left: obj.left,
@@ -202,24 +210,15 @@
 		}
 	}
 
-	function createStrategyNode(probId: string, title: string) {
-		quillsReady.set(false);
-		problems = [];
-		strategies = [];
-		tree.createStrategy(probId, title, true, undefined, [data.props?.profile.username]);
-		treeContainer = tree.calculateSpacing();
-		updateTreeArrays();
-		tick().then(() => quillsReady.set(true));
-		publishStrategy(probId, title);
-	}
-	async function publishStrategy(probId: string, title: string): Promise<void> {
+	async function publishStrategy(probId: string, probUUID: string, title: string): Promise<void> {
+		$processing = true;
 		try {
 			const response = await fetch('/home/tree/actions/publish_strategy', {
 				method: 'POST',
 				headers: {
 					'Content-Type': 'application/json'
 				},
-				body: JSON.stringify({ probId, title, userId: data.session?.user.id })
+				body: JSON.stringify({ probId, probUUID, title, userId: data.session?.user.id })
 			});
 
 			const result: any = await response.json();
@@ -227,14 +226,24 @@
 			if (!response.ok) {
 				throw new Error(result.error || 'Failed to submit data');
 			}
+			quillsReady.set(false);
+			problems = [];
+			strategies = [];
+			tree.setTree(result.data.tree, tree.getSelections());
+			tick().then(() => {
+				treeContainer = tree.calculateSpacing();
+				updateTreeArrays();
+				setTimeout(() => {
+					quillsReady.set(true);
+				}, 20);
+			});
+			$processing = false;
 		} catch (error: any) {
 			failurePopUp.set('Error: ' + error.message);
-			setTimeout(() => {
-				location.reload();
-			}, 500);
+			$processing = false;
 		}
 	}
-	async function deleteProblem(id: string): Promise<void> {
+	async function deleteProblem(id: string, uuid: string): Promise<void> {
 		$processing = true;
 		try {
 			const response = await fetch('/home/tree/actions/delete_problem', {
@@ -242,7 +251,7 @@
 				headers: {
 					'Content-Type': 'application/json'
 				},
-				body: JSON.stringify({ id, userId: data.session?.user.id })
+				body: JSON.stringify({ id, uuid, userId: data.session?.user.id })
 			});
 
 			const result: any = await response.json();
@@ -262,14 +271,13 @@
 					successPopUp.set('Problem successfully deleted');
 				}, 20);
 			});
-			successPopUp.set('Problem successfully deleted');
 			$processing = false;
 		} catch (error: any) {
 			failurePopUp.set('Error: ' + error.message);
 			$processing = false;
 		}
 	}
-	async function deleteStrategy(id: string): Promise<void> {
+	async function deleteStrategy(id: string, uuid: string): Promise<void> {
 		$processing = true;
 		try {
 			const response = await fetch('/home/tree/actions/delete_strategy', {
@@ -277,7 +285,7 @@
 				headers: {
 					'Content-Type': 'application/json'
 				},
-				body: JSON.stringify({ id, userId: data.session?.user.id })
+				body: JSON.stringify({ id, uuid, userId: data.session?.user.id })
 			});
 
 			const result: any = await response.json();
@@ -467,14 +475,14 @@
 						</div>
 						<button
 							on:click={() => {
-								newStrategyProblemId = problem.id;
+								newStrategyProblem = { id: problem.id, uuid: problem.uuid };
 								$newStrategyTitleModal.visible = true;
 							}}
 							class="absolute left-[22px] bottom-[-25px] text-[#5f66a0] text-[12px] underline hover:text-[#8a93eb]"
 							>New Strategy</button
 						>
 					{/if}
-					<Problem treeData={problem}></Problem>
+					<Problem treeData={tree.getObjFromId(problem.id)}></Problem>
 				</div>
 				{#if $quillsReady && !problem.last}
 					<Curve

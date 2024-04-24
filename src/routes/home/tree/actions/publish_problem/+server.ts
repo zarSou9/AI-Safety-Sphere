@@ -5,7 +5,7 @@ import Joi from 'joi';
 
 export const POST: RequestHandler = async ({ request, locals: { supabase, supabaseService } }) => {
 	try {
-		const { stratId, title, userId } = await request.json();
+		const { stratId, stratUUID, title, userId } = await request.json();
 
 		const userIdValid = Joi.string().validate(userId);
 		const stratIdValid = Joi.string().validate(stratId);
@@ -33,35 +33,38 @@ export const POST: RequestHandler = async ({ request, locals: { supabase, supaba
 			throw { status: 400, message: 'Unauthorized' };
 		}
 
-		const sId = tree.getObjFromId(stratId)?.id;
+		const sId = tree.getObjFromId(stratId, stratUUID)?.id;
 
 		if (!sId) throw { status: 400, message: 'Parent strategy of problem node could not be found' };
 
-		const id = tree.createProblem(sId, title, false, undefined, [username], true);
-		if (!id) throw { status: 400, message: 'error occured while creating problem' };
+		const prob = tree.createProblem(sId, stratUUID, title, undefined, [username]);
+		if (!prob) throw { status: 400, message: 'error occured while creating problem' };
 
-		let j = id.length - 1;
+		let j = prob.id.length - 1;
 		let c = '0';
 
 		while (c !== 's' && c !== 'p' && j >= 0) {
-			c = id.charAt(j);
+			c = prob.id.charAt(j);
 			j--;
 		}
-		const problemLen = Number(id.substring(j + 2));
+		const problemLen = Number(prob.id.substring(j + 2));
 
 		if (problemLen > 8)
 			throw { status: 400, message: 'Strategies have a maximum of 8 subproblems' };
 
 		const problemsPromise = supabaseService
 			.from('Problems')
-			.insert({ id, title, tldr: { ops: [] } });
+			.insert({ id: prob.id, uuid: prob.uuid, title, tldr: { ops: [] } });
 		const treePromise = supabaseService.from('Tree').update({ data: tree.getTree() }).eq('id', 1);
 		const [problemsResult, treeResult] = await Promise.all([problemsPromise, treePromise]);
 
 		if (problemsResult?.error) throw { status: 400, message: problemsResult.error.message };
 		if (treeResult?.error) throw { status: 400, message: treeResult.error.message };
 
-		return json({ message: 'Data submitted successfully' }, { status: 200 });
+		return json(
+			{ message: 'Data submitted successfully', data: { tree: tree.getTree() } },
+			{ status: 200 }
+		);
 	} catch (error: any) {
 		return json(
 			{ error: error?.message || 'An unexpected error occurred' },

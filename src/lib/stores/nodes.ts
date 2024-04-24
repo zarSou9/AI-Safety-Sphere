@@ -1,4 +1,5 @@
 import type { Problem, Tree, SelectedStrategy } from '../types/nodes';
+import { v4 as uuidv4 } from 'uuid';
 
 export function createTree() {
 	let tree: Tree = {};
@@ -94,6 +95,26 @@ export function createTree() {
 			});
 		}
 	}
+	function findObjFromUUID(obj: any, UUID: any) {
+		if (obj.uuid === UUID) return obj;
+		if (obj?.strategies !== undefined) {
+			for (let strat of obj.strategies) {
+				if (strat.uuid === UUID) {
+					return strat;
+				}
+				const objFound: any = findObjFromUUID(strat, UUID);
+				if (objFound) return objFound;
+			}
+		} else {
+			for (let prob of obj.problems) {
+				if (prob.uuid === UUID) {
+					return prob;
+				}
+				const objFound: any = findObjFromUUID(prob, UUID);
+				if (objFound) return objFound;
+			}
+		}
+	}
 
 	return {
 		setTree(t: Tree, sS: SelectedStrategy[] | undefined = undefined) {
@@ -131,7 +152,7 @@ export function createTree() {
 			}
 			return c;
 		},
-		getObjFromId(id: string | undefined) {
+		getObjFromId(id: string | undefined, UUID: string | undefined = undefined) {
 			if (!id) return false;
 			const prevId = id;
 			let obj: any = tree.problem;
@@ -158,8 +179,17 @@ export function createTree() {
 					running = false;
 				}
 			}
-			if (obj?.id === prevId) return obj;
-			else return false;
+			if (UUID) {
+				if (obj?.uuid === UUID) return obj;
+				else {
+					const objFound = findObjFromUUID(tree.problem, UUID);
+					if (objFound) return objFound;
+					else return false;
+				}
+			} else {
+				if (obj?.id === prevId) return obj;
+				else return false;
+			}
 		},
 		calculateSpacing() {
 			let container = { left: 0, height: 0 };
@@ -174,76 +204,74 @@ export function createTree() {
 				id: 'r',
 				title: title
 			};
+			const uuid = uuidv4();
 
 			tree.problem = {
 				id: prob.id as string,
+				uuid,
 				data: { title: title },
 				strategies: [],
 				selectedStrategy: 0
 			};
 
-			return [prob, { problem: { id: prob.id as string, data: { title: title }, strategies: [] } }];
+			return [
+				prob,
+				{ problem: { id: prob.id as string, uuid, data: { title: title }, strategies: [] } }
+			];
 		},
 		createProblem(
 			strategyID: string,
+			strategyUUID: string,
 			title: string = 'untitled',
-			user = true,
-			tldr: any = undefined,
-			owners: any = undefined,
-			api = false
-		) {
-			let strategyTreeObj = this.getObjFromId(strategyID);
-			if (!strategyTreeObj) return false;
-
-			const id = strategyID + 'p' + strategyTreeObj.problems.length.toString();
-
-			if (!api) {
-				strategyTreeObj.problems.push({
-					id,
-					data: { title, tldr },
-					owners,
-					strategies: [],
-					selectedStrategy: 0
-				});
-			} else {
-				strategyTreeObj.problems.push({
-					id,
-					data: { title, tldr },
-					owners,
-					strategies: []
-				});
-			}
-			return id;
-		},
-		createStrategy(
-			problemID: string,
-			title: string = 'untitled',
-			user = true,
 			tldr: any = undefined,
 			owners: any = undefined
 		) {
-			let problemTreeObj = this.getObjFromId(problemID);
+			let strategyTreeObj = this.getObjFromId(strategyID, strategyUUID);
+			if (!strategyTreeObj) return false;
+
+			const id = strategyID + 'p' + strategyTreeObj.problems.length.toString();
+			const uuid = uuidv4();
+
+			strategyTreeObj.problems.push({
+				id,
+				uuid,
+				data: { title, tldr },
+				owners,
+				strategies: []
+			});
+
+			return { id, uuid };
+		},
+		createStrategy(
+			problemID: string,
+			problemUUID: string,
+			title: string = 'untitled',
+			tldr: any = undefined,
+			owners: any = undefined
+		) {
+			let problemTreeObj = this.getObjFromId(problemID, problemUUID);
 			if (!problemTreeObj) return false;
 
 			const id = problemID + 's' + problemTreeObj.strategies.length.toString();
+			const uuid = uuidv4();
 
-			problemTreeObj.strategies.push({ id, data: { title, tldr }, owners, problems: [] });
+			problemTreeObj.strategies.push({ id, uuid, data: { title, tldr }, owners, problems: [] });
 
-			return id;
+			return { id, uuid };
 		},
-		deleteProblem(probId: string) {
+		deleteProblem(probId: string, probUUID: string) {
 			let strategyTreeObj = this.getObjFromId(this.getParent(probId));
 			if (!strategyTreeObj) return { error: 'Invalid problem ID' };
 
-			if (this.getObjFromId(probId)?.strategies?.length)
+			if (this.getObjFromId(probId, probUUID)?.strategies?.length)
 				return { error: 'Problem has child strategies' };
 
-			const index = strategyTreeObj.problems.findIndex((prob: any) => prob.id === probId);
+			const index = strategyTreeObj.problems.findIndex((prob: any) => prob.uuid === probUUID);
 			const data: any = { newProbIds: [] };
 
 			strategyTreeObj.problems.forEach((prob: any, i: number) => {
 				if (i > index) {
-					let updateProbId: any = { old: prob.id };
+					let updateProbId: any = { old: prob.uuid };
 					let j = prob.id.length - 1;
 					let c = '0';
 
@@ -263,19 +291,19 @@ export function createTree() {
 
 			return { success: 'Problem succesfully deleted from tree', data };
 		},
-		deleteStrategy(stratId: string) {
+		deleteStrategy(stratId: string, stratUUID: string) {
 			let problemTreeObj = this.getObjFromId(this.getParent(stratId));
 			if (!problemTreeObj) return { error: 'Invalid strategy ID' };
 
-			if (this.getObjFromId(stratId)?.problems?.length)
+			if (this.getObjFromId(stratId, stratUUID)?.problems?.length)
 				return { error: 'Strategy has child problems' };
 
-			const index = problemTreeObj.strategies.findIndex((strat: any) => strat.id === stratId);
+			const index = problemTreeObj.strategies.findIndex((strat: any) => strat.uuid === stratUUID);
 			const data: any = { newStratIds: [] };
 
 			problemTreeObj.strategies.forEach((strat: any, i: number) => {
 				if (i > index) {
-					let updateStratId: any = { old: strat.id };
+					let updateStratId: any = { old: strat.uuid };
 					let j = strat.id.length - 1;
 					let c = '0';
 

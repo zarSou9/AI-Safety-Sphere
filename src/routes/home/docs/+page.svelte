@@ -68,7 +68,7 @@
 		</button>
 	</div>
 	<div class="h-full w-full overflow-y-auto flex flex-col items-center">
-		<div class="w-[800px] flex flex-col items-start mt-[80px] mb-[120px]">
+		<div class="w-[80%] max-w-[770px] flex flex-col items-start mt-[80px] mb-[120px]">
 			<p class="c4">
 				<span class="c14">Thank you for participating in this </span>
 			</p>
@@ -129,11 +129,11 @@
 			<div class="mx-auto">
 				<p class="c6">
 					<span
-						style="overflow: hidden; display: inline-block; margin: 0.00px 0.00px; border: 0.00px solid #d6d6d6; transform: rotate(0.00rad) translateZ(0px); -webkit-transform: rotate(0.00rad) translateZ(0px); width: 491.50px; height: 400.13px;"
+						style="overflow: hidden; display: inline-block; margin: 0.00px 0.00px; border: 0.00px solid #d6d6d6; transform: rotate(0.00rad) translateZ(0px); -webkit-transform: rotate(0.00rad) translateZ(0px); width: 75.615%; height: 61.55%;"
 						><img
 							alt="Problem broken down into subproblems through a tree"
 							src="/images/image1.png"
-							style="width: 491.50px; height: 400.13px; margin-left: 0.00px; margin-top: 0.00px; transform: rotate(0.00rad) translateZ(0px); -webkit-transform: rotate(0.00rad) translateZ(0px);"
+							style="width: 100%; height: 100%; margin-left: 0.00px; margin-top: 0.00px; transform: rotate(0.00rad) translateZ(0px); -webkit-transform: rotate(0.00rad) translateZ(0px);"
 							title=""
 						/></span
 					>

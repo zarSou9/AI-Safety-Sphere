@@ -5,16 +5,20 @@ import { createTree } from '$lib/stores/nodes';
 
 export const POST: RequestHandler = async ({ request, locals: { supabase, supabaseService } }) => {
 	try {
-		const { id, i, userId } = await request.json();
+		const { id, uuid, i, userId } = await request.json();
 
 		const idValid = Joi.string().validate(id);
 		const userIdValid = Joi.string().validate(userId);
 		const iValid = Joi.number().min(1).validate(i);
+		const uuidValid = Joi.string().validate(uuid);
 
-		if (idValid.error || userIdValid.error || iValid.error)
+		if (idValid.error || userIdValid.error || iValid.error || uuidValid.error)
 			throw { status: 400, message: 'Bad request: missing or incorrect fields' };
 
-		const problemPromise = supabase.from('Problems').select('content, suggestions').eq('id', id);
+		const problemPromise = supabase
+			.from('Problems')
+			.select('content, suggestions')
+			.eq('uuid', uuid);
 		const usernamePromise = supabase.from('Profiles').select('username').eq('user_id', userId);
 		const treePromise = supabase.from('Tree').select('data').eq('id', 1);
 
@@ -47,7 +51,7 @@ export const POST: RequestHandler = async ({ request, locals: { supabase, supaba
 		const { error } = await supabaseService
 			.from('Problems')
 			.update({ content, suggestions })
-			.eq('id', id);
+			.eq('uuid', uuid);
 		if (error) throw { status: 400, message: error.message };
 
 		return json({ message: 'Edit successfully pushed!' }, { status: 200 });

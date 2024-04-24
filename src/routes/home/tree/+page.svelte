@@ -107,8 +107,8 @@
 	setContext('failurePopUpStore', failurePopUp);
 	const sectionContextE = writable(undefined);
 	setContext('sectionContextEStore', sectionContextE);
-	const nodeIdToRemove = writable<string | undefined>(undefined);
-	setContext('nodeIdToRemoveStore', nodeIdToRemove);
+	const nodeToRemove = writable<any>(undefined);
+	setContext('nodeToRemoveStore', nodeToRemove);
 	const processing = writable(false);
 	setContext('processingStore', processing);
 	setContext('data', data);

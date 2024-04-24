@@ -43,12 +43,13 @@
 	const successPopUp: Writable<any> = getContext('successPopUpStore');
 	const failurePopUp: Writable<any> = getContext('failurePopUpStore');
 	const sectionContextE: Writable<any> = getContext('sectionContextEStore');
-	const nodeIdToRemove: Writable<string | undefined> = getContext('nodeIdToRemoveStore');
+	const nodeToRemove: Writable<any> = getContext('nodeToRemoveStore');
 	const newProblemTitleModal: Writable<{
 		visible: boolean;
 		title: string;
 	}> = getContext('newProblemTitleModalStore');
 	const redoTree: Writable<boolean> = getContext('redoTreeStore');
+	const processing: Writable<boolean> = getContext('processingStore');
 
 	export let treeData: any;
 
@@ -68,7 +69,6 @@
 
 	let deleteI = 1;
 
-	let id = treeData.id;
 	let Quill: any;
 	let Delta: any;
 
@@ -2248,7 +2248,7 @@
 
 		enableQuills(false);
 
-		if (id === 'r') {
+		if (treeData.id === 'r') {
 			setTimeout(() => {
 				quillsReady.set(true);
 			}, 100);
@@ -2463,16 +2463,12 @@
 				} else if (action === 'delete') {
 					escapeNode();
 					setTimeout(() => {
-						nodeIdToRemove.set(id);
+						nodeToRemove.set({ id: treeData.id, uuid: treeData.uuid });
 						treeAction.set('remove-node');
 					}, 250);
 				} else if (action === 'create-new-problem') {
-					tree.createProblem(id, $newProblemTitleModal.title, true, undefined, [
-						data.props?.profile.username
-					]);
-					publishProblem(id, $newProblemTitleModal.title);
+					publishProblem(treeData.id, treeData.uuid, $newProblemTitleModal.title);
 					redoTree.set(true);
-					children = children;
 					$newProblemTitleModal.title = '';
 				}
 				nodeAction.set(null);
@@ -2545,7 +2541,7 @@
 					event: 'UPDATE',
 					schema: 'public',
 					table: 'Strategies',
-					filter: `id=eq.${id}`
+					filter: `uuid=eq.${treeData.uuid}`
 				},
 				(payload) => {
 					currentUser = payload.new.active_user;
@@ -2575,7 +2571,7 @@
 		data.supabase
 			.from('Strategies')
 			.select('*')
-			.eq('id', id)
+			.eq('uuid', treeData.uuid)
 			.then(({ data: strategyData }) => {
 				if (strategyData) {
 					currentUser = strategyData[0].active_user;
@@ -3145,7 +3141,8 @@
 		if (!saved && !posting) {
 			if (userColor === 'owner') {
 				pushToStrategyEdit({
-					id,
+					id: treeData.id,
+					uuid: treeData.uuid,
 					base,
 					newChanges: changes,
 					section: currentSection,
@@ -3153,7 +3150,8 @@
 				});
 			} else {
 				pushToStrategySuggestions({
-					id,
+					id: treeData.id,
+					uuid: treeData.uuid,
 					newChanges: changes,
 					section: currentSection,
 					userId: data.session?.user.id
@@ -3163,7 +3161,7 @@
 		}
 
 		if (closing) {
-			const treeDataTemp = tree.getObjFromId(id).data;
+			const treeDataTemp = tree.getObjFromId(treeData.id, treeData.uuid).data;
 			treeDataTemp.title = title;
 			treeDataTemp.tldr = sections[0].quill.getContents();
 		}
@@ -3221,7 +3219,12 @@
 				headers: {
 					'Content-Type': 'application/json'
 				},
-				body: JSON.stringify({ id, newTitle, userId: data.session?.user.id })
+				body: JSON.stringify({
+					id: treeData.id,
+					uuid: treeData.uuid,
+					newTitle,
+					userId: data.session?.user.id
+				})
 			});
 
 			const result = await response.json();
@@ -3262,12 +3265,18 @@
 			sections = sections;
 		});
 		try {
-			const response = await fetch('/home/tree/actions/new_section', {
+			const response = await fetch('/home/tree/actions/new_section_strategy', {
 				method: 'POST',
 				headers: {
 					'Content-Type': 'application/json'
 				},
-				body: JSON.stringify({ id, sectionTitle, after, userId: data.session?.user.id })
+				body: JSON.stringify({
+					id: treeData.id,
+					uuid: treeData.uuid,
+					sectionTitle,
+					after,
+					userId: data.session?.user.id
+				})
 			});
 
 			const result = await response.json();
@@ -3291,12 +3300,18 @@
 		const prevTitle = sections[i].title;
 		sections[i].title = sectionTitle;
 		try {
-			const response = await fetch('/home/tree/actions/change_section_title', {
+			const response = await fetch('/home/tree/actions/change_section_title_strategy', {
 				method: 'POST',
 				headers: {
 					'Content-Type': 'application/json'
 				},
-				body: JSON.stringify({ id, i, sectionTitle, userId: data.session?.user.id })
+				body: JSON.stringify({
+					id: treeData.id,
+					uuid: treeData.uuid,
+					i,
+					sectionTitle,
+					userId: data.session?.user.id
+				})
 			});
 
 			const result = await response.json();
@@ -3316,12 +3331,17 @@
 		const prevSect = sections[i];
 		sections = [...sections.slice(0, i), ...sections.slice(i + 1)];
 		try {
-			const response = await fetch('/home/tree/actions/delete_section', {
+			const response = await fetch('/home/tree/actions/delete_section_strategy', {
 				method: 'POST',
 				headers: {
 					'Content-Type': 'application/json'
 				},
-				body: JSON.stringify({ id, i, userId: data.session?.user.id })
+				body: JSON.stringify({
+					id: treeData.id,
+					uuid: treeData.uuid,
+					i,
+					userId: data.session?.user.id
+				})
 			});
 
 			const result = await response.json();
@@ -3336,14 +3356,15 @@
 		}
 		posting = false;
 	}
-	async function publishProblem(stratId: string, title: string): Promise<void> {
+	async function publishProblem(stratId: string, stratUUID: string, title: string): Promise<void> {
+		$processing = true;
 		try {
 			const response = await fetch('/home/tree/actions/publish_problem', {
 				method: 'POST',
 				headers: {
 					'Content-Type': 'application/json'
 				},
-				body: JSON.stringify({ stratId, title, userId: data.session?.user.id })
+				body: JSON.stringify({ stratId, stratUUID, title, userId: data.session?.user.id })
 			});
 
 			const result: any = await response.json();
@@ -3351,11 +3372,13 @@
 			if (!response.ok) {
 				throw new Error(result.error || 'Failed to submit data');
 			}
+			tree.setTree(result.data.tree, tree.getSelections());
+			tree.getObjFromId(treeData.id, treeData.uuid);
+			children = treeData.problems;
+			$processing = false;
 		} catch (error: any) {
+			$processing = false;
 			failurePopUp.set('Error: ' + error.message);
-			setTimeout(() => {
-				location.reload();
-			}, 500);
 		}
 	}
 	function findAllUserColors() {
@@ -3395,7 +3418,7 @@
 				headers: {
 					'Content-Type': 'application/json'
 				},
-				body: JSON.stringify({ id, color, username, userColors })
+				body: JSON.stringify({ id: treeData.id, uuid: treeData.uuid, color, username, userColors })
 			});
 
 			const result = await response.json();
@@ -3429,7 +3452,7 @@
 			loadData();
 			$shortCutsEnabled = false;
 			editIconActive = true;
-			$viewingNode = id;
+			$viewingNode = treeData.id;
 			children = treeData.problems;
 			startListening();
 			treeAction.set('find-node-position');
@@ -3449,7 +3472,7 @@
 				data.supabase
 					.from('Strategies')
 					.select('*')
-					.eq('id', id)
+					.eq('uuid', treeData.uuid)
 					.then(({ data: strategyData }) => {
 						if (strategyData) {
 							currentUser = strategyData[0].active_user;

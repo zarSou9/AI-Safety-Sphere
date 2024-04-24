@@ -8,10 +8,12 @@ export const POST: RequestHandler = async ({
 	locals: { supabase, supabaseService, getSession }
 }) => {
 	try {
-		const { id, newTitle, userId } = await request.json();
+		const { id, uuid, newTitle, userId } = await request.json();
 
 		const newTitleValid = Joi.string().max(28).validate(newTitle);
-		if (newTitleValid.error)
+		const uuidValid = Joi.string().validate(uuid);
+
+		if (newTitleValid.error || uuidValid.error)
 			throw { status: 400, message: 'Bad request: missing or incorrect fields' };
 
 		const usernamePromise = supabase.from('Profiles').select('username').eq('user_id', userId);
@@ -26,7 +28,7 @@ export const POST: RequestHandler = async ({
 		const tree = createTree();
 
 		tree.setTree(treeResult.data[0].data);
-		const treeNode = tree.getObjFromId(id);
+		const treeNode = tree.getObjFromId(id, uuid);
 		const owners = treeNode?.owners;
 		if (!owners?.includes(username)) {
 			throw { status: 400, message: 'Unauthorized' };
@@ -41,7 +43,7 @@ export const POST: RequestHandler = async ({
 		const problemPostPromise = supabaseService
 			.from('Problems')
 			.update({ title: newTitle })
-			.eq('id', id);
+			.eq('uuid', uuid);
 
 		const [problemPostResult, treePostResult] = await Promise.all([
 			problemPostPromise,

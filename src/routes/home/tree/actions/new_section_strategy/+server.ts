@@ -15,21 +15,21 @@ export const POST: RequestHandler = async ({ request, locals: { supabase, supaba
 		if (idValid.error || sectionValid.error || userIdValid.error || uuidValid.error)
 			throw { status: 400, message: 'Bad request: missing or incorrect fields' };
 
-		const problemPromise = supabase.from('Problems').select('content').eq('uuid', uuid);
+		const strategyPromise = supabase.from('Strategies').select('content').eq('uuid', uuid);
 		const usernamePromise = supabase.from('Profiles').select('username').eq('user_id', userId);
 		const treePromise = supabase.from('Tree').select('data').eq('id', 1);
 
-		const [problemResult, usernameResult, treeResult] = await Promise.all([
-			problemPromise,
+		const [strategyResult, usernameResult, treeResult] = await Promise.all([
+			strategyPromise,
 			usernamePromise,
 			treePromise
 		]);
 
-		if (problemResult?.error) throw { status: 400, message: problemResult.error.message };
+		if (strategyResult?.error) throw { status: 400, message: strategyResult.error.message };
 		if (usernameResult?.error) throw { status: 400, message: usernameResult.error.message };
 		if (treeResult?.error) throw { status: 400, message: treeResult.error.message };
 
-		const content = problemResult.data[0].content;
+		const content = strategyResult.data[0].content;
 		const username = usernameResult.data[0].username;
 		const tree = createTree();
 
@@ -45,7 +45,7 @@ export const POST: RequestHandler = async ({ request, locals: { supabase, supaba
 
 		content.splice(after, 0, { delta: { ops: [] }, title: sectionTitle });
 
-		const { error } = await supabaseService.from('Problems').update({ content }).eq('uuid', uuid);
+		const { error } = await supabaseService.from('Strategies').update({ content }).eq('uuid', uuid);
 		if (error) throw { status: 400, message: error.message };
 
 		return json({ message: 'Edit successfully pushed!' }, { status: 200 });

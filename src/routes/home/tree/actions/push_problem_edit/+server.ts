@@ -10,31 +10,31 @@ export const POST: RequestHandler = async ({
 	locals: { supabase, supabaseService, getSession }
 }) => {
 	try {
-		const { id, base, newChanges, section, userId } = await request.json();
+		const { id, uuid, base, newChanges, section, userId } = await request.json();
 
 		const idValid = Joi.string().validate(id);
 		const sectionValid = Joi.string().validate(section);
 		const userIdValid = Joi.string().validate(userId);
-		if (idValid.error || sectionValid.error || userIdValid.error)
+		const uuidValid = Joi.string().validate(uuid);
+
+		if (idValid.error || sectionValid.error || userIdValid.error || uuidValid.error)
 			throw { status: 400, message: 'Bad request: missing or incorrect fields' };
 
-		setTimeout(async () => {
-			const uuid = randomUUID();
-			await supabaseService.from('Problems').update({ last_edit: uuid }).eq('id', id);
+		const last_edit = randomUUID();
 
-			fetch('https://aisafetysphere.com/home/tree/actions/continue_timeout', {
-				method: 'POST',
-				headers: {
-					'Content-Type': 'application/json'
-				},
-				body: JSON.stringify({ id, timeElapsed: 9200, uuid })
-			});
-		}, 9000);
+		fetch('https://aisafetysphere.com/home/tree/actions/continue_timeout', {
+			method: 'POST',
+			headers: {
+				'Content-Type': 'application/json'
+			},
+			body: JSON.stringify({ uuid, timeElapsed: 70, last_edit })
+		});
+		supabaseService.from('Problems').update({ last_edit }).eq('uuid', uuid);
 
 		const problemPromise = supabase
 			.from('Problems')
 			.select('tldr, content, suggestions')
-			.eq('id', id);
+			.eq('uuid', uuid);
 		const usernamePromise = supabase.from('Profiles').select('username').eq('user_id', userId);
 		const treePromise = supabase.from('Tree').select('data').eq('id', 1);
 
@@ -53,7 +53,7 @@ export const POST: RequestHandler = async ({
 		const tree = createTree();
 
 		tree.setTree(treeResult.data[0].data);
-		const treeNode = tree.getObjFromId(id);
+		const treeNode = tree.getObjFromId(id, uuid);
 		const owners = treeNode?.owners;
 		if (!owners?.includes(username)) {
 			throw { status: 400, message: 'Unauthorized' };
@@ -85,7 +85,7 @@ export const POST: RequestHandler = async ({
 			const problemPostPromise = supabaseService
 				.from('Problems')
 				.update({ tldr: base, suggestions })
-				.eq('id', id);
+				.eq('uuid', uuid);
 
 			const [problemPostResult, treePostResult] = await Promise.all([
 				problemPostPromise,
@@ -108,7 +108,7 @@ export const POST: RequestHandler = async ({
 			const { error } = await supabaseService
 				.from('Problems')
 				.update({ content, suggestions })
-				.eq('id', id);
+				.eq('uuid', uuid);
 			if (error) throw { status: 400, message: error.message };
 		}
 

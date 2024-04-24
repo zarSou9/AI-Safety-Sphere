@@ -5,34 +5,31 @@ import { randomUUID } from 'crypto';
 
 export const POST: RequestHandler = async ({ request, locals: { supabaseService } }) => {
 	try {
-		const { id, color, username, userColors } = await request.json();
+		const { id, uuid, color, username, userColors } = await request.json();
 
 		const idValid = Joi.string().validate(id);
 		const usernameValid = Joi.string().validate(username);
 		const colorValid = Joi.string().validate(color);
+		const uuidValid = Joi.string().validate(uuid);
 
-		if (idValid.error || usernameValid.error || colorValid.error)
+		if (idValid.error || usernameValid.error || colorValid.error || uuidValid.error)
 			throw { status: 400, message: 'Bad request: missing or incorrect fields' };
-
-		setTimeout(async () => {
-			const uuid = randomUUID();
-			await supabaseService.from('Strategies').update({ last_edit: uuid }).eq('id', id);
-
-			fetch('https://aisafetysphere.com/home/tree/actions/continue_timeout_strategy', {
-				method: 'POST',
-				headers: {
-					'Content-Type': 'application/json'
-				},
-				body: JSON.stringify({ id, timeElapsed: 9200, uuid })
-			});
-		}, 9000);
 
 		if (color) userColors.push({ color, user: username });
 
+		const last_edit = randomUUID();
+
+		fetch('https://aisafetysphere.com/home/tree/actions/continue_timeout_strategy', {
+			method: 'POST',
+			headers: {
+				'Content-Type': 'application/json'
+			},
+			body: JSON.stringify({ uuid, timeElapsed: 70, last_edit })
+		});
 		const { error } = await supabaseService
 			.from('Strategies')
-			.update({ active_user: username, userColors })
-			.eq('id', id);
+			.update({ active_user: username, userColors, last_edit })
+			.eq('uuid', uuid);
 		if (error) throw { status: 400, message: error.message };
 
 		return json({ message: 'User now active!' }, { status: 200 });

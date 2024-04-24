@@ -42,7 +42,7 @@
 	const successPopUp: Writable<any> = getContext('successPopUpStore');
 	const failurePopUp: Writable<any> = getContext('failurePopUpStore');
 	const sectionContextE: Writable<any> = getContext('sectionContextEStore');
-	const nodeIdToRemove: Writable<string | undefined> = getContext('nodeIdToRemoveStore');
+	const nodeToRemove: Writable<any> = getContext('nodeToRemoveStore');
 
 	export let treeData: any;
 
@@ -60,7 +60,6 @@
 
 	let deleteI = 1;
 
-	let id = treeData.id;
 	let Quill: any;
 	let Delta: any;
 
@@ -2236,7 +2235,7 @@
 
 		enableQuills(false);
 
-		if (id === 'r') {
+		if (treeData.id === 'r') {
 			setTimeout(() => {
 				quillsReady.set(true);
 			}, 100);
@@ -2451,7 +2450,7 @@
 				} else if (action === 'delete') {
 					escapeNode();
 					setTimeout(() => {
-						nodeIdToRemove.set(id);
+						nodeToRemove.set({ id: treeData.id, uuid: treeData.uuid });
 						treeAction.set('remove-node');
 					}, 300);
 				}
@@ -2525,7 +2524,7 @@
 					event: 'UPDATE',
 					schema: 'public',
 					table: 'Problems',
-					filter: `id=eq.${id}`
+					filter: `uuid=eq.${treeData.uuid}`
 				},
 				(payload) => {
 					currentUser = payload.new.active_user;
@@ -2552,7 +2551,7 @@
 				}
 			)
 			.subscribe();
-		data.supabase.from('Problems').select('*').eq('id', id).then(
+		data.supabase.from('Problems').select('*').eq('uuid', treeData.uuid).then(
 			({ data: problemData }) => {
 				if (problemData) {
 					currentUser = problemData[0].active_user;
@@ -3115,7 +3114,8 @@
 		if (!saved && !posting) {
 			if (userColor === 'owner') {
 				pushToProblemEdit({
-					id,
+					id: treeData.id,
+					uuid: treeData.uuid,
 					base,
 					newChanges: changes,
 					section: currentSection,
@@ -3123,7 +3123,8 @@
 				});
 			} else {
 				pushToProblemSuggestions({
-					id,
+					id: treeData.id,
+					uuid: treeData.uuid,
 					newChanges: changes,
 					section: currentSection,
 					userId: data.session?.user.id
@@ -3133,7 +3134,7 @@
 		}
 
 		if (closing) {
-			const treeDataTemp = tree.getObjFromId(id).data;
+			const treeDataTemp = tree.getObjFromId(treeData.id, treeData.uuid).data;
 			treeDataTemp.title = title;
 			treeDataTemp.tldr = sections[0].quill.getContents();
 		}
@@ -3191,7 +3192,7 @@
 				headers: {
 					'Content-Type': 'application/json'
 				},
-				body: JSON.stringify({ id, newTitle, userId: data.session?.user.id })
+				body: JSON.stringify({ id: treeData.id, uuid: treeData.uuid, newTitle, userId: data.session?.user.id })
 			});
 
 			const result = await response.json();
@@ -3237,7 +3238,7 @@
 				headers: {
 					'Content-Type': 'application/json'
 				},
-				body: JSON.stringify({ id, sectionTitle, after, userId: data.session?.user.id })
+				body: JSON.stringify({ id: treeData.id, uuid: treeData.uuid, sectionTitle, after, userId: data.session?.user.id })
 			});
 
 			const result = await response.json();
@@ -3266,7 +3267,7 @@
 				headers: {
 					'Content-Type': 'application/json'
 				},
-				body: JSON.stringify({ id, i, sectionTitle, userId: data.session?.user.id })
+				body: JSON.stringify({ id: treeData.id, uuid: treeData.uuid, i, sectionTitle, userId: data.session?.user.id })
 			});
 
 			const result = await response.json();
@@ -3291,7 +3292,7 @@
 				headers: {
 					'Content-Type': 'application/json'
 				},
-				body: JSON.stringify({ id, i, userId: data.session?.user.id })
+				body: JSON.stringify({ id: treeData.id, uuid: treeData.uuid, i, userId: data.session?.user.id })
 			});
 
 			const result = await response.json();
@@ -3343,7 +3344,7 @@
 				headers: {
 					'Content-Type': 'application/json'
 				},
-				body: JSON.stringify({ id, color, username, userColors })
+				body: JSON.stringify({ id: treeData.id, uuid: treeData.uuid, color, username, userColors })
 			});
 
 			const result = await response.json();
@@ -3377,7 +3378,7 @@
 			loadData();
 			$shortCutsEnabled = false;
 			editIconActive = true;
-			$viewingNode = id;
+			$viewingNode = treeData.id;
 			startListening();
 			treeAction.set('find-node-position');
 		} else {
@@ -3393,7 +3394,7 @@
 			} else {
 				editIconActive = false;
 				editBtnActive = false;
-				data.supabase.from('Problems').select('*').eq('id', id).then(
+				data.supabase.from('Problems').select('*').eq('uuid', treeData.uuid).then(
 					({ data: problemData }) => {
 						if (problemData) {
 							currentUser = problemData[0].active_user;

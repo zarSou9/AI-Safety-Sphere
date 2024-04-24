@@ -3,24 +3,23 @@ import { json } from '@sveltejs/kit';
 
 export const POST: RequestHandler = async ({ request, locals: { supabase, supabaseService } }) => {
 	try {
-		const { id, timeElapsed, uuid } = await request.json();
+		const { uuid, timeElapsed, last_edit } = await request.json();
 
-		const { data, error } = await supabase.from('Problems').select('last_edit').eq('id', id);
+		const { data, error } = await supabase.from('Problems').select('last_edit').eq('uuid', uuid);
 		if (error) throw {};
 
-		if (data[0].last_edit === uuid) {
+		if (data[0].last_edit === last_edit) {
 			if (timeElapsed > 120000) {
-				await supabaseService.from('Problems').update({ active_user: null }).eq('id', id);
+				await supabaseService.from('Problems').update({ active_user: null }).eq('uuid', uuid);
 			} else {
-				setTimeout(() => {
-					fetch('https://aisafetysphere.com/home/tree/actions/continue_timeout', {
-						method: 'POST',
-						headers: {
-							'Content-Type': 'application/json'
-						},
-						body: JSON.stringify({ id, timeElapsed: timeElapsed + 9600, uuid })
-					});
-				}, 9500);
+				await new Promise((resolve) => setTimeout(resolve, 9000));
+				fetch('https://aisafetysphere.com/home/tree/actions/continue_timeout', {
+					method: 'POST',
+					headers: {
+						'Content-Type': 'application/json'
+					},
+					body: JSON.stringify({ uuid, timeElapsed: timeElapsed + 9400, last_edit })
+				});
 			}
 		}
 

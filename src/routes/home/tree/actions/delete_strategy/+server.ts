@@ -5,19 +5,17 @@ import Joi from 'joi';
 
 export const POST: RequestHandler = async ({ request, locals: { supabase, supabaseService } }) => {
 	try {
-		const { id, userId } = await request.json();
+		const { id, uuid, userId } = await request.json();
 
 		const userIdValid = Joi.string().validate(userId);
 		const idValid = Joi.string().validate(id);
+		const uuidValid = Joi.string().validate(uuid);
 
-		if (userIdValid.error || idValid.error)
+		if ((userIdValid.error || idValid.error, uuidValid.error))
 			throw { status: 400, message: 'Bad request: missing or incorrect fields' };
 
 		const treeDataPromise = supabase.from('Tree').select('data').eq('id', 1);
-		const userPromise = supabase
-			.from('Profiles')
-			.select('username, selected_strategies')
-			.eq('user_id', userId);
+		const userPromise = supabase.from('Profiles').select('username').eq('user_id', userId);
 
 		const [treeData, userResult] = await Promise.all([treeDataPromise, userPromise]);
 
@@ -25,29 +23,30 @@ export const POST: RequestHandler = async ({ request, locals: { supabase, supaba
 		if (userResult?.error) throw { status: 400, message: userResult.error.message };
 
 		const username = userResult.data[0].username;
-		const selected_strategies = userResult.data[0].selected_strategies;
 
 		const tree = createTree();
 
 		tree.setTree(treeData.data[0].data);
-		const treeNode = tree.getObjFromId(id);
+		const treeNode = tree.getObjFromId(id, uuid);
 		const owners = treeNode?.owners;
 		if (!owners?.includes(username)) {
 			throw { status: 400, message: 'Unauthorized' };
 		}
 
-		const deleteResult = tree.deleteStrategy(id);
+		const deleteResult = tree.deleteStrategy(id, uuid);
 		if (deleteResult?.error) throw { status: 400, message: deleteResult.error };
 
 		const postPromises = [];
 
-		await supabaseService.from('Strategies').delete().eq('id', id);
+		postPromises.push(supabaseService.from('Strategies').delete().eq('uuid', uuid));
 
 		for (let updateStratId of deleteResult.data.newStratIds) {
-			await supabaseService
-				.from('Strategies')
-				.update({ id: updateStratId.new })
-				.eq('id', updateStratId.old);
+			postPromises.push(
+				supabaseService
+					.from('Strategies')
+					.update({ id: updateStratId.new })
+					.eq('uuid', updateStratId.old)
+			);
 		}
 		postPromises.push(supabaseService.from('Tree').update({ data: tree.getTree() }).eq('id', 1));
 		postPromises.push(
