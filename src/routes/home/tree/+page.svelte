@@ -290,7 +290,10 @@
 		in:fly={{ duration: 300, x: 0, y: 200, opacity: 0.5, easing: quintOut }}
 		class="fixed left-0 bottom-[20px] w-[100vw] flex items-center justify-center"
 	>
-		<div class="flex bg-[#ffffff] py-[10px] rounded-[6px]" style="box-shadow: -4px 4px #4ad36c;">
+		<div
+			class="z-[400] flex bg-[#ffffff] py-[10px] rounded-[6px]"
+			style="box-shadow: -4px 4px #4ad36c;"
+		>
 			<p class="text-[#000000] mr-[20px] ml-[25px]">{$successPopUp}</p>
 			<button class="mr-[15px]" on:click={() => ($successPopUp = false)}
 				><Cross color="#70747c" size="16px" /></button

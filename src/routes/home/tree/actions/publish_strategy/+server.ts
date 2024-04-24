@@ -9,7 +9,7 @@ export const POST: RequestHandler = async ({ request, locals: { supabase, supaba
 
 		const userIdValid = Joi.string().validate(userId);
 		const probIdValid = Joi.string().validate(probId);
-		const titleValid = Joi.string().max(22).validate(title);
+		const titleValid = Joi.string().max(28).validate(title);
 
 		if (userIdValid.error || probIdValid.error || titleValid.error)
 			throw { status: 400, message: 'Bad request: missing or incorrect fields' };

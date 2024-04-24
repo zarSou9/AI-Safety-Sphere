@@ -10,7 +10,7 @@ export const POST: RequestHandler = async ({
 	try {
 		const { id, newTitle, userId } = await request.json();
 
-		const newTitleValid = Joi.string().max(22).validate(newTitle);
+		const newTitleValid = Joi.string().max(28).validate(newTitle);
 		if (newTitleValid.error)
 			throw { status: 400, message: 'Bad request: missing or incorrect fields' };
 
