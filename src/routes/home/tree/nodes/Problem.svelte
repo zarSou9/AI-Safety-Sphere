@@ -103,13 +103,12 @@
 	let changes: any = [];
 	let currentSection: string = 'TL;DR';
 
-	const quillOptions = {
+	const quillOptions: any = {
 		theme: 'bubble',
 		modules: {
 			toolbar: false,
 			history: { userOnly: true, maxStack: 0 }
 		},
-		formats: ['italic', 'bold', 'color', 'underline', 'strike', 'script'],
 		placeholder: 'Write here...'
 	};
 
@@ -2193,6 +2192,40 @@
 		const { default: QuillImport } = await import('quill');
 		Quill = QuillImport;
 		Delta = Quill.import('delta');
+		const Parchment = Quill.import('parchment');
+
+		const Block = Quill.import('blots/block');
+		const Break = Quill.import('blots/break');
+		const Container = Quill.import('blots/container');
+		const Cursor = Quill.import('blots/cursor');
+		const Inline = Quill.import('blots/inline');
+		const Scroll = Quill.import('blots/scroll');
+		const Text = Quill.import('blots/text');
+		const Bold = Quill.import('formats/bold');
+        const Italic = Quill.import('formats/italic');
+        const Color = Quill.import('formats/color');
+        const Script = Quill.import('formats/script');
+        const Strike = Quill.import('formats/strike');
+        const Underline = Quill.import('formats/underline');
+
+		const registry = new Parchment.Registry();
+
+		registry.register(
+			Scroll,
+			Block,
+			Break,
+			Container,
+			Cursor,
+			Inline,
+			Text,
+			Bold,
+			Italic,
+			Color,
+			Script,
+			Strike,
+			Underline
+		);
+		quillOptions.registry = registry;
 
 		sections[0].quill = new Quill(sections[0].editor, quillOptions);
 
