@@ -2,6 +2,7 @@ import type { RequestHandler } from './$types';
 import { json } from '@sveltejs/kit';
 import Joi from 'joi';
 import { randomUUID } from 'crypto';
+import axios from 'axios';
 
 export const POST: RequestHandler = async ({ request, locals: { supabaseService } }) => {
 	try {
@@ -19,13 +20,19 @@ export const POST: RequestHandler = async ({ request, locals: { supabaseService 
 
 		const last_edit = randomUUID();
 
-		fetch('https://aisafetysphere.com/home/tree/actions/continue_timeout', {
-			method: 'POST',
-			headers: {
-				'Content-Type': 'application/json'
+		axios.post(
+			'https://aisafetysphere.com/home/tree/actions/continue_timeout',
+			{
+				uuid,
+				timeElapsed: 70,
+				last_edit
 			},
-			body: JSON.stringify({ uuid, timeElapsed: 70, last_edit })
-		});
+			{
+				headers: {
+					'Content-Type': 'application/json'
+				}
+			}
+		);
 		const { error } = await supabaseService
 			.from('Problems')
 			.update({ active_user: username, userColors, last_edit })

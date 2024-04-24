@@ -1,5 +1,6 @@
 import type { RequestHandler } from './$types';
 import { json } from '@sveltejs/kit';
+import axios from 'axios';
 
 export const POST: RequestHandler = async ({ request, locals: { supabase, supabaseService } }) => {
 	try {
@@ -13,13 +14,19 @@ export const POST: RequestHandler = async ({ request, locals: { supabase, supaba
 				await supabaseService.from('Problems').update({ active_user: null }).eq('uuid', uuid);
 			} else {
 				await new Promise((resolve) => setTimeout(resolve, 8000));
-				fetch('https://aisafetysphere.com/home/tree/actions/continue_timeout', {
-					method: 'POST',
-					headers: {
-						'Content-Type': 'application/json'
+				axios.post(
+					'https://aisafetysphere.com/home/tree/actions/continue_timeout',
+					{
+						uuid,
+						timeElapsed: timeElapsed + 8200,
+						last_edit
 					},
-					body: JSON.stringify({ uuid, timeElapsed: timeElapsed + 8200, last_edit })
-				});
+					{
+						headers: {
+							'Content-Type': 'application/json'
+						}
+					}
+				);
 				await new Promise((resolve) => setTimeout(resolve, 100));
 			}
 		}
