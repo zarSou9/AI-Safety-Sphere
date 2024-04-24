@@ -12,14 +12,15 @@ export const POST: RequestHandler = async ({ request, locals: { supabase, supaba
 			if (timeElapsed > 120000) {
 				await supabaseService.from('Problems').update({ active_user: null }).eq('uuid', uuid);
 			} else {
-				await new Promise((resolve) => setTimeout(resolve, 9000));
+				await new Promise((resolve) => setTimeout(resolve, 8000));
 				fetch('https://aisafetysphere.com/home/tree/actions/continue_timeout_strategy', {
 					method: 'POST',
 					headers: {
 						'Content-Type': 'application/json'
 					},
-					body: JSON.stringify({ uuid, timeElapsed: timeElapsed + 9200, last_edit })
+					body: JSON.stringify({ uuid, timeElapsed: timeElapsed + 8200, last_edit })
 				});
+				await new Promise((resolve) => setTimeout(resolve, 100));
 			}
 		}
 
