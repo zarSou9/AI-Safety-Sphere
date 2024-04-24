@@ -2506,6 +2506,9 @@
 							emptyQuillsOfSuggestions();
 							toolBarShown.set(false);
 							toolBarDotsShown.set(false);
+							$titleModal.visible = false;
+							$sectionModal.visible = false;
+							$sectionTitleModal.visible = false;
 							if (currentUser) editBtnActive = false;
 							failurePopUp.set('Session expired');
 						}
