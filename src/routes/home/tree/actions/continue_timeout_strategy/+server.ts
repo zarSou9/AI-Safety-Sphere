@@ -18,7 +18,7 @@ export const POST: RequestHandler = async ({ request, locals: { supabase, supaba
 					headers: {
 						'Content-Type': 'application/json'
 					},
-					body: JSON.stringify({ uuid, timeElapsed: timeElapsed + 9400, last_edit })
+					body: JSON.stringify({ uuid, timeElapsed: timeElapsed + 9200, last_edit })
 				});
 			}
 		}
