@@ -18,7 +18,7 @@ export const load: LayoutServerLoad = async ({
 
 	const profilePromise = supabase
 		.from('Profiles')
-		.select('username, full_name, changes, selected_strategies')
+		.select('username, full_name, changes, selected_strategies, created_at')
 		.eq('user_id', user?.id)
 		.single();
 
@@ -37,12 +37,22 @@ export const load: LayoutServerLoad = async ({
 			message: hierResult.error.message
 		});
 	}
+	let newUser = true;
+
+	const createdAt = new Date(profileResult.data.created_at);
+	createdAt.setHours(0, 0, 0, 0);
+	const now = new Date();
+	now.setHours(0, 0, 0, 0);
+	if (createdAt.getTime() < now.getTime()) {
+		newUser = false;
+	}
 
 	return {
 		session,
 		props: {
 			profile: profileResult.data,
-			hier: hierResult.data
+			hier: hierResult.data,
+			newUser
 		}
 	};
 };

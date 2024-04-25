@@ -6,11 +6,7 @@ export const actions: Actions = {
 		const signUpSchema = Joi.object({
 			username: Joi.string().required().max(28),
 			email: Joi.string().email().required(),
-			password: Joi.string()
-				.required()
-				.min(6)
-				.pattern(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).+$/)
-				.max(30)
+			password: Joi.string().required().min(6).max(30)
 		});
 
 		const formData = await request.formData();

@@ -7,6 +7,7 @@
 	import type { Writable } from 'svelte/store';
 	import type { TreeInterface } from '$lib/types/nodes';
 	import Tree from './Tree.svelte';
+	import type { PageData } from './$types';
 
 	const viewingNodeRect: { l: number; t: number; w: number; h: number } =
 		getContext('viewingNodeRect');
@@ -22,6 +23,7 @@
 	const tree: TreeInterface = getContext('tree');
 	const stratChange: { l: number; t: number; pl: number; pt: number } = getContext('stratChange');
 	const sectionContextE: Writable<any> = getContext('sectionContextEStore');
+	const data: PageData = getContext('data');
 
 	const zoomIntensity = 0.016;
 
@@ -198,7 +200,7 @@
 		horizontalOffset = (viewPort?.clientWidth - canvas?.clientWidth * minZoom) / 2 / minZoom;
 		verticalOffset = (viewPort?.clientHeight - canvas?.clientHeight * minZoom) / 2 / minZoom;
 
-		if ($userCoords[0] === 91291312402) {
+		if ($userCoords[0] === 91291312402 || data.props?.newUser) {
 			z = minZoom;
 			x = horizontalOffset * z;
 			y = verticalOffset * z;
