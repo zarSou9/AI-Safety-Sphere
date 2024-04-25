@@ -25,7 +25,7 @@ export const POST: RequestHandler = async ({
 
 		const strategiesPromise = supabase
 			.from('Strategies')
-			.select('tldr, content, suggestions')
+			.select('tldr, content, suggestions, active_user')
 			.eq('uuid', uuid);
 		const usernamePromise = supabase.from('Profiles').select('username').eq('user_id', userId);
 		const treePromise = supabase.from('Tree').select('data').eq('id', 1);
@@ -50,6 +50,9 @@ export const POST: RequestHandler = async ({
 		if (!owners?.includes(username)) {
 			throw { status: 400, message: 'Unauthorized' };
 		}
+
+		if (username !== strategyResult.data[0].active_user)
+			throw { status: 400, message: 'Another user is currently editing this node' };
 
 		let suggestion = suggestions.find((s: any) => s.title === section);
 		if (!suggestion) {

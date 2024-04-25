@@ -24,7 +24,7 @@ export const POST: RequestHandler = async ({
 
 		const problemPromise = supabase
 			.from('Problems')
-			.select('tldr, content, suggestions')
+			.select('tldr, content, suggestions, active_user')
 			.eq('uuid', uuid);
 		const usernamePromise = supabase.from('Profiles').select('username').eq('user_id', userId);
 
@@ -35,6 +35,9 @@ export const POST: RequestHandler = async ({
 
 		const suggestions = problemResult.data[0].suggestions;
 		const username = usernameResult.data[0].username;
+
+		if (username !== problemResult.data[0].active_user)
+			throw { status: 400, message: 'Another user is currently editing this node' };
 
 		let suggestion = suggestions.find((s: any) => s.title === section);
 		if (!suggestion) {
