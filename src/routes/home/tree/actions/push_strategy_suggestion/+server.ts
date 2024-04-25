@@ -3,6 +3,7 @@ import { json } from '@sveltejs/kit';
 import { changeSchema } from '$lib/server/schemas';
 import Joi from 'joi';
 import { randomUUID } from 'crypto';
+import axios from 'axios';
 
 export const POST: RequestHandler = async ({
 	request,
@@ -21,13 +22,19 @@ export const POST: RequestHandler = async ({
 
 		const last_edit = randomUUID();
 
-		fetch('https://aisafetysphere.com/home/tree/actions/continue_timeout_strategy', {
-			method: 'POST',
-			headers: {
-				'Content-Type': 'application/json'
+		axios.post(
+			'https://aisafetysphere.com/home/tree/actions/continue_timeout_strategy',
+			{
+				uuid,
+				timeElapsed: 70,
+				last_edit
 			},
-			body: JSON.stringify({ uuid, timeElapsed: 70, last_edit })
-		});
+			{
+				headers: {
+					'Content-Type': 'application/json'
+				}
+			}
+		);
 		supabaseService.from('Strategies').update({ last_edit }).eq('uuid', uuid);
 
 		const strategiesPromise = supabase

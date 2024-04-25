@@ -10,7 +10,7 @@ export const POST: RequestHandler = async ({ request, locals: { supabase, supaba
 		if (error) throw {};
 
 		if (data[0].last_edit === last_edit) {
-			if (timeElapsed > 20000) {
+			if (timeElapsed > 80000) {
 				await supabaseService.from('Problems').update({ active_user: null }).eq('uuid', uuid);
 			} else {
 				await new Promise((resolve) => setTimeout(resolve, 8000));

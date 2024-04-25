@@ -4,6 +4,7 @@ import { changeSchema, delta } from '$lib/server/schemas';
 import Joi from 'joi';
 import { createTree } from '$lib/stores/nodes';
 import { randomUUID } from 'crypto';
+import axios from 'axios';
 
 export const POST: RequestHandler = async ({
 	request,
@@ -22,13 +23,19 @@ export const POST: RequestHandler = async ({
 
 		const last_edit = randomUUID();
 
-		fetch('https://aisafetysphere.com/home/tree/actions/continue_timeout', {
-			method: 'POST',
-			headers: {
-				'Content-Type': 'application/json'
+		axios.post(
+			'https://aisafetysphere.com/home/tree/actions/continue_timeout',
+			{
+				uuid,
+				timeElapsed: 70,
+				last_edit
 			},
-			body: JSON.stringify({ uuid, timeElapsed: 70, last_edit })
-		});
+			{
+				headers: {
+					'Content-Type': 'application/json'
+				}
+			}
+		);
 		supabaseService.from('Problems').update({ last_edit }).eq('uuid', uuid);
 
 		const problemPromise = supabase
