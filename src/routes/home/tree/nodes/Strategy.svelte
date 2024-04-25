@@ -2284,7 +2284,10 @@
 		sectionsReady = false;
 		nodeReady = false;
 		enableQuills(false);
-		if (editable) emptyQuillsOfSuggestions();
+		if (editable) {
+			unactivateUser();
+			emptyQuillsOfSuggestions();
+		}
 		toolBarShown.set(false);
 		toolBarDotsShown.set(false);
 		editable = false;
@@ -2565,12 +2568,16 @@
 								const newE = payload.new.last_edit;
 								const now = Date.now();
 								clearTimeout(sessionTimeout);
-								sessionTimeout = setTimeout(
-									() => {
-										editBtnActive = true;
-									},
-									100000 - (now - newE)
-								);
+								if (now - newE >= 100000) {
+									editBtnActive = true;
+								} else {
+									sessionTimeout = setTimeout(
+										() => {
+											editBtnActive = true;
+										},
+										100000 - (now - newE)
+									);
+								}
 							}
 							failurePopUp.set('Session expired');
 						}
@@ -2583,12 +2590,16 @@
 							if (oldE !== newE) {
 								const now = Date.now();
 								clearTimeout(sessionTimeout);
-								sessionTimeout = setTimeout(
-									() => {
-										editBtnActive = true;
-									},
-									100000 - (now - newE)
-								);
+								if (now - newE >= 100000) {
+									editBtnActive = true;
+								} else {
+									sessionTimeout = setTimeout(
+										() => {
+											editBtnActive = true;
+										},
+										100000 - (now - newE)
+									);
+								}
 							}
 						}
 					}
@@ -3180,6 +3191,7 @@
 	function save(closing = false) {
 		if (!saved && !posting) {
 			if (userColor === 'owner') {
+				console.log(base);
 				pushToStrategyEdit({
 					id: treeData.id,
 					uuid: treeData.uuid,
@@ -3189,6 +3201,7 @@
 					userId: data.session?.user.id
 				});
 			} else {
+				console.log(changes);
 				pushToStrategySuggestions({
 					id: treeData.id,
 					uuid: treeData.uuid,
@@ -3480,6 +3493,34 @@
 			posting = false;
 		}
 	}
+	async function unactivateUser() {
+		if (posting) await waitForServer();
+		posting = true;
+		try {
+			const response = await fetch('/home/tree/actions/unactivate_user', {
+				method: 'POST',
+				headers: {
+					'Content-Type': 'application/json'
+				},
+				body: JSON.stringify({
+					id: treeData.id,
+					userId: data.session?.user.id,
+					uuid: treeData.uuid,
+					nodeType: false
+				})
+			});
+
+			const result = await response.json();
+
+			if (!response.ok) {
+				throw new Error(result.error || 'Failed to submit data');
+			}
+		} catch (error: any) {
+			failurePopUp.set('Error: ' + error.message);
+		} finally {
+			posting = false;
+		}
+	}
 	function waitForServer() {
 		return new Promise<void>((resolve, reject) => {
 			const intervalId = setInterval(() => {
@@ -3507,6 +3548,7 @@
 			treeAction.set('find-node-position');
 		} else {
 			if (editable) {
+				editBtnActive = false;
 				isSaving = false;
 				clearTimeout(savingTimeout);
 				editable = false;
@@ -3515,7 +3557,11 @@
 				emptyQuillsOfSuggestions();
 				toolBarShown.set(false);
 				toolBarDotsShown.set(false);
+				unactivateUser().then(() => {
+					editBtnActive = true;
+				});
 			} else {
+				$processing = true;
 				editIconActive = false;
 				editBtnActive = false;
 				data.supabase
@@ -3559,9 +3605,11 @@
 											toolBarDotsShown.set(true);
 										}
 										editBtnActive = true;
+										$processing = false;
 									},
 									() => {
 										editIconActive = true;
+										$processing = false;
 									}
 								);
 							});

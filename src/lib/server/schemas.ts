@@ -6,7 +6,7 @@ const delta = Joi.object({
 			Joi.object({
 				insert: Joi.string(),
 				delete: Joi.number().positive(),
-				retain: Joi.number().positive(),
+				retain: Joi.number().min(0),
 				attributes: Joi.object({
 					bold: Joi.alternatives().try(true, null, false),
 					italic: Joi.alternatives().try(true, null, false)

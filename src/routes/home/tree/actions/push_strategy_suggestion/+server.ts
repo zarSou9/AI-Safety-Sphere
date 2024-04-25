@@ -2,8 +2,6 @@ import type { RequestHandler } from './$types';
 import { json } from '@sveltejs/kit';
 import { changeSchema } from '$lib/server/schemas';
 import Joi from 'joi';
-import { randomUUID } from 'crypto';
-import axios from 'axios';
 
 export const POST: RequestHandler = async ({
 	request,
@@ -56,8 +54,7 @@ export const POST: RequestHandler = async ({
 		let changeI = 0;
 		for (let newChange of newChanges) {
 			const changeValid = changeSchema.validate(newChange);
-			if (changeValid.error)
-				throw { status: 400, message: 'Bad request: missing or incorrect fields' };
+			if (changeValid.error) throw { status: 400, message: changeValid.error.message };
 
 			if (newChange.owner === changes[changeI]?.owner) {
 				changeI++;
