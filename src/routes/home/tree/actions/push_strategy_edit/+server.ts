@@ -21,22 +21,7 @@ export const POST: RequestHandler = async ({
 		if (idValid.error || sectionValid.error || userIdValid.error || uuidValid.error)
 			throw { status: 400, message: 'Bad request: missing or incorrect fields' };
 
-		const last_edit = randomUUID();
-
-		axios.post(
-			'https://aisafetysphere.com/home/tree/actions/continue_timeout_strategy',
-			{
-				uuid,
-				timeElapsed: 70,
-				last_edit
-			},
-			{
-				headers: {
-					'Content-Type': 'application/json'
-				}
-			}
-		);
-		supabaseService.from('Strategies').update({ last_edit }).eq('uuid', uuid);
+		const last_edit = Date.now();
 
 		const strategiesPromise = supabase
 			.from('Strategies')
@@ -91,7 +76,7 @@ export const POST: RequestHandler = async ({
 				.eq('id', 1);
 			const strategyPostPromise = supabaseService
 				.from('Strategies')
-				.update({ tldr: base, suggestions })
+				.update({ tldr: base, suggestions, last_edit })
 				.eq('uuid', uuid);
 
 			const [strategyPostResult, treePostResult] = await Promise.all([
@@ -115,7 +100,7 @@ export const POST: RequestHandler = async ({
 			}
 			const { error } = await supabaseService
 				.from('Strategies')
-				.update({ content, suggestions })
+				.update({ content, suggestions, last_edit })
 				.eq('uuid', uuid);
 			if (error) throw { status: 400, message: error.message };
 		}

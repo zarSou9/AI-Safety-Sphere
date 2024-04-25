@@ -3,8 +3,6 @@ import { json } from '@sveltejs/kit';
 import { changeSchema, delta } from '$lib/server/schemas';
 import Joi from 'joi';
 import { createTree } from '$lib/stores/nodes';
-import { randomUUID } from 'crypto';
-import axios from 'axios';
 
 export const POST: RequestHandler = async ({
 	request,
@@ -21,22 +19,7 @@ export const POST: RequestHandler = async ({
 		if (idValid.error || sectionValid.error || userIdValid.error || uuidValid.error)
 			throw { status: 400, message: 'Bad request: missing or incorrect fields' };
 
-		const last_edit = randomUUID();
-
-		axios.post(
-			'https://aisafetysphere.com/home/tree/actions/continue_timeout',
-			{
-				uuid,
-				timeElapsed: 70,
-				last_edit
-			},
-			{
-				headers: {
-					'Content-Type': 'application/json'
-				}
-			}
-		);
-		supabaseService.from('Problems').update({ last_edit }).eq('uuid', uuid);
+		const last_edit = Date.now();
 
 		const problemPromise = supabase
 			.from('Problems')
@@ -91,7 +74,7 @@ export const POST: RequestHandler = async ({
 				.eq('id', 1);
 			const problemPostPromise = supabaseService
 				.from('Problems')
-				.update({ tldr: base, suggestions })
+				.update({ tldr: base, suggestions, last_edit })
 				.eq('uuid', uuid);
 
 			const [problemPostResult, treePostResult] = await Promise.all([
@@ -114,7 +97,7 @@ export const POST: RequestHandler = async ({
 			}
 			const { error } = await supabaseService
 				.from('Problems')
-				.update({ content, suggestions })
+				.update({ content, suggestions, last_edit })
 				.eq('uuid', uuid);
 			if (error) throw { status: 400, message: error.message };
 		}

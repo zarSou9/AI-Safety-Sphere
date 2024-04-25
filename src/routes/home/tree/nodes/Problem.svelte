@@ -9,6 +9,7 @@
 	import Cross from '$lib/icons/Cross.svelte';
 	import Paragraph from '$lib/icons/Paragraph.svelte';
 
+
 	const tree: TreeInterface = getContext('tree');
 	const charPos: { v: number } = getContext('charPos');
 	const titleModal: Writable<{
@@ -88,6 +89,7 @@
 	let fromShiftZ = false;
 	let editCounter = 3;
 	let pasting = false;
+	let sessionTimeout: any;
 
 	let userColor: string = colors[0];
 	let username = data.props?.profile.username;
@@ -2260,6 +2262,7 @@
 	}
 	function escapeNode() {
 		editBtnActive = true;
+		clearTimeout(sessionTimeout);
 		if (problemChannel) data.supabase.removeChannel(problemChannel);
 		problemChannel = undefined;
 		window.removeEventListener('keydown', handleKeyDown);
@@ -2541,12 +2544,31 @@
 							$titleModal.visible = false;
 							$sectionModal.visible = false;
 							$sectionTitleModal.visible = false;
-							if (currentUser) editBtnActive = false;
+							if (currentUser) {
+								editBtnActive = false;
+								const newE = payload.new.last_edit;
+								const now = Date.now();
+								clearTimeout(sessionTimeout);
+								sessionTimeout = setTimeout(() => {
+									editBtnActive = true
+								}, 100000 - (now - newE));
+							}
 							failurePopUp.set('Session expired');
 						}
 					} else {
 						if (currentUser === username || !currentUser) editBtnActive = true;
-						else editBtnActive = false;
+						else {
+							editBtnActive = false;
+							const oldE = payload.old.last_edit;
+							const newE = payload.new.last_edit;
+							if (oldE !== newE) {
+								const now = Date.now();
+								clearTimeout(sessionTimeout);
+								sessionTimeout = setTimeout(() => {
+									editBtnActive = true
+								}, 100000 - (now - newE));
+							}
+						}
 					}
 				}
 			)
@@ -2556,7 +2578,18 @@
 				if (problemData) {
 					currentUser = problemData[0].active_user;
 					if (currentUser === username || !currentUser) editBtnActive = true;
-					else editBtnActive = false;
+					else {
+						const now = Date.now();
+						if (now - problemData[0].last_edit >= 100000) editBtnActive = true;
+						else {
+							editBtnActive = false;
+							clearTimeout(sessionTimeout);
+							sessionTimeout = setTimeout(() => {
+								editBtnActive = true;
+							}, 100000 - (now - problemData[0].last_edit));
+						}
+					
+					}
 					const bases = JSON.parse(
 						JSON.stringify([problemData[0].tldr, ...problemData[0].content])
 					);
@@ -3344,7 +3377,7 @@
 				headers: {
 					'Content-Type': 'application/json'
 				},
-				body: JSON.stringify({ id: treeData.id, uuid: treeData.uuid, color, username, userColors })
+				body: JSON.stringify({ id: treeData.id, userId: data.session?.user.id, uuid: treeData.uuid, color, userColors, nodeType: true })
 			});
 
 			const result = await response.json();
@@ -3354,8 +3387,10 @@
 			}
 		} catch (error: any) {
 			failurePopUp.set('Error: ' + error.message);
+			throw error;
+		} finally {
+			posting = false;
 		}
-		posting = false;
 	}
 	function waitForServer() {
 		return new Promise<void>((resolve, reject) => {
@@ -3397,46 +3432,42 @@
 				data.supabase.from('Problems').select('*').eq('uuid', treeData.uuid).then(
 					({ data: problemData }) => {
 						if (problemData) {
-							currentUser = problemData[0].active_user;
-							if (!currentUser || currentUser === username) {
-								const bases = JSON.parse(
-									JSON.stringify([problemData[0].tldr, ...problemData[0].content])
-								);
-								const suggestions = JSON.parse(JSON.stringify(problemData[0].suggestions));
-								updateQuillData(bases, suggestions);
-								fillQuills().then(() => {
-									fillQuillsWithSuggestions();
-									let color = undefined;
-									userColors = problemData[0].userColors;
-									if (userColor !== 'owner') {
-										let colorMatching = problemData[0].userColors.find((uc: any) => uc.user === username);
-										if (colorMatching) {
-											userColor = colorMatching.color;
+							const bases = JSON.parse(
+								JSON.stringify([problemData[0].tldr, ...problemData[0].content])
+							);
+							const suggestions = JSON.parse(JSON.stringify(problemData[0].suggestions));
+							updateQuillData(bases, suggestions);
+							fillQuills().then(() => {
+								fillQuillsWithSuggestions();
+								let color = undefined;
+								userColors = problemData[0].userColors;
+								if (userColor !== 'owner') {
+									let colorMatching = problemData[0].userColors.find((uc: any) => uc.user === username);
+									if (colorMatching) {
+										userColor = colorMatching.color;
+									} else {
+										let colorI = problemData[0].userColors.length;
+										if (colorI > colors.length - 1) {
+											userColor = colors[colorI - colors.length + 1];
 										} else {
-											let colorI = problemData[0].userColors.length;
-											if (colorI > colors.length - 1) {
-												userColor = colors[colorI - colors.length + 1];
-											} else {
-												userColor = colors[colorI];
-											}
-											color = userColor;
+											userColor = colors[colorI];
 										}
+										color = userColor;
 									}
-									activateUser(color, problemData[0].userColors).then(() => {
-										saving(true);
-										enableQuills(true);
-										editable = true;
-										toolBarShown.set(true);
-										if (userColor === 'owner') {
-											toolBarDotsShown.set(true);
-										}
-										editBtnActive = true;
-									})
-								});
-							} else {
-								failurePopUp.set('Someone else is currently editing this node');
-								editIconActive = true;
-							}
+								}
+								activateUser(color, problemData[0].userColors).then(() => {
+									saving(true);
+									enableQuills(true);
+									editable = true;
+									toolBarShown.set(true);
+									if (userColor === 'owner') {
+										toolBarDotsShown.set(true);
+									}
+									editBtnActive = true;
+								}, () => {
+									editIconActive = true;
+								})
+							});
 						}
 					}
 				);
