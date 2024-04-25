@@ -11,7 +11,7 @@ export const POST: RequestHandler = async ({ request, locals: { supabase, supaba
 
 		if (data[0].last_edit === last_edit) {
 			if (timeElapsed > 80000) {
-				await supabaseService.from('Problems').update({ active_user: null }).eq('uuid', uuid);
+				await supabaseService.from('Strategies').update({ active_user: null }).eq('uuid', uuid);
 			} else {
 				await new Promise((resolve) => setTimeout(resolve, 8000));
 				axios.post(
