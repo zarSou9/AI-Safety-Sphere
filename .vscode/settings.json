@@ -117,5 +117,8 @@
 	],
 	"gitlens.currentLine.enabled": false,
 	"gitlens.currentLine.pullRequests.enabled": false,
-	"editor.foldingStrategy": "indentation"
+	"editor.foldingStrategy": "indentation",
+	"svelte.plugin.svelte.compilerWarnings": {
+		"css-unused-selector": "ignore"
+	}
 }
