@@ -3191,7 +3191,6 @@
 	function save(closing = false) {
 		if (!saved && !posting) {
 			if (userColor === 'owner') {
-				console.log(base);
 				pushToStrategyEdit({
 					id: treeData.id,
 					uuid: treeData.uuid,
@@ -3201,7 +3200,6 @@
 					userId: data.session?.user.id
 				});
 			} else {
-				console.log(changes);
 				pushToStrategySuggestions({
 					id: treeData.id,
 					uuid: treeData.uuid,
@@ -3654,7 +3652,6 @@
 			section.quill.setSelection(change.pos.i, change.cd.ops[0].delete, 'user');
 		}
 		function handleSuggestionCleanup() {
-			console.log('clean up');
 			sections[pi].suggestions[i].selected = undefined;
 			window.removeEventListener('click', handleSuggestionCleanup);
 			sections = sections.map((section: any) => ({

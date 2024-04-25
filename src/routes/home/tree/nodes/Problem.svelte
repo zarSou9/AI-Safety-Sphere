@@ -3564,7 +3564,6 @@
 			section.quill.setSelection(change.pos.i, change.cd.ops[0].delete , 'user');
 		}
 		function handleSuggestionCleanup() {
-			console.log('clean up');
 			sections[pi].suggestions[i].selected = undefined;
 			window.removeEventListener('click', handleSuggestionCleanup);
 			sections = sections.map((section: any) => ({ ...section, suggestions: section.suggestions.map((suggestion: any) => ({ ...suggestion })) }));
