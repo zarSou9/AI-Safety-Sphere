@@ -69,148 +69,265 @@
 	</div>
 	<div class="h-full w-full overflow-y-auto flex flex-col items-center">
 		<div class="w-[80%] max-w-[770px] flex flex-col items-start mt-[80px] mb-[120px]">
-			<p class="c4">
-				<span class="c14">Thank you for participating in this </span>
-			</p>
-			<p class="c4"><span class="c12 c15">Feedback</span><span class="c15">&nbsp;session!</span></p>
-			<p class="c2"><span class="c13"></span></p>
-			<p class="c2"><span class="c13"></span></p>
-			<p class="c2"><span class="c13"></span></p>
-			<p class="c4"><span class="c5">TO DO:</span></p>
-			<p class="c2"><span class="c1"></span></p>
-			<ol class="c11 lst-kix_5n9jywy0rmvt-0 start" start="1">
-				<li class="c0 li-bullet-0">
-					<span class="c1">Read: &ldquo;Problem Solving Ideology&rdquo;</span>
+			<p><span class="c9 c18">Thank you for participating in this </span></p>
+			<p class="c1"><span class="c9 c4">feedback</span><span class="c9">&nbsp;session!</span></p>
+			<p class="c1 c2"><span class="c6"></span></p>
+			<p class="c1"><span class="c10">TO DO:</span></p>
+			<p class="c1 c2"><span class="c0"></span></p>
+			<ol class="c7 lst-kix_5n9jywy0rmvt-0 start" start="1">
+				<li class="c1 c3 li-bullet-0">
+					<span class="c0">Read: &ldquo;Problem Solving Ideology&rdquo;</span>
 				</li>
-				<li class="c0 li-bullet-0"><span class="c1">Read: &ldquo;How to Use&rdquo;</span></li>
-				<li class="c0 li-bullet-0"><span class="c1">Play: in &ldquo;Tree&rdquo; page</span></li>
-				<li class="c0 li-bullet-0">
-					<span>Give Feedback: </span><span class="c16"
+				<li class="c1 c3 li-bullet-0"><span class="c0">Read: &ldquo;How to Use&rdquo;</span></li>
+				<li class="c1 c3 li-bullet-0"><span class="c0">Play: in &ldquo;Tree&rdquo; page</span></li>
+				<li class="c1 c3 li-bullet-0">
+					<span>Give Feedback: </span><span class="c5"
 						><a
-							class="c3"
-							href="https://www.google.com/url?q=https://forms.gle/PPUF31AoGTTURx5D8&amp;sa=D&amp;source=editors&amp;ust=1713890106064883&amp;usg=AOvVaw3XBjgbsPjovlE-323q5P2T"
+							class="c17"
+							href="https://www.google.com/url?q=https://forms.gle/PPUF31AoGTTURx5D8&amp;sa=D&amp;source=editors&amp;ust=1714159150484265&amp;usg=AOvVaw2-9VsZqY576wnRVB9CKAGC"
 							>https://forms.gle/PPUF31AoGTTURx5D8</a
 						></span
 					>
 				</li>
 			</ol>
-			<p class="c2"><span class="c1"></span></p>
-			<p class="c2"><span class="c1"></span></p>
-			<p class="c4"><span class="c5">Problem Solving Ideology:</span></p>
-			<p class="c2"><span class="c1"></span></p>
-			<p class="c4">
-				<span class="c1"
+			<p class="c1 c2"><span class="c0"></span></p>
+			<p class="c1 c2"><span class="c0"></span></p>
+			<p class="c1"><span class="c10">Problem Solving Ideology:</span></p>
+			<p class="c1 c2"><span class="c0"></span></p>
+			<p class="c1">
+				<span
 					>At AISS, we define problems as essentially goals in which collaborators strive to grasp
-					how to complete. Once we have gained a solid understanding of how to complete said goal,
-					we consider the problem solved. Here is an example:</span
+					how to complete.</span
+				><span>&nbsp;</span><span class="c0"
+					>Once we have gained a solid understanding of how to complete said goal, we consider the
+					problem solved. Here is an example:</span
 				>
 			</p>
-			<p class="c2"><span class="c1"></span></p>
-			<ul class="c11 lst-kix_xbgds6zcul8s-0 start">
-				<li class="c0 li-bullet-0">
-					<span class="c1">Problem: I need milk but don&#39;t have it</span>
+			<p class="c1 c2"><span class="c0"></span></p>
+			<ul class="c7 lst-kix_xbgds6zcul8s-0 start">
+				<li class="c1 c3 li-bullet-0">
+					<span class="c0">Problem: I need milk but don&#39;t have it (Goal: acquire milk)</span>
 				</li>
-				<li class="c0 li-bullet-0"><span class="c1">Goal: Have milk</span></li>
-				<li class="c0 li-bullet-0">
-					<span class="c1">Proposed solution: Go to the grocery store and get milk</span>
+				<li class="c1 c3 li-bullet-0">
+					<span class="c0">Proposed solution: Go to the grocery store and get milk</span>
 				</li>
 			</ul>
-			<p class="c2"><span class="c1"></span></p>
-			<p class="c4">
-				<span class="c1"
+			<p class="c1 c2"><span class="c0"></span></p>
+			<p class="c1">
+				<span class="c0"
 					>Even though I haven&#39;t necessarily gone out to get milk, I consider this problem to be
 					solved. As in, I don&#39;t need to think too much more about achieving my goal, I just
-					have to act on my proposed solution. However, when big problems need solving, they must be
-					broken down into smaller, more manageable subproblems. How one decides to break down a big
-					problem and why, could be encapsulated in a strategy.</span
+					have to act on my proposed solution.</span
 				>
 			</p>
-			<p class="c2"><span class="c1"></span></p>
+			<p class="c1 c2"><span class="c0"></span></p>
+			<p class="c1">
+				<span>However, when </span><span>big</span><span class="c0"
+					>&nbsp;problems need solving, it might be easier to break it down into smaller, more
+					manageable subproblems. How one decides to break down a big problem and why, could be
+					encapsulated in a strategy (instead of a solution).</span
+				>
+			</p>
+			<p class="c1 c2"><span class="c0"></span></p>
 			<div class="mx-auto">
-				<p class="c6">
+				<p class="c14">
 					<span
-						style="overflow: hidden; display: inline-block; margin: 0.00px 0.00px; border: 0.00px solid #d6d6d6; transform: rotate(0.00rad) translateZ(0px); -webkit-transform: rotate(0.00rad) translateZ(0px); width: 75.615%; height: 61.55%;"
+						style="overflow: hidden; display: inline-block; margin: 0.00px 0.00px; border: 0.00px solid #ebebeb; transform: rotate(0.00rad) translateZ(0px); -webkit-transform: rotate(0.00rad) translateZ(0px); width: 566.70px; height: 460.28px;"
 						><img
-							alt="Problem broken down into subproblems through a tree"
+							alt=""
 							src="/images/image1.png"
-							style="width: 100%; height: 100%; margin-left: 0.00px; margin-top: 0.00px; transform: rotate(0.00rad) translateZ(0px); -webkit-transform: rotate(0.00rad) translateZ(0px);"
+							style="width: 566.70px; height: 460.28px; margin-left: 0.00px; margin-top: 0.00px; transform: rotate(0.00rad) translateZ(0px); -webkit-transform: rotate(0.00rad) translateZ(0px);"
 							title=""
 						/></span
 					>
 				</p>
-				<p class="c6">
-					<span class="c7">Problem broken down into subproblems through a tree</span>
+				<p class="c14">
+					<span class="c8">Problem broken down into subproblems through a tree</span>
 				</p>
 			</div>
-			<p class="c2"><span class="c1"></span></p>
-			<p class="c4">
-				<span class="c1"
-					>This raises an issue however. What if people disagree on how a problem should be broken
-					down. After all, a problem can be broken down in any number of ways. The solution here is
-					to allow people to propose as many different strategies as they want. The system still
+			<p class="c1 c2"><span class="c0"></span></p>
+			<p class="c1">
+				<span class="c0"
+					>A strategy breaks down a problem in a way where if all of its sub-problems are solved,
+					then the parent problem gets solved. For a developed strategy to have been considered
+					successful, it must:</span
+				>
+			</p>
+			<p class="c1 c2"><span class="c0"></span></p>
+			<ol class="c7 lst-kix_k39ns5nc81d5-0 start" start="1">
+				<li class="c1 c3 li-bullet-0">
+					<span class="c0"
+						>Break down the parent problem into a definitive set of subproblems, which if solved,
+						would in turn solve the parent problem. (As defined by some logic)</span
+					>
+				</li>
+				<li class="c1 c3 li-bullet-0">
+					<span class="c0"
+						>Define subproblems which are all simpler or very likely easier to solve/think about
+						than the parent problem. They don&rsquo;t have to be collectively easier, just
+						individually.</span
+					>
+				</li>
+			</ol>
+			<p class="c1 c2"><span class="c0"></span></p>
+			<p class="c1">
+				<span class="c0"
+					>You can imagine how, as the tree gets deeper, problems become easier and easier to solve.
+					Hopefully to a point where they don&rsquo;t need to be broken down further and can simply
+					be solved out right. If all of the problem leaves of a tree have been solved, then the big
+					problem gets solved.</span
+				>
+			</p>
+			<p class="c1 c2"><span class="c0"></span></p>
+			<p class="c1">
+				<span class="c0"
+					>As this is a collaborative tool, people are likely to disagree on how a problem should be
+					broken down. After all, a problem can be broken down in any number of ways. The solution
+					here is to allow people to propose as many different strategies as they want (In the tree
+					page you can navigate between strategies with arrow buttons). Thus, the system still
 					thrives in the face of disagreement. Another issue is redundancy. Strategies, particularly
 					those to the same problem, are likely to have overlap in terms of what problems they
 					decide on. To solve this, people would be allowed to link to any existing subproblem in
-					the tree, if it fits within their strategy.
-				</span>
-			</p>
-			<p class="c2"><span class="c1"></span></p>
-			<p class="c4">
-				<span class="c1"
-					>As stated earlier, problems are solved independent of completing the objective defined by
-					the problem. We consider proposed solutions to be plans on how to achieve the problem.
-					This is why we have a &ldquo;Plan&rdquo; page. This page would be dedicated to distilling
-					the tree page into a list of action steps.
-				</span>
-			</p>
-			<p class="c2"><span class="c1"></span></p>
-			<p class="c4">
-				<span class="c1"
-					>This is a collaborative website, and what is a collaborative website without
-					communication. This is the purpose of the &ldquo;Team&rdquo; page. A place for direct
-					messaging, group chats(teams), forms, polls, etc.</span
+					the tree, if it fits within their strategy.</span
 				>
 			</p>
-			<p class="c2"><span class="c1"></span></p>
-			<p class="c2"><span class="c1"></span></p>
-			<p class="c2"><span class="c1"></span></p>
-			<p class="c4"><span class="c5">How to Use:</span></p>
-			<p class="c2"><span class="c1"></span></p>
-			<p class="c4">
-				<span class="c1">These are just the important notes on how to navigate the site:</span>
+			<p class="c1 c2"><span class="c0"></span></p>
+			<p class="c1">
+				<span
+					>It is important to point out that this structure is not perfect, and can be
+				</span><span>somatically</span><span class="c0"
+					>&nbsp;confusing. I am not currently crystal clear on how this structure should be used.
+					The following are some questions which are currently unanswered:</span
+				>
 			</p>
-			<p class="c2"><span class="c1"></span></p>
-			<ul class="c11 lst-kix_4mdn3jwye9e0-0 start">
-				<li class="c0 li-bullet-0">
-					<span class="c1">To read a node click the book button at the top right of the node</span>
+			<p class="c1 c2"><span class="c0"></span></p>
+			<ul class="c7 lst-kix_38zswjdicgwh-0 start">
+				<li class="c1 c3 li-bullet-0">
+					<span class="c0">To what level should a given strategy break down a problem?</span>
 				</li>
-				<li class="c0 li-bullet-0">
-					<span class="c1">Click the edit button in the same place to begin editing</span>
+				<li class="c1 c3 li-bullet-0"><span class="c0">How detailed should each node be?</span></li>
+				<li class="c1 c3 li-bullet-0">
+					<span class="c0"
+						>What happens when a problem is so broad or confusing that it is just not useful to
+						break it down into a definitive set of subproblems which solve the parent problem?</span
+					>
 				</li>
-				<li class="c0 li-bullet-0">
-					<span class="c1">Navigate between nodes with the arrow keys</span>
-				</li>
-				<li class="c0 li-bullet-0"><span class="c1">Shortcuts</span></li>
 			</ul>
-			<ul class="c11 lst-kix_4mdn3jwye9e0-1 start">
-				<li class="c4 c8 li-bullet-0">
-					<span class="c12">IMPORTANT</span><span>:</span><span class="c1"
+			<p class="c1 c2"><span class="c0"></span></p>
+			<p class="c1">
+				<span class="c0"
+					>I do hope that as more people use it, these questions (and many others) will become more
+					clear, but in the meantime, feel free to ponder these, and let us know your thoughts. (The
+					&ldquo;Ideas&rdquo; page is coming soon!)</span
+				>
+			</p>
+			<p class="c1 c2"><span class="c0"></span></p>
+			<p class="c1">
+				<span class="c0"
+					>As stated earlier, problems are solved independent of completing the objective defined by
+					the problem. By framing problems in terms of an objective, which is preferably measurable,
+					it helps people ideate strategies and frame their thinking.
+				</span>
+			</p>
+			<p class="c1 c2"><span class="c0"></span></p>
+			<p class="c1 c2"><span class="c0"></span></p>
+			<p class="c1"><span class="c10">Pages:</span></p>
+			<p class="c1 c2"><span class="c0"></span></p>
+			<ul class="c7 lst-kix_eymv275zzudt-0 start">
+				<li class="c1 c3 li-bullet-0">
+					<span class="c4">Tree</span><span class="c0"
+						>: See &ldquo;Problem Solving Ideology&rdquo;</span
+					>
+				</li>
+				<li class="c1 c3 li-bullet-0">
+					<span class="c4">Plan</span><span class="c0"
+						>: Once a big problem has been solved, because achieving the goal of a problem is
+						independent of solving it, there exists an incomplete plan as defined by the strategies.
+						This page would be for distilling that plan into a list of actionable items which our
+						community would carry out.
+					</span>
+				</li>
+				<li class="c1 c3 li-bullet-0">
+					<span class="c4">Team</span><span
+						>: This page links you to our discord which is where we currently communicate</span
+					>
+				</li>
+				<li class="c1 c3 li-bullet-0">
+					<span class="c4">Ideas</span><span class="c0"
+						>: A place for people to post feature ideas, questions, thoughts, bugs, etc.</span
+					>
+				</li>
+				<li class="c1 c3 li-bullet-0">
+					<span class="c4">Learn</span><span class="c0"
+						>: List of helpful resources to get you familiar with AI Safety</span
+					>
+				</li>
+			</ul>
+			<p class="c1 c2"><span class="c0"></span></p>
+			<p class="c1 c2"><span class="c0"></span></p>
+			<p class="c1"><span class="c10">How to Use:</span></p>
+			<p class="c1 c2"><span class="c0"></span></p>
+			<ul class="c7 lst-kix_4mdn3jwye9e0-0 start">
+				<li class="c1 c3 li-bullet-0">
+					<span class="c0">To read a node click the book button at the top right of the node</span>
+				</li>
+				<li class="c1 c3 li-bullet-0">
+					<span class="c0">Click the edit button in the same place to begin editing</span>
+				</li>
+				<li class="c1 c3 li-bullet-0">
+					<span class="c0"
+						>Only one person can edit a node at a time (so the edit button might be grayed out)</span
+					>
+				</li>
+				<li class="c1 c3 li-bullet-0">
+					<span class="c0">If don&#39;t own a node, you are put in suggesting mode</span>
+				</li>
+				<li class="c1 c3 li-bullet-0">
+					<span class="c0">Navigate between nodes with the arrow keys</span>
+				</li>
+				<li class="c1 c3 li-bullet-0"><span class="c0">Shortcuts</span></li>
+			</ul>
+			<ul class="c7 lst-kix_4mdn3jwye9e0-1 start">
+				<li class="c1 c16 li-bullet-0">
+					<span class="c4">IMPORTANT</span><span>:</span><span class="c0"
 						>&nbsp;Leave/Escape node: esc</span
 					>
 				</li>
-				<li class="c4 c8 li-bullet-0"><span class="c1">Set home position: ctrl/cmd h</span></li>
-				<li class="c4 c8 li-bullet-0"><span class="c1">Go to home position: h</span></li>
-				<li class="c4 c8 li-bullet-0"><span class="c1">Full view: f</span></li>
+				<li class="c1 c16 li-bullet-0"><span class="c0">Set home position: ctrl/cmd h</span></li>
+				<li class="c1 c16 li-bullet-0"><span class="c0">Go to home position: h</span></li>
+				<li class="c1 c16 li-bullet-0"><span class="c0">Full view: f</span></li>
 			</ul>
-			<ul class="c11 lst-kix_4mdn3jwye9e0-0">
-				<li class="c0 li-bullet-0">
-					<span class="c1">Double click title/subsections to edit</span>
+			<ul class="c7 lst-kix_4mdn3jwye9e0-0">
+				<li class="c1 c3 li-bullet-0">
+					<span class="c0">Double click title/subsections to edit</span>
 				</li>
-				<li class="c0 li-bullet-0">
-					<span class="c1">Use the three dots in navbar to add a section</span>
+				<li class="c1 c3 li-bullet-0">
+					<span class="c0">Right click subsections to delete</span>
+				</li>
+				<li class="c1 c3 li-bullet-0">
+					<span class="c0">Use the three dots in navbar to add a section</span>
 				</li>
 			</ul>
-			<p class="c2"><span class="c5"></span></p>
+			<p class="c1 c2"><span class="c0"></span></p>
+			<p class="c1 c2"><span class="c0"></span></p>
+			<p class="c1"><span class="c10">Guidelines:</span></p>
+			<p class="c1 c2"><span class="c0"></span></p>
+			<ul class="c7 lst-kix_nznj7f2h3dvk-0 start">
+				<li class="c1 c3 li-bullet-0">
+					<span class="c0"
+						>It is generally recommended to try and edit existing strategies rather than create a
+						new one. If you have an idea for a direction or strategy, FIRST propose it to the
+						existing owner. If they aren&rsquo;t receptive then create your own.
+					</span>
+				</li>
+			</ul>
+			<p class="c1 c2"><span class="c0"></span></p>
+			<p class="c1 c2"><span class="c0"></span></p>
+			<p class="c1"><span class="c10">FAQs:</span></p>
+			<p class="c1 c2"><span class="c0"></span></p>
+			<ul class="c7 lst-kix_kpbry39snu81-0 start">
+				<li class="c1 c3 c2 li-bullet-0"><span class="c0"></span></li>
+			</ul>
 			<a
 				class="hover:underline text-[#1155cc] text-[13px] mt-[40px] ml-auto"
 				href="https://docs.google.com/document/d/1SYBkAybnBulbF5w7YbxMIzVngomiCMs_6k7tDjz29Hk/edit?usp=sharing"
@@ -221,11 +338,503 @@
 </div>
 
 <style>
-	ul.lst-kix_1kqqzx8lmu5v-2 {
-		list-style-type: none;
-	}
 	ol.lst-kix_5n9jywy0rmvt-0.start {
 		counter-reset: lst-ctn-kix_5n9jywy0rmvt-0 0;
+	}
+	ol.lst-kix_k39ns5nc81d5-0.start {
+		counter-reset: lst-ctn-kix_k39ns5nc81d5-0 0;
+	}
+	ol.lst-kix_l4163ogvpnex-5.start {
+		counter-reset: lst-ctn-kix_l4163ogvpnex-5 0;
+	}
+	.lst-kix_k39ns5nc81d5-3 > li {
+		counter-increment: lst-ctn-kix_k39ns5nc81d5-3;
+	}
+	.lst-kix_38zswjdicgwh-5 > li:before {
+		content: '\0025a0   ';
+	}
+	.lst-kix_38zswjdicgwh-6 > li:before {
+		content: '\0025cf   ';
+	}
+	ul.lst-kix_38zswjdicgwh-4 {
+		list-style-type: none;
+	}
+	ul.lst-kix_38zswjdicgwh-5 {
+		list-style-type: none;
+	}
+	ul.lst-kix_38zswjdicgwh-2 {
+		list-style-type: none;
+	}
+	.lst-kix_k39ns5nc81d5-1 > li {
+		counter-increment: lst-ctn-kix_k39ns5nc81d5-1;
+	}
+	ol.lst-kix_5n9jywy0rmvt-6.start {
+		counter-reset: lst-ctn-kix_5n9jywy0rmvt-6 0;
+	}
+	ul.lst-kix_38zswjdicgwh-3 {
+		list-style-type: none;
+	}
+	ul.lst-kix_38zswjdicgwh-0 {
+		list-style-type: none;
+	}
+	ul.lst-kix_38zswjdicgwh-1 {
+		list-style-type: none;
+	}
+	.lst-kix_38zswjdicgwh-4 > li:before {
+		content: '\0025cb   ';
+	}
+	.lst-kix_38zswjdicgwh-3 > li:before {
+		content: '\0025cf   ';
+	}
+	.lst-kix_38zswjdicgwh-1 > li:before {
+		content: '\0025cb   ';
+	}
+	.lst-kix_38zswjdicgwh-2 > li:before {
+		content: '\0025a0   ';
+	}
+	ol.lst-kix_9e4jxz58ijhi-7.start {
+		counter-reset: lst-ctn-kix_9e4jxz58ijhi-7 0;
+	}
+	.lst-kix_38zswjdicgwh-0 > li:before {
+		content: '\0025cf   ';
+	}
+	ol.lst-kix_k39ns5nc81d5-6.start {
+		counter-reset: lst-ctn-kix_k39ns5nc81d5-6 0;
+	}
+	.lst-kix_9e4jxz58ijhi-1 > li {
+		counter-increment: lst-ctn-kix_9e4jxz58ijhi-1;
+	}
+	ul.lst-kix_38zswjdicgwh-8 {
+		list-style-type: none;
+	}
+	.lst-kix_l4163ogvpnex-7 > li {
+		counter-increment: lst-ctn-kix_l4163ogvpnex-7;
+	}
+	ul.lst-kix_38zswjdicgwh-6 {
+		list-style-type: none;
+	}
+	ul.lst-kix_38zswjdicgwh-7 {
+		list-style-type: none;
+	}
+	.lst-kix_dyfx29dgxuhb-6 > li:before {
+		content: '\0025cf   ';
+	}
+	.lst-kix_xbgds6zcul8s-8 > li:before {
+		content: '\0025a0   ';
+	}
+	.lst-kix_1kqqzx8lmu5v-0 > li:before {
+		content: '-  ';
+	}
+	.lst-kix_dyfx29dgxuhb-4 > li:before {
+		content: '\0025cb   ';
+	}
+	.lst-kix_dyfx29dgxuhb-8 > li:before {
+		content: '\0025a0   ';
+	}
+	.lst-kix_xbgds6zcul8s-7 > li:before {
+		content: '\0025cb   ';
+	}
+	.lst-kix_dyfx29dgxuhb-5 > li:before {
+		content: '\0025a0   ';
+	}
+	ul.lst-kix_kpbry39snu81-7 {
+		list-style-type: none;
+	}
+	.lst-kix_dyfx29dgxuhb-2 > li:before {
+		content: '\0025a0   ';
+	}
+	ul.lst-kix_kpbry39snu81-6 {
+		list-style-type: none;
+	}
+	.lst-kix_xbgds6zcul8s-4 > li:before {
+		content: '\0025cb   ';
+	}
+	.lst-kix_xbgds6zcul8s-5 > li:before {
+		content: '\0025a0   ';
+	}
+	ul.lst-kix_kpbry39snu81-5 {
+		list-style-type: none;
+	}
+	.lst-kix_1kqqzx8lmu5v-2 > li:before {
+		content: '-  ';
+	}
+	ul.lst-kix_kpbry39snu81-4 {
+		list-style-type: none;
+	}
+	ul.lst-kix_kpbry39snu81-3 {
+		list-style-type: none;
+	}
+	.lst-kix_1kqqzx8lmu5v-1 > li:before {
+		content: '-  ';
+	}
+	ul.lst-kix_kpbry39snu81-2 {
+		list-style-type: none;
+	}
+	.lst-kix_xbgds6zcul8s-6 > li:before {
+		content: '\0025cf   ';
+	}
+	ul.lst-kix_kpbry39snu81-1 {
+		list-style-type: none;
+	}
+	.lst-kix_dyfx29dgxuhb-3 > li:before {
+		content: '\0025cf   ';
+	}
+	ul.lst-kix_kpbry39snu81-0 {
+		list-style-type: none;
+	}
+	ol.lst-kix_9e4jxz58ijhi-0 {
+		list-style-type: none;
+	}
+	.lst-kix_1kqqzx8lmu5v-7 > li:before {
+		content: '-  ';
+	}
+	ol.lst-kix_9e4jxz58ijhi-1 {
+		list-style-type: none;
+	}
+	.lst-kix_i9pmjo5plrvi-7 > li:before {
+		content: '\0025cf   ';
+	}
+	.lst-kix_i9pmjo5plrvi-8 > li:before {
+		content: '\0025cf   ';
+	}
+	.lst-kix_xbgds6zcul8s-0 > li:before {
+		content: '\0025cf   ';
+	}
+	.lst-kix_xbgds6zcul8s-1 > li:before {
+		content: '\0025cb   ';
+	}
+	.lst-kix_1kqqzx8lmu5v-6 > li:before {
+		content: '-  ';
+	}
+	.lst-kix_1kqqzx8lmu5v-8 > li:before {
+		content: '-  ';
+	}
+	ol.lst-kix_9e4jxz58ijhi-4 {
+		list-style-type: none;
+	}
+	.lst-kix_dyfx29dgxuhb-0 > li:before {
+		content: '\0025cf   ';
+	}
+	ol.lst-kix_9e4jxz58ijhi-5 {
+		list-style-type: none;
+	}
+	ol.lst-kix_k39ns5nc81d5-5.start {
+		counter-reset: lst-ctn-kix_k39ns5nc81d5-5 0;
+	}
+	.lst-kix_i9pmjo5plrvi-6 > li:before {
+		content: '\0025cf   ';
+	}
+	.lst-kix_xbgds6zcul8s-3 > li:before {
+		content: '\0025cf   ';
+	}
+	ol.lst-kix_9e4jxz58ijhi-2 {
+		list-style-type: none;
+	}
+	.lst-kix_dyfx29dgxuhb-1 > li:before {
+		content: '\0025cb   ';
+	}
+	ol.lst-kix_9e4jxz58ijhi-3 {
+		list-style-type: none;
+	}
+	ul.lst-kix_kpbry39snu81-8 {
+		list-style-type: none;
+	}
+	ol.lst-kix_9e4jxz58ijhi-8 {
+		list-style-type: none;
+	}
+	.lst-kix_1kqqzx8lmu5v-3 > li:before {
+		content: '-  ';
+	}
+	.lst-kix_i9pmjo5plrvi-3 > li:before {
+		content: '\0025cf   ';
+	}
+	.lst-kix_i9pmjo5plrvi-4 > li:before {
+		content: '\0025cf   ';
+	}
+	ol.lst-kix_9e4jxz58ijhi-6 {
+		list-style-type: none;
+	}
+	.lst-kix_1kqqzx8lmu5v-4 > li:before {
+		content: '-  ';
+	}
+	ol.lst-kix_9e4jxz58ijhi-7 {
+		list-style-type: none;
+	}
+	.lst-kix_1kqqzx8lmu5v-5 > li:before {
+		content: '-  ';
+	}
+	.lst-kix_i9pmjo5plrvi-5 > li:before {
+		content: '\0025cf   ';
+	}
+	.lst-kix_xbgds6zcul8s-2 > li:before {
+		content: '\0025a0   ';
+	}
+	ul.lst-kix_nznj7f2h3dvk-1 {
+		list-style-type: none;
+	}
+	ul.lst-kix_nznj7f2h3dvk-0 {
+		list-style-type: none;
+	}
+	.lst-kix_i9pmjo5plrvi-0 > li:before {
+		content: '\0025cf   ';
+	}
+	.lst-kix_l4163ogvpnex-5 > li {
+		counter-increment: lst-ctn-kix_l4163ogvpnex-5;
+	}
+	ul.lst-kix_nznj7f2h3dvk-5 {
+		list-style-type: none;
+	}
+	ul.lst-kix_nznj7f2h3dvk-4 {
+		list-style-type: none;
+	}
+	.lst-kix_i9pmjo5plrvi-2 > li:before {
+		content: '\0025cf   ';
+	}
+	.lst-kix_l4163ogvpnex-2 > li {
+		counter-increment: lst-ctn-kix_l4163ogvpnex-2;
+	}
+	ul.lst-kix_nznj7f2h3dvk-3 {
+		list-style-type: none;
+	}
+	ul.lst-kix_nznj7f2h3dvk-2 {
+		list-style-type: none;
+	}
+	ul.lst-kix_dyfx29dgxuhb-0 {
+		list-style-type: none;
+	}
+	ul.lst-kix_dyfx29dgxuhb-1 {
+		list-style-type: none;
+	}
+	ul.lst-kix_nznj7f2h3dvk-8 {
+		list-style-type: none;
+	}
+	ul.lst-kix_dyfx29dgxuhb-2 {
+		list-style-type: none;
+	}
+	ul.lst-kix_nznj7f2h3dvk-7 {
+		list-style-type: none;
+	}
+	ul.lst-kix_dyfx29dgxuhb-3 {
+		list-style-type: none;
+	}
+	ul.lst-kix_nznj7f2h3dvk-6 {
+		list-style-type: none;
+	}
+	ul.lst-kix_dyfx29dgxuhb-4 {
+		list-style-type: none;
+	}
+	ul.lst-kix_dyfx29dgxuhb-5 {
+		list-style-type: none;
+	}
+	ol.lst-kix_5n9jywy0rmvt-1.start {
+		counter-reset: lst-ctn-kix_5n9jywy0rmvt-1 0;
+	}
+	.lst-kix_9e4jxz58ijhi-5 > li {
+		counter-increment: lst-ctn-kix_9e4jxz58ijhi-5;
+	}
+	.lst-kix_9e4jxz58ijhi-8 > li {
+		counter-increment: lst-ctn-kix_9e4jxz58ijhi-8;
+	}
+	ul.lst-kix_dyfx29dgxuhb-6 {
+		list-style-type: none;
+	}
+	.lst-kix_i9pmjo5plrvi-1 > li:before {
+		content: '\0025cf   ';
+	}
+	ul.lst-kix_dyfx29dgxuhb-7 {
+		list-style-type: none;
+	}
+	ul.lst-kix_dyfx29dgxuhb-8 {
+		list-style-type: none;
+	}
+	.lst-kix_5n9jywy0rmvt-1 > li {
+		counter-increment: lst-ctn-kix_5n9jywy0rmvt-1;
+	}
+	.lst-kix_k39ns5nc81d5-5 > li {
+		counter-increment: lst-ctn-kix_k39ns5nc81d5-5;
+	}
+	.lst-kix_dyfx29dgxuhb-7 > li:before {
+		content: '\0025cb   ';
+	}
+	.lst-kix_5n9jywy0rmvt-6 > li {
+		counter-increment: lst-ctn-kix_5n9jywy0rmvt-6;
+	}
+	.lst-kix_kpbry39snu81-0 > li:before {
+		content: '\0025cf   ';
+	}
+	ol.lst-kix_k39ns5nc81d5-4.start {
+		counter-reset: lst-ctn-kix_k39ns5nc81d5-4 0;
+	}
+	ol.lst-kix_5n9jywy0rmvt-4.start {
+		counter-reset: lst-ctn-kix_5n9jywy0rmvt-4 0;
+	}
+	ul.lst-kix_eymv275zzudt-7 {
+		list-style-type: none;
+	}
+	.lst-kix_kpbry39snu81-8 > li:before {
+		content: '\0025a0   ';
+	}
+	ul.lst-kix_eymv275zzudt-8 {
+		list-style-type: none;
+	}
+	.lst-kix_5n9jywy0rmvt-7 > li {
+		counter-increment: lst-ctn-kix_5n9jywy0rmvt-7;
+	}
+	.lst-kix_4mdn3jwye9e0-8 > li:before {
+		content: '\0025a0   ';
+	}
+	ul.lst-kix_eymv275zzudt-5 {
+		list-style-type: none;
+	}
+	ul.lst-kix_eymv275zzudt-6 {
+		list-style-type: none;
+	}
+	ul.lst-kix_eymv275zzudt-3 {
+		list-style-type: none;
+	}
+	ol.lst-kix_9e4jxz58ijhi-6.start {
+		counter-reset: lst-ctn-kix_9e4jxz58ijhi-6 0;
+	}
+	ul.lst-kix_eymv275zzudt-4 {
+		list-style-type: none;
+	}
+	ul.lst-kix_eymv275zzudt-1 {
+		list-style-type: none;
+	}
+	ol.lst-kix_5n9jywy0rmvt-7.start {
+		counter-reset: lst-ctn-kix_5n9jywy0rmvt-7 0;
+	}
+	ul.lst-kix_eymv275zzudt-2 {
+		list-style-type: none;
+	}
+	ul.lst-kix_eymv275zzudt-0 {
+		list-style-type: none;
+	}
+	.lst-kix_k39ns5nc81d5-7 > li {
+		counter-increment: lst-ctn-kix_k39ns5nc81d5-7;
+	}
+	ol.lst-kix_l4163ogvpnex-1.start {
+		counter-reset: lst-ctn-kix_l4163ogvpnex-1 0;
+	}
+	.lst-kix_kpbry39snu81-6 > li:before {
+		content: '\0025cf   ';
+	}
+	.lst-kix_nznj7f2h3dvk-0 > li:before {
+		content: '\0025cf   ';
+	}
+	.lst-kix_kpbry39snu81-4 > li:before {
+		content: '\0025cb   ';
+	}
+	.lst-kix_l4163ogvpnex-1 > li {
+		counter-increment: lst-ctn-kix_l4163ogvpnex-1;
+	}
+	.lst-kix_9e4jxz58ijhi-4 > li {
+		counter-increment: lst-ctn-kix_9e4jxz58ijhi-4;
+	}
+	.lst-kix_nznj7f2h3dvk-2 > li:before {
+		content: '\0025a0   ';
+	}
+	.lst-kix_kpbry39snu81-2 > li:before {
+		content: '\0025a0   ';
+	}
+	.lst-kix_5n9jywy0rmvt-5 > li {
+		counter-increment: lst-ctn-kix_5n9jywy0rmvt-5;
+	}
+	.lst-kix_nznj7f2h3dvk-4 > li:before {
+		content: '\0025cb   ';
+	}
+	.lst-kix_nznj7f2h3dvk-8 > li:before {
+		content: '\0025a0   ';
+	}
+	ol.lst-kix_5n9jywy0rmvt-5.start {
+		counter-reset: lst-ctn-kix_5n9jywy0rmvt-5 0;
+	}
+	ol.lst-kix_9e4jxz58ijhi-8.start {
+		counter-reset: lst-ctn-kix_9e4jxz58ijhi-8 0;
+	}
+	.lst-kix_nznj7f2h3dvk-6 > li:before {
+		content: '\0025cf   ';
+	}
+	.lst-kix_9e4jxz58ijhi-3 > li {
+		counter-increment: lst-ctn-kix_9e4jxz58ijhi-3;
+	}
+	.lst-kix_eymv275zzudt-1 > li:before {
+		content: '\0025cb   ';
+	}
+	.lst-kix_k39ns5nc81d5-6 > li {
+		counter-increment: lst-ctn-kix_k39ns5nc81d5-6;
+	}
+	.lst-kix_l4163ogvpnex-6 > li {
+		counter-increment: lst-ctn-kix_l4163ogvpnex-6;
+	}
+	ol.lst-kix_k39ns5nc81d5-0 {
+		list-style-type: none;
+	}
+	.lst-kix_eymv275zzudt-3 > li:before {
+		content: '\0025cf   ';
+	}
+	.lst-kix_k39ns5nc81d5-0 > li {
+		counter-increment: lst-ctn-kix_k39ns5nc81d5-0;
+	}
+	ol.lst-kix_k39ns5nc81d5-2 {
+		list-style-type: none;
+	}
+	ol.lst-kix_k39ns5nc81d5-1 {
+		list-style-type: none;
+	}
+	ol.lst-kix_l4163ogvpnex-0.start {
+		counter-reset: lst-ctn-kix_l4163ogvpnex-0 0;
+	}
+	ol.lst-kix_k39ns5nc81d5-4 {
+		list-style-type: none;
+	}
+	ol.lst-kix_k39ns5nc81d5-3 {
+		list-style-type: none;
+	}
+	ol.lst-kix_k39ns5nc81d5-6 {
+		list-style-type: none;
+	}
+	ol.lst-kix_k39ns5nc81d5-5 {
+		list-style-type: none;
+	}
+	ol.lst-kix_k39ns5nc81d5-8 {
+		list-style-type: none;
+	}
+	ol.lst-kix_k39ns5nc81d5-2.start {
+		counter-reset: lst-ctn-kix_k39ns5nc81d5-2 0;
+	}
+	ol.lst-kix_k39ns5nc81d5-7 {
+		list-style-type: none;
+	}
+	.lst-kix_38zswjdicgwh-7 > li:before {
+		content: '\0025cb   ';
+	}
+	.lst-kix_eymv275zzudt-7 > li:before {
+		content: '\0025cb   ';
+	}
+	ol.lst-kix_k39ns5nc81d5-1.start {
+		counter-reset: lst-ctn-kix_k39ns5nc81d5-1 0;
+	}
+	.lst-kix_eymv275zzudt-5 > li:before {
+		content: '\0025a0   ';
+	}
+	.lst-kix_4mdn3jwye9e0-0 > li:before {
+		content: '\0025cf   ';
+	}
+	.lst-kix_4mdn3jwye9e0-6 > li:before {
+		content: '\0025cf   ';
+	}
+	.lst-kix_l4163ogvpnex-0 > li {
+		counter-increment: lst-ctn-kix_l4163ogvpnex-0;
+	}
+	.lst-kix_4mdn3jwye9e0-4 > li:before {
+		content: '\0025cb   ';
+	}
+	.lst-kix_4mdn3jwye9e0-2 > li:before {
+		content: '\0025a0   ';
+	}
+	ul.lst-kix_1kqqzx8lmu5v-2 {
+		list-style-type: none;
 	}
 	ul.lst-kix_1kqqzx8lmu5v-3 {
 		list-style-type: none;
@@ -275,6 +884,9 @@
 	.lst-kix_l4163ogvpnex-1 > li:before {
 		content: '' counter(lst-ctn-kix_l4163ogvpnex-1, lower-latin) '. ';
 	}
+	.lst-kix_k39ns5nc81d5-1 > li:before {
+		content: '' counter(lst-ctn-kix_k39ns5nc81d5-1, lower-latin) '. ';
+	}
 	.lst-kix_5n9jywy0rmvt-3 > li:before {
 		content: '' counter(lst-ctn-kix_5n9jywy0rmvt-3, decimal) '. ';
 	}
@@ -284,11 +896,11 @@
 	ul.lst-kix_i9pmjo5plrvi-2 {
 		list-style-type: none;
 	}
+	.lst-kix_k39ns5nc81d5-0 > li:before {
+		content: '' counter(lst-ctn-kix_k39ns5nc81d5-0, decimal) '. ';
+	}
 	ul.lst-kix_i9pmjo5plrvi-1 {
 		list-style-type: none;
-	}
-	ol.lst-kix_l4163ogvpnex-5.start {
-		counter-reset: lst-ctn-kix_l4163ogvpnex-5 0;
 	}
 	ul.lst-kix_i9pmjo5plrvi-0 {
 		list-style-type: none;
@@ -344,11 +956,17 @@
 	ol.lst-kix_l4163ogvpnex-8.start {
 		counter-reset: lst-ctn-kix_l4163ogvpnex-8 0;
 	}
+	.lst-kix_k39ns5nc81d5-4 > li {
+		counter-increment: lst-ctn-kix_k39ns5nc81d5-4;
+	}
 	ol.lst-kix_9e4jxz58ijhi-4.start {
 		counter-reset: lst-ctn-kix_9e4jxz58ijhi-4 0;
 	}
-	ol.lst-kix_5n9jywy0rmvt-6.start {
-		counter-reset: lst-ctn-kix_5n9jywy0rmvt-6 0;
+	.lst-kix_k39ns5nc81d5-7 > li:before {
+		content: '' counter(lst-ctn-kix_k39ns5nc81d5-7, lower-latin) '. ';
+	}
+	.lst-kix_k39ns5nc81d5-8 > li:before {
+		content: '' counter(lst-ctn-kix_k39ns5nc81d5-8, lower-roman) '. ';
 	}
 	.lst-kix_9e4jxz58ijhi-7 > li:before {
 		content: '' counter(lst-ctn-kix_9e4jxz58ijhi-7, lower-latin) '. ';
@@ -365,8 +983,23 @@
 	.lst-kix_5n9jywy0rmvt-6 > li:before {
 		content: '' counter(lst-ctn-kix_5n9jywy0rmvt-6, decimal) '. ';
 	}
-	ol.lst-kix_9e4jxz58ijhi-7.start {
-		counter-reset: lst-ctn-kix_9e4jxz58ijhi-7 0;
+	.lst-kix_k39ns5nc81d5-2 > li:before {
+		content: '' counter(lst-ctn-kix_k39ns5nc81d5-2, lower-roman) '. ';
+	}
+	.lst-kix_k39ns5nc81d5-3 > li:before {
+		content: '' counter(lst-ctn-kix_k39ns5nc81d5-3, decimal) '. ';
+	}
+	.lst-kix_k39ns5nc81d5-4 > li:before {
+		content: '' counter(lst-ctn-kix_k39ns5nc81d5-4, lower-latin) '. ';
+	}
+	ol.lst-kix_k39ns5nc81d5-3.start {
+		counter-reset: lst-ctn-kix_k39ns5nc81d5-3 0;
+	}
+	.lst-kix_k39ns5nc81d5-5 > li:before {
+		content: '' counter(lst-ctn-kix_k39ns5nc81d5-5, lower-roman) '. ';
+	}
+	.lst-kix_k39ns5nc81d5-6 > li:before {
+		content: '' counter(lst-ctn-kix_k39ns5nc81d5-6, decimal) '. ';
 	}
 	.lst-kix_5n9jywy0rmvt-8 > li:before {
 		content: '' counter(lst-ctn-kix_5n9jywy0rmvt-8, lower-roman) '. ';
@@ -376,12 +1009,6 @@
 	}
 	.lst-kix_l4163ogvpnex-6 > li:before {
 		content: '' counter(lst-ctn-kix_l4163ogvpnex-6, decimal) '. ';
-	}
-	.lst-kix_9e4jxz58ijhi-1 > li {
-		counter-increment: lst-ctn-kix_9e4jxz58ijhi-1;
-	}
-	.lst-kix_l4163ogvpnex-7 > li {
-		counter-increment: lst-ctn-kix_l4163ogvpnex-7;
 	}
 	ol.lst-kix_5n9jywy0rmvt-3.start {
 		counter-reset: lst-ctn-kix_5n9jywy0rmvt-3 0;
@@ -395,14 +1022,8 @@
 	ol.lst-kix_5n9jywy0rmvt-3 {
 		list-style-type: none;
 	}
-	.lst-kix_xbgds6zcul8s-8 > li:before {
-		content: '\0025a0   ';
-	}
 	ol.lst-kix_5n9jywy0rmvt-6 {
 		list-style-type: none;
-	}
-	.lst-kix_1kqqzx8lmu5v-0 > li:before {
-		content: '-  ';
 	}
 	ol.lst-kix_5n9jywy0rmvt-5 {
 		list-style-type: none;
@@ -410,122 +1031,29 @@
 	ol.lst-kix_5n9jywy0rmvt-0 {
 		list-style-type: none;
 	}
-	.lst-kix_xbgds6zcul8s-7 > li:before {
-		content: '\0025cb   ';
-	}
 	ol.lst-kix_5n9jywy0rmvt-2 {
 		list-style-type: none;
 	}
 	ol.lst-kix_5n9jywy0rmvt-1 {
 		list-style-type: none;
 	}
-	.lst-kix_xbgds6zcul8s-4 > li:before {
-		content: '\0025cb   ';
-	}
-	.lst-kix_xbgds6zcul8s-5 > li:before {
-		content: '\0025a0   ';
-	}
-	.lst-kix_1kqqzx8lmu5v-2 > li:before {
-		content: '-  ';
-	}
 	ol.lst-kix_5n9jywy0rmvt-8 {
 		list-style-type: none;
-	}
-	.lst-kix_1kqqzx8lmu5v-1 > li:before {
-		content: '-  ';
 	}
 	ol.lst-kix_5n9jywy0rmvt-7 {
 		list-style-type: none;
 	}
-	.lst-kix_xbgds6zcul8s-6 > li:before {
-		content: '\0025cf   ';
-	}
-	ol.lst-kix_9e4jxz58ijhi-0 {
-		list-style-type: none;
-	}
-	.lst-kix_1kqqzx8lmu5v-7 > li:before {
-		content: '-  ';
-	}
-	ol.lst-kix_9e4jxz58ijhi-1 {
-		list-style-type: none;
-	}
-	.lst-kix_i9pmjo5plrvi-7 > li:before {
-		content: '\0025cf   ';
-	}
-	.lst-kix_i9pmjo5plrvi-8 > li:before {
-		content: '\0025cf   ';
-	}
-	.lst-kix_xbgds6zcul8s-0 > li:before {
-		content: '\0025cf   ';
-	}
-	.lst-kix_xbgds6zcul8s-1 > li:before {
-		content: '\0025cb   ';
-	}
 	.lst-kix_5n9jywy0rmvt-4 > li {
 		counter-increment: lst-ctn-kix_5n9jywy0rmvt-4;
 	}
-	.lst-kix_1kqqzx8lmu5v-6 > li:before {
-		content: '-  ';
-	}
-	.lst-kix_1kqqzx8lmu5v-8 > li:before {
-		content: '-  ';
-	}
-	ol.lst-kix_9e4jxz58ijhi-4 {
-		list-style-type: none;
-	}
-	ol.lst-kix_9e4jxz58ijhi-5 {
-		list-style-type: none;
-	}
-	.lst-kix_i9pmjo5plrvi-6 > li:before {
-		content: '\0025cf   ';
-	}
-	.lst-kix_xbgds6zcul8s-3 > li:before {
-		content: '\0025cf   ';
-	}
 	ol.lst-kix_5n9jywy0rmvt-2.start {
 		counter-reset: lst-ctn-kix_5n9jywy0rmvt-2 0;
-	}
-	ol.lst-kix_9e4jxz58ijhi-2 {
-		list-style-type: none;
-	}
-	ol.lst-kix_9e4jxz58ijhi-3 {
-		list-style-type: none;
-	}
-	ol.lst-kix_9e4jxz58ijhi-8 {
-		list-style-type: none;
-	}
-	.lst-kix_1kqqzx8lmu5v-3 > li:before {
-		content: '-  ';
-	}
-	.lst-kix_i9pmjo5plrvi-3 > li:before {
-		content: '\0025cf   ';
-	}
-	.lst-kix_i9pmjo5plrvi-4 > li:before {
-		content: '\0025cf   ';
-	}
-	ol.lst-kix_9e4jxz58ijhi-6 {
-		list-style-type: none;
-	}
-	.lst-kix_1kqqzx8lmu5v-4 > li:before {
-		content: '-  ';
-	}
-	ol.lst-kix_9e4jxz58ijhi-7 {
-		list-style-type: none;
 	}
 	ol.lst-kix_l4163ogvpnex-3.start {
 		counter-reset: lst-ctn-kix_l4163ogvpnex-3 0;
 	}
 	.lst-kix_9e4jxz58ijhi-6 > li:before {
 		content: '' counter(lst-ctn-kix_9e4jxz58ijhi-6, decimal) '. ';
-	}
-	.lst-kix_1kqqzx8lmu5v-5 > li:before {
-		content: '-  ';
-	}
-	.lst-kix_i9pmjo5plrvi-5 > li:before {
-		content: '\0025cf   ';
-	}
-	.lst-kix_xbgds6zcul8s-2 > li:before {
-		content: '\0025a0   ';
 	}
 	.lst-kix_9e4jxz58ijhi-5 > li:before {
 		content: '' counter(lst-ctn-kix_9e4jxz58ijhi-5, lower-roman) '. ';
@@ -545,14 +1073,8 @@
 	ul.lst-kix_4mdn3jwye9e0-6 {
 		list-style-type: none;
 	}
-	.lst-kix_i9pmjo5plrvi-0 > li:before {
-		content: '\0025cf   ';
-	}
 	ul.lst-kix_xbgds6zcul8s-5 {
 		list-style-type: none;
-	}
-	.lst-kix_l4163ogvpnex-5 > li {
-		counter-increment: lst-ctn-kix_l4163ogvpnex-5;
 	}
 	ul.lst-kix_xbgds6zcul8s-6 {
 		list-style-type: none;
@@ -568,12 +1090,6 @@
 	}
 	ol.lst-kix_l4163ogvpnex-7 {
 		list-style-type: none;
-	}
-	.lst-kix_i9pmjo5plrvi-2 > li:before {
-		content: '\0025cf   ';
-	}
-	.lst-kix_l4163ogvpnex-2 > li {
-		counter-increment: lst-ctn-kix_l4163ogvpnex-2;
 	}
 	ol.lst-kix_l4163ogvpnex-6 {
 		list-style-type: none;
@@ -602,23 +1118,11 @@
 	ol.lst-kix_l4163ogvpnex-4 {
 		list-style-type: none;
 	}
-	ol.lst-kix_5n9jywy0rmvt-1.start {
-		counter-reset: lst-ctn-kix_5n9jywy0rmvt-1 0;
-	}
 	.lst-kix_9e4jxz58ijhi-2 > li:before {
 		content: '' counter(lst-ctn-kix_9e4jxz58ijhi-2, lower-roman) '. ';
 	}
 	ul.lst-kix_xbgds6zcul8s-0 {
 		list-style-type: none;
-	}
-	.lst-kix_9e4jxz58ijhi-5 > li {
-		counter-increment: lst-ctn-kix_9e4jxz58ijhi-5;
-	}
-	.lst-kix_9e4jxz58ijhi-8 > li {
-		counter-increment: lst-ctn-kix_9e4jxz58ijhi-8;
-	}
-	.lst-kix_i9pmjo5plrvi-1 > li:before {
-		content: '\0025cf   ';
 	}
 	ul.lst-kix_xbgds6zcul8s-1 {
 		list-style-type: none;
@@ -638,8 +1142,11 @@
 	ol.lst-kix_l4163ogvpnex-0 {
 		list-style-type: none;
 	}
-	.lst-kix_5n9jywy0rmvt-1 > li {
-		counter-increment: lst-ctn-kix_5n9jywy0rmvt-1;
+	.lst-kix_k39ns5nc81d5-2 > li {
+		counter-increment: lst-ctn-kix_k39ns5nc81d5-2;
+	}
+	.lst-kix_k39ns5nc81d5-8 > li {
+		counter-increment: lst-ctn-kix_k39ns5nc81d5-8;
 	}
 	ol.lst-kix_9e4jxz58ijhi-5.start {
 		counter-reset: lst-ctn-kix_9e4jxz58ijhi-5 0;
@@ -647,8 +1154,8 @@
 	ol.lst-kix_5n9jywy0rmvt-8.start {
 		counter-reset: lst-ctn-kix_5n9jywy0rmvt-8 0;
 	}
-	.lst-kix_5n9jywy0rmvt-6 > li {
-		counter-increment: lst-ctn-kix_5n9jywy0rmvt-6;
+	ol.lst-kix_k39ns5nc81d5-7.start {
+		counter-reset: lst-ctn-kix_k39ns5nc81d5-7 0;
 	}
 	ol.lst-kix_9e4jxz58ijhi-3.start {
 		counter-reset: lst-ctn-kix_9e4jxz58ijhi-3 0;
@@ -659,35 +1166,23 @@
 	.lst-kix_9e4jxz58ijhi-6 > li {
 		counter-increment: lst-ctn-kix_9e4jxz58ijhi-6;
 	}
-	.lst-kix_4mdn3jwye9e0-7 > li:before {
+	.lst-kix_kpbry39snu81-7 > li:before {
 		content: '\0025cb   ';
 	}
-	ol.lst-kix_5n9jywy0rmvt-4.start {
-		counter-reset: lst-ctn-kix_5n9jywy0rmvt-4 0;
-	}
-	.lst-kix_5n9jywy0rmvt-7 > li {
-		counter-increment: lst-ctn-kix_5n9jywy0rmvt-7;
-	}
-	.lst-kix_4mdn3jwye9e0-8 > li:before {
-		content: '\0025a0   ';
-	}
-	ol.lst-kix_9e4jxz58ijhi-6.start {
-		counter-reset: lst-ctn-kix_9e4jxz58ijhi-6 0;
-	}
-	ol.lst-kix_5n9jywy0rmvt-7.start {
-		counter-reset: lst-ctn-kix_5n9jywy0rmvt-7 0;
-	}
-	ol.lst-kix_l4163ogvpnex-1.start {
-		counter-reset: lst-ctn-kix_l4163ogvpnex-1 0;
+	.lst-kix_4mdn3jwye9e0-7 > li:before {
+		content: '\0025cb   ';
 	}
 	ol.lst-kix_l4163ogvpnex-4.start {
 		counter-reset: lst-ctn-kix_l4163ogvpnex-4 0;
 	}
+	.lst-kix_kpbry39snu81-5 > li:before {
+		content: '\0025a0   ';
+	}
 	ol.lst-kix_9e4jxz58ijhi-0.start {
 		counter-reset: lst-ctn-kix_9e4jxz58ijhi-0 0;
 	}
-	.lst-kix_l4163ogvpnex-1 > li {
-		counter-increment: lst-ctn-kix_l4163ogvpnex-1;
+	.lst-kix_nznj7f2h3dvk-3 > li:before {
+		content: '\0025cf   ';
 	}
 	.lst-kix_9e4jxz58ijhi-7 > li {
 		counter-increment: lst-ctn-kix_9e4jxz58ijhi-7;
@@ -695,14 +1190,20 @@
 	.lst-kix_l4163ogvpnex-4 > li {
 		counter-increment: lst-ctn-kix_l4163ogvpnex-4;
 	}
+	.lst-kix_kpbry39snu81-1 > li:before {
+		content: '\0025cb   ';
+	}
+	.lst-kix_kpbry39snu81-3 > li:before {
+		content: '\0025cf   ';
+	}
 	.lst-kix_5n9jywy0rmvt-8 > li {
 		counter-increment: lst-ctn-kix_5n9jywy0rmvt-8;
 	}
-	.lst-kix_9e4jxz58ijhi-4 > li {
-		counter-increment: lst-ctn-kix_9e4jxz58ijhi-4;
+	.lst-kix_nznj7f2h3dvk-1 > li:before {
+		content: '\0025cb   ';
 	}
-	.lst-kix_5n9jywy0rmvt-5 > li {
-		counter-increment: lst-ctn-kix_5n9jywy0rmvt-5;
+	.lst-kix_nznj7f2h3dvk-7 > li:before {
+		content: '\0025cb   ';
 	}
 	.lst-kix_5n9jywy0rmvt-3 > li {
 		counter-increment: lst-ctn-kix_5n9jywy0rmvt-3;
@@ -710,20 +1211,14 @@
 	ol.lst-kix_l4163ogvpnex-7.start {
 		counter-reset: lst-ctn-kix_l4163ogvpnex-7 0;
 	}
-	ol.lst-kix_5n9jywy0rmvt-5.start {
-		counter-reset: lst-ctn-kix_5n9jywy0rmvt-5 0;
+	.lst-kix_nznj7f2h3dvk-5 > li:before {
+		content: '\0025a0   ';
 	}
-	ol.lst-kix_9e4jxz58ijhi-8.start {
-		counter-reset: lst-ctn-kix_9e4jxz58ijhi-8 0;
+	.lst-kix_eymv275zzudt-0 > li:before {
+		content: '\0025cf   ';
 	}
-	.lst-kix_9e4jxz58ijhi-3 > li {
-		counter-increment: lst-ctn-kix_9e4jxz58ijhi-3;
-	}
-	.lst-kix_l4163ogvpnex-6 > li {
-		counter-increment: lst-ctn-kix_l4163ogvpnex-6;
-	}
-	ol.lst-kix_l4163ogvpnex-0.start {
-		counter-reset: lst-ctn-kix_l4163ogvpnex-0 0;
+	.lst-kix_eymv275zzudt-2 > li:before {
+		content: '\0025a0   ';
 	}
 	ol.lst-kix_9e4jxz58ijhi-1.start {
 		counter-reset: lst-ctn-kix_9e4jxz58ijhi-1 0;
@@ -731,11 +1226,20 @@
 	.lst-kix_4mdn3jwye9e0-1 > li:before {
 		content: '\0025cb   ';
 	}
-	.lst-kix_4mdn3jwye9e0-0 > li:before {
-		content: '\0025cf   ';
+	.lst-kix_38zswjdicgwh-8 > li:before {
+		content: '\0025a0   ';
+	}
+	.lst-kix_eymv275zzudt-4 > li:before {
+		content: '\0025cb   ';
+	}
+	.lst-kix_eymv275zzudt-8 > li:before {
+		content: '\0025a0   ';
 	}
 	ol.lst-kix_l4163ogvpnex-6.start {
 		counter-reset: lst-ctn-kix_l4163ogvpnex-6 0;
+	}
+	ol.lst-kix_k39ns5nc81d5-8.start {
+		counter-reset: lst-ctn-kix_k39ns5nc81d5-8 0;
 	}
 	.lst-kix_4mdn3jwye9e0-5 > li:before {
 		content: '\0025a0   ';
@@ -749,23 +1253,14 @@
 	.lst-kix_9e4jxz58ijhi-0 > li {
 		counter-increment: lst-ctn-kix_9e4jxz58ijhi-0;
 	}
-	.lst-kix_4mdn3jwye9e0-6 > li:before {
+	.lst-kix_eymv275zzudt-6 > li:before {
 		content: '\0025cf   ';
-	}
-	.lst-kix_l4163ogvpnex-0 > li {
-		counter-increment: lst-ctn-kix_l4163ogvpnex-0;
 	}
 	ol.lst-kix_9e4jxz58ijhi-2.start {
 		counter-reset: lst-ctn-kix_9e4jxz58ijhi-2 0;
 	}
-	.lst-kix_4mdn3jwye9e0-4 > li:before {
-		content: '\0025cb   ';
-	}
 	.lst-kix_4mdn3jwye9e0-3 > li:before {
 		content: '\0025cf   ';
-	}
-	.lst-kix_4mdn3jwye9e0-2 > li:before {
-		content: '\0025a0   ';
 	}
 	ol {
 		margin: 0;
@@ -775,9 +1270,9 @@
 	table th {
 		padding: 0;
 	}
-	.c9 {
+	.c15 {
 		-webkit-text-decoration-skip: none;
-		color: #d6d6d6;
+		color: #ebebeb;
 		font-weight: 400;
 		text-decoration: underline;
 		vertical-align: baseline;
@@ -786,36 +1281,17 @@
 		font-family: 'Arial';
 		font-style: italic;
 	}
-	.c0 {
-		margin-left: 36pt;
-		padding-top: 0pt;
-		padding-left: 0pt;
-		padding-bottom: 0pt;
-		line-height: 1.15;
-		orphans: 2;
-		widows: 2;
-		text-align: left;
-	}
 	.c13 {
-		color: #d6d6d6;
+		color: #ebebeb;
 		font-weight: 400;
 		text-decoration: none;
 		vertical-align: baseline;
-		font-size: 20pt;
+		font-size: 10pt;
 		font-family: 'Arial';
 		font-style: normal;
 	}
-	.c5 {
-		color: #d6d6d6;
-		font-weight: 400;
-		text-decoration: none;
-		vertical-align: baseline;
-		font-size: 15pt;
-		font-family: 'Arial';
-		font-style: normal;
-	}
-	.c7 {
-		color: #b0b0b0;
+	.c8 {
+		color: #666666;
 		font-weight: 400;
 		text-decoration: none;
 		vertical-align: baseline;
@@ -823,26 +1299,17 @@
 		font-family: 'Arial';
 		font-style: italic;
 	}
-	.c14 {
-		color: #d6d6d6;
+	.c11 {
+		color: #666666;
 		font-weight: 400;
 		text-decoration: none;
 		vertical-align: baseline;
-		font-size: 22pt;
+		font-size: 10pt;
 		font-family: 'Arial';
 		font-style: normal;
 	}
-	.c2 {
-		padding-top: 0pt;
-		padding-bottom: 0pt;
-		line-height: 1.15;
-		orphans: 2;
-		widows: 2;
-		text-align: left;
-		height: 11pt;
-	}
-	.c1 {
-		color: #d6d6d6;
+	.c0 {
+		color: #ebebeb;
 		font-weight: 400;
 		text-decoration: none;
 		vertical-align: baseline;
@@ -850,15 +1317,25 @@
 		font-family: 'Arial';
 		font-style: normal;
 	}
-	.c4 {
-		padding-top: 0pt;
-		padding-bottom: 0pt;
-		line-height: 1.15;
-		orphans: 2;
-		widows: 2;
-		text-align: left;
+	.c10 {
+		color: #ebebeb;
+		font-weight: 400;
+		text-decoration: none;
+		vertical-align: baseline;
+		font-size: 15pt;
+		font-family: 'Arial';
+		font-style: normal;
 	}
 	.c6 {
+		color: #ebebeb;
+		font-weight: 400;
+		text-decoration: none;
+		vertical-align: baseline;
+		font-size: 20pt;
+		font-family: 'Arial';
+		font-style: normal;
+	}
+	.c14 {
 		padding-top: 0pt;
 		padding-bottom: 0pt;
 		line-height: 1.15;
@@ -866,38 +1343,61 @@
 		widows: 2;
 		text-align: center;
 	}
-	.c16 {
+	.c1 {
+		padding-top: 0pt;
+		padding-bottom: 0pt;
+		line-height: 1.15;
+		orphans: 2;
+		widows: 2;
+		text-align: left;
+	}
+	.c18 {
+		color: #ebebeb;
+		font-weight: 400;
+		text-decoration: none;
+		vertical-align: baseline;
+		font-family: 'Arial';
+		font-style: normal;
+	}
+	.c5 {
 		text-decoration-skip-ink: none;
 		-webkit-text-decoration-skip: none;
 		color: #1155cc;
 		text-decoration: underline;
 	}
-	.c10 {
+	.c12 {
 		background-color: #ffffff;
 		max-width: 468pt;
 		padding: 72pt 72pt 72pt 72pt;
 	}
-	.c8 {
-		margin-left: 72pt;
+	.c3 {
+		margin-left: 36pt;
 		padding-left: 0pt;
 	}
-	.c3 {
+	.c17 {
 		color: inherit;
 		text-decoration: inherit;
 	}
-	.c11 {
+	.c7 {
 		padding: 0;
 		margin: 0;
 	}
-	.c15 {
+	.c16 {
+		margin-left: 72pt;
+		padding-left: 0pt;
+	}
+	.c9 {
 		font-size: 22pt;
 	}
-	.c12 {
+	.c4 {
 		font-weight: 700;
+	}
+	.c2 {
+		height: 11pt;
 	}
 	.title {
 		padding-top: 0pt;
-		color: #d6d6d6;
+		color: #ebebeb;
 		font-size: 26pt;
 		padding-bottom: 3pt;
 		font-family: 'Arial';
@@ -920,19 +1420,19 @@
 		text-align: left;
 	}
 	li {
-		color: #d6d6d6;
+		color: #ebebeb;
 		font-size: 11pt;
 		font-family: 'Arial';
 	}
 	p {
 		margin: 0;
-		color: #d6d6d6;
+		color: #ebebeb;
 		font-size: 11pt;
 		font-family: 'Arial';
 	}
 	h1 {
 		padding-top: 20pt;
-		color: #d6d6d6;
+		color: #ebebeb;
 		font-size: 20pt;
 		padding-bottom: 6pt;
 		font-family: 'Arial';
@@ -944,7 +1444,7 @@
 	}
 	h2 {
 		padding-top: 18pt;
-		color: #d6d6d6;
+		color: #ebebeb;
 		font-size: 16pt;
 		padding-bottom: 6pt;
 		font-family: 'Arial';
