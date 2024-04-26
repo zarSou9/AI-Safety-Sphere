@@ -195,7 +195,7 @@
 			<p class="c1">
 				<span
 					>It is important to point out that this structure is not perfect, and can be
-				</span><span>somatically</span><span class="c0"
+				</span><span>semantically</span><span class="c0"
 					>&nbsp;confusing. I am not currently crystal clear on how this structure should be used.
 					The following are some questions which are currently unanswered:</span
 				>
