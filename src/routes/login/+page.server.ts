@@ -43,6 +43,6 @@ export const actions: Actions = {
 				}
 			});
 		}
-		throw redirect(303, '/home/tree');
+		throw redirect(303, '/home/docs');
 	}
 };
