@@ -68,32 +68,35 @@
 		</button>
 	</div>
 	<div class="h-full w-full overflow-y-auto flex flex-col items-center">
-		<div class="w-[80%] max-w-[770px] flex flex-col items-start mt-[80px] mb-[120px]">
-			<p><span class="c9 c18">Thank you for participating in this </span></p>
-			<p class="c1"><span class="c9 c4">feedback</span><span class="c9">&nbsp;session!</span></p>
-			<p class="c1 c2"><span class="c6"></span></p>
+		<div class="w-[80%] max-w-[713px] flex flex-col items-start mt-[80px] mb-[120px]">
+			<p class="c1"><span class="c16">Thank you for participating in this </span></p>
+			<p class="c1"><span class="c4 c17">feedback</span><span class="c17">&nbsp;session!</span></p>
+			<p class="c1 c3"><span class="c12"></span></p>
 			<p class="c1"><span class="c10">TO DO:</span></p>
-			<p class="c1 c2"><span class="c0"></span></p>
-			<ol class="c7 lst-kix_5n9jywy0rmvt-0 start" start="1">
-				<li class="c1 c3 li-bullet-0">
-					<span class="c0">Read: &ldquo;Problem Solving Ideology&rdquo;</span>
+			<p class="c1 c3"><span class="c0"></span></p>
+			<ol class="c9 lst-kix_5n9jywy0rmvt-0 start" start="1">
+				<li class="c1 c6 li-bullet-0">
+					<span>Read: &ldquo;Problem Solving Ideology&rdquo;, &ldquo;Ho</span><span
+						>w to Use&rdquo;, and &ldquo;Guidelines&rdquo;</span
+					>
 				</li>
-				<li class="c1 c3 li-bullet-0"><span class="c0">Read: &ldquo;How to Use&rdquo;</span></li>
-				<li class="c1 c3 li-bullet-0"><span class="c0">Play: in &ldquo;Tree&rdquo; page</span></li>
-				<li class="c1 c3 li-bullet-0">
-					<span>Give Feedback: </span><span class="c5"
+				<li class="c1 c6 li-bullet-0">
+					<span class="c0">Play around: &ldquo;Tree&rdquo; page</span>
+				</li>
+				<li class="c1 c6 li-bullet-0">
+					<span>Give feedback: </span><span class="c11"
 						><a
-							class="c17"
-							href="https://www.google.com/url?q=https://forms.gle/PPUF31AoGTTURx5D8&amp;sa=D&amp;source=editors&amp;ust=1714159150484265&amp;usg=AOvVaw2-9VsZqY576wnRVB9CKAGC"
+							class="c7"
+							href="https://www.google.com/url?q=https://forms.gle/PPUF31AoGTTURx5D8&amp;sa=D&amp;source=editors&amp;ust=1714229965133753&amp;usg=AOvVaw22_rQJUPhME3EQRPCjJUBx"
 							>https://forms.gle/PPUF31AoGTTURx5D8</a
 						></span
 					>
 				</li>
 			</ol>
-			<p class="c1 c2"><span class="c0"></span></p>
-			<p class="c1 c2"><span class="c0"></span></p>
+			<p class="c1 c3"><span class="c0"></span></p>
+			<p class="c1 c3"><span class="c0"></span></p>
 			<p class="c1"><span class="c10">Problem Solving Ideology:</span></p>
-			<p class="c1 c2"><span class="c0"></span></p>
+			<p class="c1 c3"><span class="c0"></span></p>
 			<p class="c1">
 				<span
 					>At AISS, we define problems as essentially goals in which collaborators strive to grasp
@@ -103,16 +106,16 @@
 					problem solved. Here is an example:</span
 				>
 			</p>
-			<p class="c1 c2"><span class="c0"></span></p>
-			<ul class="c7 lst-kix_xbgds6zcul8s-0 start">
-				<li class="c1 c3 li-bullet-0">
+			<p class="c1 c3"><span class="c0"></span></p>
+			<ul class="c9 lst-kix_xbgds6zcul8s-0 start">
+				<li class="c1 c6 li-bullet-0">
 					<span class="c0">Problem: I need milk but don&#39;t have it (Goal: acquire milk)</span>
 				</li>
-				<li class="c1 c3 li-bullet-0">
+				<li class="c1 c6 li-bullet-0">
 					<span class="c0">Proposed solution: Go to the grocery store and get milk</span>
 				</li>
 			</ul>
-			<p class="c1 c2"><span class="c0"></span></p>
+			<p class="c1 c3"><span class="c0"></span></p>
 			<p class="c1">
 				<span class="c0"
 					>Even though I haven&#39;t necessarily gone out to get milk, I consider this problem to be
@@ -120,32 +123,32 @@
 					have to act on my proposed solution.</span
 				>
 			</p>
-			<p class="c1 c2"><span class="c0"></span></p>
+			<p class="c1 c3"><span class="c0"></span></p>
 			<p class="c1">
 				<span>However, when </span><span>big</span><span class="c0"
-					>&nbsp;problems need solving, it might be easier to break it down into smaller, more
-					manageable subproblems. How one decides to break down a big problem and why, could be
+					>&nbsp;problems need solving, it might be easier to break a problem down into smaller,
+					more manageable subproblems. How one decides to break down a big problem and why, could be
 					encapsulated in a strategy (instead of a solution).</span
 				>
 			</p>
-			<p class="c1 c2"><span class="c0"></span></p>
+			<p class="c1 c3"><span class="c0"></span></p>
 			<div class="mx-auto">
-				<p class="c14">
+				<p class="c2">
 					<span
-						style="overflow: hidden; display: inline-block; margin: 0.00px 0.00px; border: 0.00px solid #ebebeb; transform: rotate(0.00rad) translateZ(0px); -webkit-transform: rotate(0.00rad) translateZ(0px); width: 566.70px; height: 460.28px;"
+						style="overflow: hidden; display: inline-block; margin: 0.00px 0.00px; border: 0.00px solid #000000; transform: rotate(0.00rad) translateZ(0px); -webkit-transform: rotate(0.00rad) translateZ(0px); width: 538.50px; height: 460.00px;"
 						><img
-							alt=""
+							alt="Problem broken down into subproblems through a tree"
 							src="/images/image1.png"
-							style="width: 566.70px; height: 460.28px; margin-left: 0.00px; margin-top: 0.00px; transform: rotate(0.00rad) translateZ(0px); -webkit-transform: rotate(0.00rad) translateZ(0px);"
+							style="width: 538.50px; height: 460.00px; margin-left: 0.00px; margin-top: 0.00px; transform: rotate(0.00rad) translateZ(0px); -webkit-transform: rotate(0.00rad) translateZ(0px);"
 							title=""
 						/></span
 					>
 				</p>
-				<p class="c14">
-					<span class="c8">Problem broken down into subproblems through a tree</span>
+				<p class="c2">
+					<span class="c20">Problem broken down into subproblems through a tree</span>
 				</p>
 			</div>
-			<p class="c1 c2"><span class="c0"></span></p>
+			<p class="c1 c3"><span class="c0"></span></p>
 			<p class="c1">
 				<span class="c0"
 					>A strategy breaks down a problem in a way where if all of its sub-problems are solved,
@@ -153,15 +156,15 @@
 					successful, it must:</span
 				>
 			</p>
-			<p class="c1 c2"><span class="c0"></span></p>
-			<ol class="c7 lst-kix_k39ns5nc81d5-0 start" start="1">
-				<li class="c1 c3 li-bullet-0">
+			<p class="c1 c3"><span class="c0"></span></p>
+			<ol class="c9 lst-kix_k39ns5nc81d5-0 start" start="1">
+				<li class="c1 c6 li-bullet-0">
 					<span class="c0"
 						>Break down the parent problem into a definitive set of subproblems, which if solved,
 						would in turn solve the parent problem. (As defined by some logic)</span
 					>
 				</li>
-				<li class="c1 c3 li-bullet-0">
+				<li class="c1 c6 li-bullet-0">
 					<span class="c0"
 						>Define subproblems which are all simpler or very likely easier to solve/think about
 						than the parent problem. They don&rsquo;t have to be collectively easier, just
@@ -169,16 +172,16 @@
 					>
 				</li>
 			</ol>
-			<p class="c1 c2"><span class="c0"></span></p>
+			<p class="c1 c3"><span class="c0"></span></p>
 			<p class="c1">
 				<span class="c0"
 					>You can imagine how, as the tree gets deeper, problems become easier and easier to solve.
 					Hopefully to a point where they don&rsquo;t need to be broken down further and can simply
-					be solved out right. If all of the problem leaves of a tree have been solved, then the big
-					problem gets solved.</span
+					be solved out right. If all of the problem leaves of a tree get solved, then the solving
+					of problems cascades up the tree solving the big problem.</span
 				>
 			</p>
-			<p class="c1 c2"><span class="c0"></span></p>
+			<p class="c1 c3"><span class="c0"></span></p>
 			<p class="c1">
 				<span class="c0"
 					>As this is a collaborative tool, people are likely to disagree on how a problem should be
@@ -191,29 +194,31 @@
 					the tree, if it fits within their strategy.</span
 				>
 			</p>
-			<p class="c1 c2"><span class="c0"></span></p>
+			<p class="c1 c3"><span class="c0"></span></p>
 			<p class="c1">
-				<span
-					>It is important to point out that this structure is not perfect, and can be
-				</span><span>semantically</span><span class="c0"
-					>&nbsp;confusing. I am not currently crystal clear on how this structure should be used.
-					The following are some questions which are currently unanswered:</span
+				<span class="c0"
+					>It is important to point out that this structure is not perfect, and can be semantically
+					confusing. I am not currently crystal clear on how this structure should be used. The
+					following are some questions which are currently unanswered:</span
 				>
 			</p>
-			<p class="c1 c2"><span class="c0"></span></p>
-			<ul class="c7 lst-kix_38zswjdicgwh-0 start">
-				<li class="c1 c3 li-bullet-0">
+			<p class="c1 c3"><span class="c0"></span></p>
+			<ul class="c9 lst-kix_38zswjdicgwh-0 start">
+				<li class="c1 c6 li-bullet-0">
 					<span class="c0">To what level should a given strategy break down a problem?</span>
 				</li>
-				<li class="c1 c3 li-bullet-0"><span class="c0">How detailed should each node be?</span></li>
-				<li class="c1 c3 li-bullet-0">
+				<li class="c1 c6 li-bullet-0"><span class="c0">How detailed should each node be?</span></li>
+				<li class="c1 c6 li-bullet-0">
 					<span class="c0"
-						>What happens when a problem is so broad or confusing that it is just not useful to
-						break it down into a definitive set of subproblems which solve the parent problem?</span
+						>How difficult is it to actually break down a problem into a definitive set of
+						subproblems which solve the problem? (ie. Is this system even practical?)</span
 					>
 				</li>
+				<li class="c1 c6 li-bullet-0">
+					<span class="c0">How should strategies be ranked? (up/down votes, moderators, etc.)</span>
+				</li>
 			</ul>
-			<p class="c1 c2"><span class="c0"></span></p>
+			<p class="c1 c3"><span class="c0"></span></p>
 			<p class="c1">
 				<span class="c0"
 					>I do hope that as more people use it, these questions (and many others) will become more
@@ -221,7 +226,7 @@
 					&ldquo;Ideas&rdquo; page is coming soon!)</span
 				>
 			</p>
-			<p class="c1 c2"><span class="c0"></span></p>
+			<p class="c1 c3"><span class="c0"></span></p>
 			<p class="c1">
 				<span class="c0"
 					>As stated earlier, problems are solved independent of completing the objective defined by
@@ -229,17 +234,17 @@
 					it helps people ideate strategies and frame their thinking.
 				</span>
 			</p>
-			<p class="c1 c2"><span class="c0"></span></p>
-			<p class="c1 c2"><span class="c0"></span></p>
+			<p class="c1 c3"><span class="c0"></span></p>
+			<p class="c1 c3"><span class="c0"></span></p>
 			<p class="c1"><span class="c10">Pages:</span></p>
-			<p class="c1 c2"><span class="c0"></span></p>
-			<ul class="c7 lst-kix_eymv275zzudt-0 start">
-				<li class="c1 c3 li-bullet-0">
+			<p class="c1 c3"><span class="c0"></span></p>
+			<ul class="c9 lst-kix_eymv275zzudt-0 start">
+				<li class="c1 c6 li-bullet-0">
 					<span class="c4">Tree</span><span class="c0"
 						>: See &ldquo;Problem Solving Ideology&rdquo;</span
 					>
 				</li>
-				<li class="c1 c3 li-bullet-0">
+				<li class="c1 c6 li-bullet-0">
 					<span class="c4">Plan</span><span class="c0"
 						>: Once a big problem has been solved, because achieving the goal of a problem is
 						independent of solving it, there exists an incomplete plan as defined by the strategies.
@@ -247,86 +252,110 @@
 						community would carry out.
 					</span>
 				</li>
-				<li class="c1 c3 li-bullet-0">
+				<li class="c1 c6 li-bullet-0">
 					<span class="c4">Team</span><span
 						>: This page links you to our discord which is where we currently communicate</span
 					>
 				</li>
-				<li class="c1 c3 li-bullet-0">
+				<li class="c1 c6 li-bullet-0">
 					<span class="c4">Ideas</span><span class="c0"
 						>: A place for people to post feature ideas, questions, thoughts, bugs, etc.</span
 					>
 				</li>
-				<li class="c1 c3 li-bullet-0">
+				<li class="c1 c6 li-bullet-0">
 					<span class="c4">Learn</span><span class="c0"
 						>: List of helpful resources to get you familiar with AI Safety</span
 					>
 				</li>
 			</ul>
-			<p class="c1 c2"><span class="c0"></span></p>
-			<p class="c1 c2"><span class="c0"></span></p>
+			<p class="c1 c3"><span class="c0"></span></p>
+			<p class="c1 c3"><span class="c0"></span></p>
 			<p class="c1"><span class="c10">How to Use:</span></p>
-			<p class="c1 c2"><span class="c0"></span></p>
-			<ul class="c7 lst-kix_4mdn3jwye9e0-0 start">
-				<li class="c1 c3 li-bullet-0">
+			<p class="c1 c3"><span class="c0"></span></p>
+			<ul class="c9 lst-kix_4mdn3jwye9e0-0 start">
+				<li class="c1 c6 li-bullet-0">
 					<span class="c0">To read a node click the book button at the top right of the node</span>
 				</li>
-				<li class="c1 c3 li-bullet-0">
+				<li class="c1 c6 li-bullet-0">
 					<span class="c0">Click the edit button in the same place to begin editing</span>
 				</li>
-				<li class="c1 c3 li-bullet-0">
+				<li class="c1 c6 li-bullet-0">
 					<span class="c0"
 						>Only one person can edit a node at a time (so the edit button might be grayed out)</span
 					>
 				</li>
-				<li class="c1 c3 li-bullet-0">
-					<span class="c0">If don&#39;t own a node, you are put in suggesting mode</span>
+				<li class="c1 c6 li-bullet-0">
+					<span class="c0">If don&rsquo;t own a node, you are put in suggesting mode</span>
 				</li>
-				<li class="c1 c3 li-bullet-0">
+				<li class="c1 c6 li-bullet-0">
 					<span class="c0">Navigate between nodes with the arrow keys</span>
 				</li>
-				<li class="c1 c3 li-bullet-0"><span class="c0">Shortcuts</span></li>
+				<li class="c1 c6 li-bullet-0"><span class="c0">Shortcuts</span></li>
 			</ul>
-			<ul class="c7 lst-kix_4mdn3jwye9e0-1 start">
-				<li class="c1 c16 li-bullet-0">
+			<ul class="c9 lst-kix_4mdn3jwye9e0-1 start">
+				<li class="c1 c5 li-bullet-0">
 					<span class="c4">IMPORTANT</span><span>:</span><span class="c0"
 						>&nbsp;Leave/Escape node: esc</span
 					>
 				</li>
-				<li class="c1 c16 li-bullet-0"><span class="c0">Set home position: ctrl/cmd h</span></li>
-				<li class="c1 c16 li-bullet-0"><span class="c0">Go to home position: h</span></li>
-				<li class="c1 c16 li-bullet-0"><span class="c0">Full view: f</span></li>
+				<li class="c1 c5 li-bullet-0"><span class="c0">Set home position: ctrl/cmd h</span></li>
+				<li class="c1 c5 li-bullet-0"><span class="c0">Go to home position: h</span></li>
+				<li class="c1 c5 li-bullet-0"><span class="c0">Full view: f</span></li>
 			</ul>
-			<ul class="c7 lst-kix_4mdn3jwye9e0-0">
-				<li class="c1 c3 li-bullet-0">
+			<ul class="c9 lst-kix_4mdn3jwye9e0-0">
+				<li class="c1 c6 li-bullet-0">
 					<span class="c0">Double click title/subsections to edit</span>
 				</li>
-				<li class="c1 c3 li-bullet-0">
-					<span class="c0">Right click subsections to delete</span>
-				</li>
-				<li class="c1 c3 li-bullet-0">
+				<li class="c1 c6 li-bullet-0"><span class="c0">Right click subsections to delete</span></li>
+				<li class="c1 c6 li-bullet-0">
 					<span class="c0">Use the three dots in navbar to add a section</span>
 				</li>
 			</ul>
-			<p class="c1 c2"><span class="c0"></span></p>
-			<p class="c1 c2"><span class="c0"></span></p>
+			<p class="c1 c3"><span class="c0"></span></p>
+			<p class="c1 c3"><span class="c0"></span></p>
 			<p class="c1"><span class="c10">Guidelines:</span></p>
-			<p class="c1 c2"><span class="c0"></span></p>
-			<ul class="c7 lst-kix_nznj7f2h3dvk-0 start">
-				<li class="c1 c3 li-bullet-0">
-					<span class="c0"
-						>It is generally recommended to try and edit existing strategies rather than create a
-						new one. If you have an idea for a direction or strategy, FIRST propose it to the
-						existing owner. If they aren&rsquo;t receptive then create your own.
-					</span>
-				</li>
-			</ul>
-			<p class="c1 c2"><span class="c0"></span></p>
-			<p class="c1 c2"><span class="c0"></span></p>
+			<p class="c1 c3"><span class="c0"></span></p>
+			<p class="c1">
+				<span class="c0"
+					>I recently did some very crude user testing where I gave people a piece of paper and
+					asked them to solve a problem using this idea. I found it very common for people to not
+					only use the system to solve the problem, but also to figure out how to solve the problem
+					in a way which violated the constraints of the system. For example, when given a problem
+					like &quot;building a house&quot;, people might write a strategy which includes the
+					problem, &quot;talk to a house expert&quot;, and then they might have another problem
+					which depends on that problem, say &quot;write a plan based on what the expert said&quot;.
+					This kind of dependency is problematic because it breaks the first rule for strategies. If
+					the logic is not yet defined for how the solving of all of the subproblems will result in
+					the solving of the parent problem, then the cascading effect is broken. Using this
+					example, it would have been better if the user first talked to the expert, and then wrote
+					their sub-problems depending on what the expert said. This is not to be confused with the
+					fact that subproblems can intertwine with each other, as long as that logic is defined
+					within the strategy. How defined the logic for a strategy should be and how that is even
+					measured are still open questions. I also noticed people using strategies to critique the
+					problem they were supposed to be solving. Don&#39;t do this.
+				</span>
+			</p>
+			<p class="c1 c3"><span class="c0"></span></p>
+			<p class="c1">
+				<span
+					>It is generally recommended to try and edit existing strategies rather than create a new
+					one. If you have an idea for a direction or strategy, FIRST propose it to the existing
+					owner. If they aren&rsquo;t receptive, then create your own.</span
+				>
+			</p>
+			<p class="c1 c3"><span class="c0"></span></p>
 			<p class="c1"><span class="c10">FAQs:</span></p>
-			<p class="c1 c2"><span class="c0"></span></p>
-			<ul class="c7 lst-kix_kpbry39snu81-0 start">
-				<li class="c1 c3 c2 li-bullet-0"><span class="c0"></span></li>
+			<p class="c1 c3"><span class="c0"></span></p>
+			<p class="c15"><span class="c4 c8">How can I help?</span></p>
+			<ul class="c9 lst-kix_s8ga7gzevg2y-0 start">
+				<li class="c6 c15 li-bullet-0">
+					<span
+						>Testing out the site is a big help, so thank you! If you are interested to help out
+						further. Feel free to email me at
+					</span><span class="c11"
+						><a class="c7" href="mailto:aisafetysphere@gmail.com">aisafetysphere@gmail.com</a></span
+					><span>. I am in need of people to help further develop the site. </span>
+				</li>
 			</ul>
 			<a
 				class="hover:underline text-[#1155cc] text-[13px] mt-[40px] ml-auto"
@@ -359,6 +388,9 @@
 	ul.lst-kix_38zswjdicgwh-4 {
 		list-style-type: none;
 	}
+	.lst-kix_s8ga7gzevg2y-0 > li:before {
+		content: '-  ';
+	}
 	ul.lst-kix_38zswjdicgwh-5 {
 		list-style-type: none;
 	}
@@ -383,20 +415,38 @@
 	.lst-kix_38zswjdicgwh-4 > li:before {
 		content: '\0025cb   ';
 	}
+	.lst-kix_s8ga7gzevg2y-1 > li:before {
+		content: '-  ';
+	}
 	.lst-kix_38zswjdicgwh-3 > li:before {
 		content: '\0025cf   ';
+	}
+	.lst-kix_s8ga7gzevg2y-4 > li:before {
+		content: '-  ';
 	}
 	.lst-kix_38zswjdicgwh-1 > li:before {
 		content: '\0025cb   ';
 	}
+	.lst-kix_s8ga7gzevg2y-2 > li:before {
+		content: '-  ';
+	}
 	.lst-kix_38zswjdicgwh-2 > li:before {
 		content: '\0025a0   ';
+	}
+	.lst-kix_s8ga7gzevg2y-3 > li:before {
+		content: '-  ';
 	}
 	ol.lst-kix_9e4jxz58ijhi-7.start {
 		counter-reset: lst-ctn-kix_9e4jxz58ijhi-7 0;
 	}
+	.lst-kix_s8ga7gzevg2y-8 > li:before {
+		content: '-  ';
+	}
 	.lst-kix_38zswjdicgwh-0 > li:before {
 		content: '\0025cf   ';
+	}
+	.lst-kix_s8ga7gzevg2y-5 > li:before {
+		content: '-  ';
 	}
 	ol.lst-kix_k39ns5nc81d5-6.start {
 		counter-reset: lst-ctn-kix_k39ns5nc81d5-6 0;
@@ -407,11 +457,17 @@
 	ul.lst-kix_38zswjdicgwh-8 {
 		list-style-type: none;
 	}
+	.lst-kix_s8ga7gzevg2y-6 > li:before {
+		content: '-  ';
+	}
 	.lst-kix_l4163ogvpnex-7 > li {
 		counter-increment: lst-ctn-kix_l4163ogvpnex-7;
 	}
 	ul.lst-kix_38zswjdicgwh-6 {
 		list-style-type: none;
+	}
+	.lst-kix_s8ga7gzevg2y-7 > li:before {
+		content: '-  ';
 	}
 	ul.lst-kix_38zswjdicgwh-7 {
 		list-style-type: none;
@@ -1043,11 +1099,38 @@
 	ol.lst-kix_5n9jywy0rmvt-7 {
 		list-style-type: none;
 	}
+	ul.lst-kix_s8ga7gzevg2y-0 {
+		list-style-type: none;
+	}
 	.lst-kix_5n9jywy0rmvt-4 > li {
 		counter-increment: lst-ctn-kix_5n9jywy0rmvt-4;
 	}
+	ul.lst-kix_s8ga7gzevg2y-2 {
+		list-style-type: none;
+	}
+	ul.lst-kix_s8ga7gzevg2y-1 {
+		list-style-type: none;
+	}
+	ul.lst-kix_s8ga7gzevg2y-4 {
+		list-style-type: none;
+	}
+	ul.lst-kix_s8ga7gzevg2y-3 {
+		list-style-type: none;
+	}
 	ol.lst-kix_5n9jywy0rmvt-2.start {
 		counter-reset: lst-ctn-kix_5n9jywy0rmvt-2 0;
+	}
+	ul.lst-kix_s8ga7gzevg2y-6 {
+		list-style-type: none;
+	}
+	ul.lst-kix_s8ga7gzevg2y-5 {
+		list-style-type: none;
+	}
+	ul.lst-kix_s8ga7gzevg2y-8 {
+		list-style-type: none;
+	}
+	ul.lst-kix_s8ga7gzevg2y-7 {
+		list-style-type: none;
 	}
 	ol.lst-kix_l4163ogvpnex-3.start {
 		counter-reset: lst-ctn-kix_l4163ogvpnex-3 0;
@@ -1270,7 +1353,7 @@
 	table th {
 		padding: 0;
 	}
-	.c15 {
+	.c18 {
 		-webkit-text-decoration-skip: none;
 		color: #ebebeb;
 		font-weight: 400;
@@ -1281,30 +1364,12 @@
 		font-family: 'Arial';
 		font-style: italic;
 	}
-	.c13 {
+	.c16 {
 		color: #ebebeb;
 		font-weight: 400;
 		text-decoration: none;
 		vertical-align: baseline;
-		font-size: 10pt;
-		font-family: 'Arial';
-		font-style: normal;
-	}
-	.c8 {
-		color: #666666;
-		font-weight: 400;
-		text-decoration: none;
-		vertical-align: baseline;
-		font-size: 9pt;
-		font-family: 'Arial';
-		font-style: italic;
-	}
-	.c11 {
-		color: #666666;
-		font-weight: 400;
-		text-decoration: none;
-		vertical-align: baseline;
-		font-size: 10pt;
+		font-size: 22pt;
 		font-family: 'Arial';
 		font-style: normal;
 	}
@@ -1317,6 +1382,33 @@
 		font-family: 'Arial';
 		font-style: normal;
 	}
+	.c20 {
+		color: #666666;
+		font-weight: 400;
+		text-decoration: none;
+		vertical-align: baseline;
+		font-size: 9pt;
+		font-family: 'Arial';
+		font-style: italic;
+	}
+	.c13 {
+		color: #ebebeb;
+		font-weight: 400;
+		text-decoration: none;
+		vertical-align: baseline;
+		font-size: 10pt;
+		font-family: 'Arial';
+		font-style: normal;
+	}
+	.c12 {
+		color: #ebebeb;
+		font-weight: 400;
+		text-decoration: none;
+		vertical-align: baseline;
+		font-size: 20pt;
+		font-family: 'Arial';
+		font-style: normal;
+	}
 	.c10 {
 		color: #ebebeb;
 		font-weight: 400;
@@ -1326,22 +1418,38 @@
 		font-family: 'Arial';
 		font-style: normal;
 	}
-	.c6 {
-		color: #ebebeb;
+	.c14 {
+		color: #666666;
 		font-weight: 400;
 		text-decoration: none;
 		vertical-align: baseline;
-		font-size: 20pt;
+		font-size: 10pt;
 		font-family: 'Arial';
 		font-style: normal;
 	}
-	.c14 {
+	.c2 {
 		padding-top: 0pt;
 		padding-bottom: 0pt;
 		line-height: 1.15;
 		orphans: 2;
 		widows: 2;
 		text-align: center;
+	}
+	.c15 {
+		padding-top: 0pt;
+		padding-bottom: 10pt;
+		line-height: 1.15;
+		orphans: 2;
+		widows: 2;
+		text-align: left;
+	}
+	.c8 {
+		color: #ebebeb;
+		text-decoration: none;
+		vertical-align: baseline;
+		font-size: 11pt;
+		font-family: 'Arial';
+		font-style: normal;
 	}
 	.c1 {
 		padding-top: 0pt;
@@ -1351,48 +1459,40 @@
 		widows: 2;
 		text-align: left;
 	}
-	.c18 {
-		color: #ebebeb;
-		font-weight: 400;
-		text-decoration: none;
-		vertical-align: baseline;
-		font-family: 'Arial';
-		font-style: normal;
-	}
-	.c5 {
+	.c11 {
 		text-decoration-skip-ink: none;
 		-webkit-text-decoration-skip: none;
 		color: #1155cc;
 		text-decoration: underline;
 	}
-	.c12 {
+	.c19 {
 		background-color: #ffffff;
 		max-width: 468pt;
 		padding: 72pt 72pt 72pt 72pt;
 	}
-	.c3 {
+	.c6 {
 		margin-left: 36pt;
 		padding-left: 0pt;
 	}
-	.c17 {
+	.c7 {
 		color: inherit;
 		text-decoration: inherit;
 	}
-	.c7 {
+	.c9 {
 		padding: 0;
 		margin: 0;
 	}
-	.c16 {
+	.c5 {
 		margin-left: 72pt;
 		padding-left: 0pt;
-	}
-	.c9 {
-		font-size: 22pt;
 	}
 	.c4 {
 		font-weight: 700;
 	}
-	.c2 {
+	.c17 {
+		font-size: 22pt;
+	}
+	.c3 {
 		height: 11pt;
 	}
 	.title {
