@@ -156,6 +156,7 @@
 				>
 			</p>
 			<p class="c2 c3"><span class="c0"></span></p>
+			<p class="c2 c3"><span class="c0"></span></p>
 			<p class="c2"><span class="c10 c14">Problem Solving Ideology:</span></p>
 			<p class="c2 c3"><span class="c0"></span></p>
 			<p class="c2">
@@ -304,6 +305,7 @@
 				>
 			</p>
 			<p class="c2 c3"><span class="c0"></span></p>
+			<p class="c2 c3"><span class="c0"></span></p>
 			<p class="c2"><span class="c10 c14">Pages:</span></p>
 			<p class="c2 c3"><span class="c0"></span></p>
 			<ul class="c8 lst-kix_eymv275zzudt-0 start">
@@ -412,6 +414,7 @@
 					owner. If they aren&rsquo;t receptive, then create your own.</span
 				>
 			</p>
+			<p class="c2 c3"><span class="c0"></span></p>
 			<p class="c2 c3"><span class="c0"></span></p>
 			<p class="c2"><span class="c10 c14">FAQs:</span></p>
 			<p class="c2 c3"><span class="c0"></span></p>
