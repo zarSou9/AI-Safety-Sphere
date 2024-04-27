@@ -69,102 +69,162 @@
 	</div>
 	<div class="h-full w-full overflow-y-auto flex flex-col items-center">
 		<div class="w-[80%] max-w-[713px] flex flex-col items-start mt-[80px] mb-[120px]">
-			<p class="c1"><span class="c16">Thank you for participating in this </span></p>
-			<p class="c1"><span class="c4 c17">feedback</span><span class="c17">&nbsp;session!</span></p>
-			<p class="c1 c3"><span class="c12"></span></p>
-			<p class="c1"><span class="c10">TO DO:</span></p>
-			<p class="c1 c3"><span class="c0"></span></p>
-			<ol class="c9 lst-kix_5n9jywy0rmvt-0 start" start="1">
-				<li class="c1 c6 li-bullet-0">
+			<p class="c2"><span class="c1 c10">Thank you for participating in this </span></p>
+			<p class="c2"><span class="c1 c11">feedback</span><span class="c1">&nbsp;session!</span></p>
+			<p class="c2 c3"><span class="c10 c18"></span></p>
+			<p class="c2"><span class="c10 c14">TO DO:</span></p>
+			<p class="c2 c3"><span class="c0"></span></p>
+			<ol class="c8 lst-kix_5n9jywy0rmvt-0 start" start="1">
+				<li class="c2 c6 li-bullet-0">
 					<span>Read: &ldquo;Problem Solving Ideology&rdquo;, &ldquo;Ho</span><span
 						>w to Use&rdquo;, and &ldquo;Guidelines&rdquo;</span
 					>
 				</li>
-				<li class="c1 c6 li-bullet-0">
+				<li class="c2 c6 li-bullet-0">
 					<span class="c0">Play around: &ldquo;Tree&rdquo; page</span>
 				</li>
-				<li class="c1 c6 li-bullet-0">
-					<span>Give feedback: </span><span class="c11"
+				<li class="c2 c6 li-bullet-0">
+					<span>Give feedback: </span><span class="c17"
 						><a
-							class="c7"
-							href="https://www.google.com/url?q=https://forms.gle/PPUF31AoGTTURx5D8&amp;sa=D&amp;source=editors&amp;ust=1714229965133753&amp;usg=AOvVaw22_rQJUPhME3EQRPCjJUBx"
+							class="c15"
+							href="https://www.google.com/url?q=https://forms.gle/PPUF31AoGTTURx5D8&amp;sa=D&amp;source=editors&amp;ust=1714239976601737&amp;usg=AOvVaw2ZC6l1YMNY8XoHv5oVu0cx"
 							>https://forms.gle/PPUF31AoGTTURx5D8</a
 						></span
 					>
 				</li>
 			</ol>
-			<p class="c1 c3"><span class="c0"></span></p>
-			<p class="c1 c3"><span class="c0"></span></p>
-			<p class="c1"><span class="c10">Problem Solving Ideology:</span></p>
-			<p class="c1 c3"><span class="c0"></span></p>
-			<p class="c1">
-				<span
-					>At AISS, we define problems as essentially goals in which collaborators strive to grasp
-					how to complete.</span
-				><span>&nbsp;</span><span class="c0"
-					>Once we have gained a solid understanding of how to complete said goal, we consider the
-					problem solved. Here is an example:</span
+			<p class="c2 c3"><span class="c0"></span></p>
+			<p class="c2 c3"><span class="c0"></span></p>
+			<p class="c2"><span class="c10 c14">Background:</span></p>
+			<p class="c2 c3"><span class="c0"></span></p>
+			<p class="c2">
+				<span class="c0"
+					>My name is Myles, and a few months back, I found myself deeply concerned with the
+					world&#39;s lack of focus on mitigating AI existential risks. With a drive to help out, I
+					decided to learn more about the state of the problem and how I might be able to advance
+					research. I quickly realized that I lacked the experience and technical knowledge required
+					for me to make any significant impact through advancing research within a reasonable time
+					frame. Instead I decided to focus my efforts on observing how people were currently
+					tackling this issue to see if I could find areas for improvement and maybe make some tool
+					to help the actual smart people out. These were my most notable findings:</span
 				>
 			</p>
-			<p class="c1 c3"><span class="c0"></span></p>
-			<ul class="c9 lst-kix_xbgds6zcul8s-0 start">
-				<li class="c1 c6 li-bullet-0">
+			<p class="c2 c3"><span class="c0"></span></p>
+			<ol class="c8 lst-kix_5a9hdng83p25-0 start" start="1">
+				<li class="c2 c6 li-bullet-0">
+					<span class="c0">The AI Safety community lacks consensus on almost everything</span>
+				</li>
+				<li class="c2 c6 li-bullet-0">
+					<span class="c0"
+						>Most alignment work is done behind closed doors in research institutes, universities,
+						and worst of all, the private companies advancing the technology.</span
+					>
+				</li>
+			</ol>
+			<p class="c2 c3"><span class="c0"></span></p>
+			<p class="c2">
+				<span class="c0"
+					>Both of these findings actually make a lot of sense. The field of AI Safety has grown
+					extremely quickly, so it would be unreasonable to expect for it to have developed a very
+					organized structure. Secondly, given the upsurge of interest, and the limited number of
+					people with proper expertise, it wouldn&#39;t have been efficient or smart to have a more
+					open research model. Not to mention, an open research model is not exactly at the front of
+					companies&#39; minds. I&#39;m looking at you Sam.
+				</span>
+			</p>
+			<p class="c2 c3"><span class="c0"></span></p>
+			<p class="c2">
+				<span class="c0"
+					>This leaves discussion threads and blog posts as the main tool for people to contribute
+					their ideas and research. These tools are very helpful for getting initial ideas out and
+					thinking through possibilities (ie. brainstorming), but they are not the most helpful when
+					it comes to continued and concrete research. Blog posts and discussion threads inevitably
+					get overloaded with filler and redundancy. There isn&#39;t a notion of picking up where
+					you last left off, because there is no collective understanding of a plan. In a university
+					group however, people can coordinate, plan, and keep each other accountable.</span
+				>
+			</p>
+			<p class="c2 c3"><span class="c0"></span></p>
+			<p class="c2">
+				<span
+					>What if there was some way to keep track of all of the problems being worked on in AI
+					safety, and be able to intuitively see how they fit together? What if people had a
+					dedicated place to propose solutions to those problems, without their work being lost to a
+					continued feed of a blog site? Well boy do I have the solution for you. I&#39;m kidding,
+					but yes, I did come up with a problem solving structure for tackling big problems, and
+					made a collaborative website based around it.</span
+				>
+			</p>
+			<p class="c2 c3"><span class="c0"></span></p>
+			<p class="c2"><span class="c10 c14">Problem Solving Ideology:</span></p>
+			<p class="c2 c3"><span class="c0"></span></p>
+			<p class="c2">
+				<span
+					>To start from a first principles perspective, we can view problems as essentially goals
+					in which we agents strive to grasp how to complete. Once we have gained a solid
+					understanding of how to complete said goal, we consider the problem solved. Here is an
+					example:</span
+				>
+			</p>
+			<p class="c2 c3"><span class="c0"></span></p>
+			<ul class="c8 lst-kix_xbgds6zcul8s-0 start">
+				<li class="c2 c6 li-bullet-0">
 					<span class="c0">Problem: I need milk but don&#39;t have it (Goal: acquire milk)</span>
 				</li>
-				<li class="c1 c6 li-bullet-0">
+				<li class="c2 c6 li-bullet-0">
 					<span class="c0">Proposed solution: Go to the grocery store and get milk</span>
 				</li>
 			</ul>
-			<p class="c1 c3"><span class="c0"></span></p>
-			<p class="c1">
+			<p class="c2 c3"><span class="c0"></span></p>
+			<p class="c2">
 				<span class="c0"
 					>Even though I haven&#39;t necessarily gone out to get milk, I consider this problem to be
-					solved. As in, I don&#39;t need to think too much more about achieving my goal, I just
-					have to act on my proposed solution.</span
+					solved. As in, I don&#39;t need to think too much more about how to achieve my goal, I
+					just have to act on my proposed solution.</span
 				>
 			</p>
-			<p class="c1 c3"><span class="c0"></span></p>
-			<p class="c1">
+			<p class="c2 c3"><span class="c0"></span></p>
+			<p class="c2">
 				<span>However, when </span><span>big</span><span class="c0"
 					>&nbsp;problems need solving, it might be easier to break a problem down into smaller,
 					more manageable subproblems. How one decides to break down a big problem and why, could be
 					encapsulated in a strategy (instead of a solution).</span
 				>
 			</p>
-			<p class="c1 c3"><span class="c0"></span></p>
+			<p class="c2 c3"><span class="c0"></span></p>
 			<div class="mx-auto">
-				<p class="c2">
+				<p class="c12">
 					<span
 						style="overflow: hidden; display: inline-block; margin: 0.00px 0.00px; border: 0.00px solid #000000; transform: rotate(0.00rad) translateZ(0px); -webkit-transform: rotate(0.00rad) translateZ(0px); width: 538.50px; height: 460.00px;"
 						><img
-							alt="Problem broken down into subproblems through a tree"
+							alt=""
 							src="/images/image1.png"
 							style="width: 538.50px; height: 460.00px; margin-left: 0.00px; margin-top: 0.00px; transform: rotate(0.00rad) translateZ(0px); -webkit-transform: rotate(0.00rad) translateZ(0px);"
 							title=""
 						/></span
 					>
 				</p>
-				<p class="c2">
-					<span class="c20">Problem broken down into subproblems through a tree</span>
+				<p class="c12">
+					<span class="c16">Problem broken down into subproblems through a tree</span>
 				</p>
 			</div>
-			<p class="c1 c3"><span class="c0"></span></p>
-			<p class="c1">
+			<p class="c2 c3"><span class="c0"></span></p>
+			<p class="c2">
 				<span class="c0"
 					>A strategy breaks down a problem in a way where if all of its sub-problems are solved,
 					then the parent problem gets solved. For a developed strategy to have been considered
 					successful, it must:</span
 				>
 			</p>
-			<p class="c1 c3"><span class="c0"></span></p>
-			<ol class="c9 lst-kix_k39ns5nc81d5-0 start" start="1">
-				<li class="c1 c6 li-bullet-0">
+			<p class="c2 c3"><span class="c0"></span></p>
+			<ol class="c8 lst-kix_k39ns5nc81d5-0 start" start="1">
+				<li class="c2 c6 li-bullet-0">
 					<span class="c0"
 						>Break down the parent problem into a definitive set of subproblems, which if solved,
 						would in turn solve the parent problem. (As defined by some logic)</span
 					>
 				</li>
-				<li class="c1 c6 li-bullet-0">
+				<li class="c2 c6 li-bullet-0">
 					<span class="c0"
 						>Define subproblems which are all simpler or very likely easier to solve/think about
 						than the parent problem. They don&rsquo;t have to be collectively easier, just
@@ -172,8 +232,8 @@
 					>
 				</li>
 			</ol>
-			<p class="c1 c3"><span class="c0"></span></p>
-			<p class="c1">
+			<p class="c2 c3"><span class="c0"></span></p>
+			<p class="c2">
 				<span class="c0"
 					>You can imagine how, as the tree gets deeper, problems become easier and easier to solve.
 					Hopefully to a point where they don&rsquo;t need to be broken down further and can simply
@@ -181,8 +241,8 @@
 					of problems cascades up the tree solving the big problem.</span
 				>
 			</p>
-			<p class="c1 c3"><span class="c0"></span></p>
-			<p class="c1">
+			<p class="c2 c3"><span class="c0"></span></p>
+			<p class="c2">
 				<span class="c0"
 					>As this is a collaborative tool, people are likely to disagree on how a problem should be
 					broken down. After all, a problem can be broken down in any number of ways. The solution
@@ -194,128 +254,129 @@
 					the tree, if it fits within their strategy.</span
 				>
 			</p>
-			<p class="c1 c3"><span class="c0"></span></p>
-			<p class="c1">
+			<p class="c2 c3"><span class="c0"></span></p>
+			<p class="c2">
 				<span class="c0"
-					>It is important to point out that this structure is not perfect, and can be semantically
-					confusing. I am not currently crystal clear on how this structure should be used. The
-					following are some questions which are currently unanswered:</span
+					>It is important to point out that this structure is not perfect, and can be confusing. I
+					am not currently crystal clear on how this structure should be used. The following are
+					some questions which are currently unanswered:</span
 				>
 			</p>
-			<p class="c1 c3"><span class="c0"></span></p>
-			<ul class="c9 lst-kix_38zswjdicgwh-0 start">
-				<li class="c1 c6 li-bullet-0">
+			<p class="c2 c3"><span class="c0"></span></p>
+			<ul class="c8 lst-kix_38zswjdicgwh-0 start">
+				<li class="c2 c6 li-bullet-0">
 					<span class="c0">To what level should a given strategy break down a problem?</span>
 				</li>
-				<li class="c1 c6 li-bullet-0"><span class="c0">How detailed should each node be?</span></li>
-				<li class="c1 c6 li-bullet-0">
+				<li class="c2 c6 li-bullet-0"><span class="c0">How detailed should each node be?</span></li>
+				<li class="c2 c6 li-bullet-0">
 					<span class="c0"
 						>How difficult is it to actually break down a problem into a definitive set of
 						subproblems which solve the problem? (ie. Is this system even practical?)</span
 					>
 				</li>
-				<li class="c1 c6 li-bullet-0">
+				<li class="c2 c6 li-bullet-0">
 					<span class="c0">How should strategies be ranked? (up/down votes, moderators, etc.)</span>
 				</li>
 			</ul>
-			<p class="c1 c3"><span class="c0"></span></p>
-			<p class="c1">
+			<p class="c2 c3"><span class="c0"></span></p>
+			<p class="c2">
 				<span class="c0"
 					>I do hope that as more people use it, these questions (and many others) will become more
 					clear, but in the meantime, feel free to ponder these, and let us know your thoughts. (The
 					&ldquo;Ideas&rdquo; page is coming soon!)</span
 				>
 			</p>
-			<p class="c1 c3"><span class="c0"></span></p>
-			<p class="c1">
+			<p class="c2 c3"><span class="c0"></span></p>
+			<p class="c2">
 				<span class="c0"
 					>As stated earlier, problems are solved independent of completing the objective defined by
 					the problem. By framing problems in terms of an objective, which is preferably measurable,
 					it helps people ideate strategies and frame their thinking.
 				</span>
 			</p>
-			<p class="c1 c3"><span class="c0"></span></p>
-			<p class="c1 c3"><span class="c0"></span></p>
-			<p class="c1"><span class="c10">Pages:</span></p>
-			<p class="c1 c3"><span class="c0"></span></p>
-			<ul class="c9 lst-kix_eymv275zzudt-0 start">
-				<li class="c1 c6 li-bullet-0">
-					<span class="c4">Tree</span><span class="c0"
+			<p class="c2 c3"><span class="c0"></span></p>
+			<p class="c2">
+				<span class="c0"
+					>Currently the big problem this website is trying to solve is intent alignment, but there
+					is nothing stopping us from adding more big problems associated with AI Safety. Notably,
+					AI governance, how exactly do we make sure that people are not going to use dangerous AI
+					or use it for bad.</span
+				>
+			</p>
+			<p class="c2 c3"><span class="c0"></span></p>
+			<p class="c2"><span class="c10 c14">Pages:</span></p>
+			<p class="c2 c3"><span class="c0"></span></p>
+			<ul class="c8 lst-kix_eymv275zzudt-0 start">
+				<li class="c2 c6 li-bullet-0">
+					<span class="c11">Tree</span><span class="c0"
 						>: See &ldquo;Problem Solving Ideology&rdquo;</span
 					>
 				</li>
-				<li class="c1 c6 li-bullet-0">
-					<span class="c4">Plan</span><span class="c0"
-						>: Once a big problem has been solved, because achieving the goal of a problem is
-						independent of solving it, there exists an incomplete plan as defined by the strategies.
-						This page would be for distilling that plan into a list of actionable items which our
-						community would carry out.
-					</span>
-				</li>
-				<li class="c1 c6 li-bullet-0">
-					<span class="c4">Team</span><span
+				<li class="c2 c6 li-bullet-0">
+					<span class="c11">Team</span><span
 						>: This page links you to our discord which is where we currently communicate</span
 					>
 				</li>
-				<li class="c1 c6 li-bullet-0">
-					<span class="c4">Ideas</span><span class="c0"
-						>: A place for people to post feature ideas, questions, thoughts, bugs, etc.</span
-					>
-				</li>
-				<li class="c1 c6 li-bullet-0">
-					<span class="c4">Learn</span><span class="c0"
+				<li class="c2 c6 li-bullet-0">
+					<span class="c11">Learn</span><span class="c0"
 						>: List of helpful resources to get you familiar with AI Safety</span
 					>
 				</li>
 			</ul>
-			<p class="c1 c3"><span class="c0"></span></p>
-			<p class="c1 c3"><span class="c0"></span></p>
-			<p class="c1"><span class="c10">How to Use:</span></p>
-			<p class="c1 c3"><span class="c0"></span></p>
-			<ul class="c9 lst-kix_4mdn3jwye9e0-0 start">
-				<li class="c1 c6 li-bullet-0">
-					<span class="c0">To read a node click the book button at the top right of the node</span>
+			<p class="c2 c3"><span class="c0"></span></p>
+			<p class="c2 c3"><span class="c0"></span></p>
+			<p class="c2"><span class="c10 c14">How to Use:</span></p>
+			<p class="c2 c3"><span class="c0"></span></p>
+			<ul class="c8 lst-kix_4mdn3jwye9e0-0 start">
+				<li class="c2 c6 li-bullet-0">
+					<span class="c0"
+						>To pan and zoom in the tree, use two fingers and a trackpad (If you don&rsquo;t see
+						anything initially, you might be zoomed in. Type &lsquo;f&rsquo; to go to full view)</span
+					>
 				</li>
-				<li class="c1 c6 li-bullet-0">
+				<li class="c2 c6 li-bullet-0">
+					<span class="c0">To read a node, click the book button at the top right of the node</span>
+				</li>
+				<li class="c2 c6 li-bullet-0">
 					<span class="c0">Click the edit button in the same place to begin editing</span>
 				</li>
-				<li class="c1 c6 li-bullet-0">
+				<li class="c2 c6 li-bullet-0">
 					<span class="c0"
 						>Only one person can edit a node at a time (so the edit button might be grayed out)</span
 					>
 				</li>
-				<li class="c1 c6 li-bullet-0">
+				<li class="c2 c6 li-bullet-0">
 					<span class="c0">If don&rsquo;t own a node, you are put in suggesting mode</span>
 				</li>
-				<li class="c1 c6 li-bullet-0">
+				<li class="c2 c6 li-bullet-0">
 					<span class="c0">Navigate between nodes with the arrow keys</span>
 				</li>
-				<li class="c1 c6 li-bullet-0"><span class="c0">Shortcuts</span></li>
+				<li class="c2 c6 li-bullet-0"><span class="c0">Shortcuts</span></li>
 			</ul>
-			<ul class="c9 lst-kix_4mdn3jwye9e0-1 start">
-				<li class="c1 c5 li-bullet-0">
-					<span class="c4">IMPORTANT</span><span>:</span><span class="c0"
+			<ul class="c8 lst-kix_4mdn3jwye9e0-1 start">
+				<li class="c2 c5 li-bullet-0">
+					<span class="c11">IMPORTANT</span><span>:</span><span class="c0"
 						>&nbsp;Leave/Escape node: esc</span
 					>
 				</li>
-				<li class="c1 c5 li-bullet-0"><span class="c0">Set home position: ctrl/cmd h</span></li>
-				<li class="c1 c5 li-bullet-0"><span class="c0">Go to home position: h</span></li>
-				<li class="c1 c5 li-bullet-0"><span class="c0">Full view: f</span></li>
+				<li class="c2 c5 li-bullet-0"><span class="c0">Set home position: ctrl/cmd h</span></li>
+				<li class="c2 c5 li-bullet-0"><span class="c0">Go to home position: h</span></li>
+				<li class="c2 c5 li-bullet-0"><span class="c0">Full view: f</span></li>
 			</ul>
-			<ul class="c9 lst-kix_4mdn3jwye9e0-0">
-				<li class="c1 c6 li-bullet-0">
+			<ul class="c8 lst-kix_4mdn3jwye9e0-0">
+				<li class="c2 c6 li-bullet-0">
 					<span class="c0">Double click title/subsections to edit</span>
 				</li>
-				<li class="c1 c6 li-bullet-0"><span class="c0">Right click subsections to delete</span></li>
-				<li class="c1 c6 li-bullet-0">
+				<li class="c2 c6 li-bullet-0"><span class="c0">Right click subsections to delete</span></li>
+				<li class="c2 c6 li-bullet-0">
 					<span class="c0">Use the three dots in navbar to add a section</span>
 				</li>
 			</ul>
-			<p class="c1 c3"><span class="c0"></span></p>
-			<p class="c1 c3"><span class="c0"></span></p>
-			<p class="c1"><span class="c10">Guidelines:</span></p>
-			<p class="c1 c3"><span class="c0"></span></p>
-			<p class="c1">
+			<p class="c2 c3"><span class="c0"></span></p>
+			<p class="c2 c3"><span class="c0"></span></p>
+			<p class="c2"><span class="c10 c14">Guidelines:</span></p>
+			<p class="c2 c3"><span class="c0"></span></p>
+			<p class="c2">
 				<span class="c0"
 					>I recently did some very crude user testing where I gave people a piece of paper and
 					asked them to solve a problem using this idea. I found it very common for people to not
@@ -331,29 +392,38 @@
 					their sub-problems depending on what the expert said. This is not to be confused with the
 					fact that subproblems can intertwine with each other, as long as that logic is defined
 					within the strategy. How defined the logic for a strategy should be and how that is even
-					measured are still open questions. I also noticed people using strategies to critique the
-					problem they were supposed to be solving. Don&#39;t do this.
-				</span>
+					measured are still open questions. As a general rule, don&rsquo;t put research as a
+					subproblem in your strategies.</span
+				>
 			</p>
-			<p class="c1 c3"><span class="c0"></span></p>
-			<p class="c1">
+			<p class="c2 c3"><span class="c0"></span></p>
+			<p class="c2">
+				<span class="c0"
+					>I also noticed people using strategies to critique the problem they were supposed to be
+					solving. Don&#39;t do this. I am going to develop a commenting feature within nodes which
+					is where you would post these thoughts and more.</span
+				>
+			</p>
+			<p class="c2 c3"><span class="c0"></span></p>
+			<p class="c2">
 				<span
 					>It is generally recommended to try and edit existing strategies rather than create a new
 					one. If you have an idea for a direction or strategy, FIRST propose it to the existing
 					owner. If they aren&rsquo;t receptive, then create your own.</span
 				>
 			</p>
-			<p class="c1 c3"><span class="c0"></span></p>
-			<p class="c1"><span class="c10">FAQs:</span></p>
-			<p class="c1 c3"><span class="c0"></span></p>
-			<p class="c15"><span class="c4 c8">How can I help?</span></p>
-			<ul class="c9 lst-kix_s8ga7gzevg2y-0 start">
-				<li class="c6 c15 li-bullet-0">
+			<p class="c2 c3"><span class="c0"></span></p>
+			<p class="c2"><span class="c10 c14">FAQs:</span></p>
+			<p class="c2 c3"><span class="c0"></span></p>
+			<p class="c13"><span class="c11 c19">How can I help?</span></p>
+			<ul class="c8 lst-kix_s8ga7gzevg2y-0 start">
+				<li class="c13 c6 li-bullet-0">
 					<span
 						>Testing out the site is a big help, so thank you! If you are interested to help out
 						further. Feel free to email me at
-					</span><span class="c11"
-						><a class="c7" href="mailto:aisafetysphere@gmail.com">aisafetysphere@gmail.com</a></span
+					</span><span class="c17"
+						><a class="c15" href="mailto:aisafetysphere@gmail.com">aisafetysphere@gmail.com</a
+						></span
 					><span>. I am in need of people to help further develop the site. </span>
 				</li>
 			</ul>
@@ -424,14 +494,23 @@
 	.lst-kix_s8ga7gzevg2y-4 > li:before {
 		content: '-  ';
 	}
+	.lst-kix_5a9hdng83p25-8 > li:before {
+		content: '' counter(lst-ctn-kix_5a9hdng83p25-8, lower-roman) '. ';
+	}
 	.lst-kix_38zswjdicgwh-1 > li:before {
 		content: '\0025cb   ';
+	}
+	.lst-kix_5a9hdng83p25-7 > li:before {
+		content: '' counter(lst-ctn-kix_5a9hdng83p25-7, lower-latin) '. ';
 	}
 	.lst-kix_s8ga7gzevg2y-2 > li:before {
 		content: '-  ';
 	}
 	.lst-kix_38zswjdicgwh-2 > li:before {
 		content: '\0025a0   ';
+	}
+	ol.lst-kix_5a9hdng83p25-7.start {
+		counter-reset: lst-ctn-kix_5a9hdng83p25-7 0;
 	}
 	.lst-kix_s8ga7gzevg2y-3 > li:before {
 		content: '-  ';
@@ -442,6 +521,9 @@
 	.lst-kix_s8ga7gzevg2y-8 > li:before {
 		content: '-  ';
 	}
+	.lst-kix_5a9hdng83p25-4 > li {
+		counter-increment: lst-ctn-kix_5a9hdng83p25-4;
+	}
 	.lst-kix_38zswjdicgwh-0 > li:before {
 		content: '\0025cf   ';
 	}
@@ -450,6 +532,9 @@
 	}
 	ol.lst-kix_k39ns5nc81d5-6.start {
 		counter-reset: lst-ctn-kix_k39ns5nc81d5-6 0;
+	}
+	ol.lst-kix_5a9hdng83p25-1.start {
+		counter-reset: lst-ctn-kix_5a9hdng83p25-1 0;
 	}
 	.lst-kix_9e4jxz58ijhi-1 > li {
 		counter-increment: lst-ctn-kix_9e4jxz58ijhi-1;
@@ -493,6 +578,9 @@
 	.lst-kix_dyfx29dgxuhb-5 > li:before {
 		content: '\0025a0   ';
 	}
+	.lst-kix_5a9hdng83p25-1 > li:before {
+		content: '' counter(lst-ctn-kix_5a9hdng83p25-1, lower-latin) '. ';
+	}
 	ul.lst-kix_kpbry39snu81-7 {
 		list-style-type: none;
 	}
@@ -507,6 +595,9 @@
 	}
 	.lst-kix_xbgds6zcul8s-5 > li:before {
 		content: '\0025a0   ';
+	}
+	.lst-kix_5a9hdng83p25-0 > li:before {
+		content: '' counter(lst-ctn-kix_5a9hdng83p25-0, decimal) '. ';
 	}
 	ul.lst-kix_kpbry39snu81-5 {
 		list-style-type: none;
@@ -541,6 +632,9 @@
 	ol.lst-kix_9e4jxz58ijhi-0 {
 		list-style-type: none;
 	}
+	.lst-kix_5a9hdng83p25-5 > li:before {
+		content: '' counter(lst-ctn-kix_5a9hdng83p25-5, lower-roman) '. ';
+	}
 	.lst-kix_1kqqzx8lmu5v-7 > li:before {
 		content: '-  ';
 	}
@@ -558,6 +652,12 @@
 	}
 	.lst-kix_xbgds6zcul8s-1 > li:before {
 		content: '\0025cb   ';
+	}
+	.lst-kix_5a9hdng83p25-4 > li:before {
+		content: '' counter(lst-ctn-kix_5a9hdng83p25-4, lower-latin) '. ';
+	}
+	.lst-kix_5a9hdng83p25-6 > li:before {
+		content: '' counter(lst-ctn-kix_5a9hdng83p25-6, decimal) '. ';
 	}
 	.lst-kix_1kqqzx8lmu5v-6 > li:before {
 		content: '-  ';
@@ -610,11 +710,17 @@
 	ol.lst-kix_9e4jxz58ijhi-6 {
 		list-style-type: none;
 	}
+	.lst-kix_5a9hdng83p25-2 > li:before {
+		content: '' counter(lst-ctn-kix_5a9hdng83p25-2, lower-roman) '. ';
+	}
 	.lst-kix_1kqqzx8lmu5v-4 > li:before {
 		content: '-  ';
 	}
 	ol.lst-kix_9e4jxz58ijhi-7 {
 		list-style-type: none;
+	}
+	.lst-kix_5a9hdng83p25-3 > li:before {
+		content: '' counter(lst-ctn-kix_5a9hdng83p25-3, decimal) '. ';
 	}
 	.lst-kix_1kqqzx8lmu5v-5 > li:before {
 		content: '-  ';
@@ -661,6 +767,9 @@
 	ul.lst-kix_dyfx29dgxuhb-1 {
 		list-style-type: none;
 	}
+	.lst-kix_5a9hdng83p25-6 > li {
+		counter-increment: lst-ctn-kix_5a9hdng83p25-6;
+	}
 	ul.lst-kix_nznj7f2h3dvk-8 {
 		list-style-type: none;
 	}
@@ -706,6 +815,12 @@
 	.lst-kix_5n9jywy0rmvt-1 > li {
 		counter-increment: lst-ctn-kix_5n9jywy0rmvt-1;
 	}
+	.lst-kix_5a9hdng83p25-0 > li {
+		counter-increment: lst-ctn-kix_5a9hdng83p25-0;
+	}
+	ol.lst-kix_5a9hdng83p25-6.start {
+		counter-reset: lst-ctn-kix_5a9hdng83p25-6 0;
+	}
 	.lst-kix_k39ns5nc81d5-5 > li {
 		counter-increment: lst-ctn-kix_k39ns5nc81d5-5;
 	}
@@ -717,6 +832,9 @@
 	}
 	.lst-kix_kpbry39snu81-0 > li:before {
 		content: '\0025cf   ';
+	}
+	ol.lst-kix_5a9hdng83p25-3.start {
+		counter-reset: lst-ctn-kix_5a9hdng83p25-3 0;
 	}
 	ol.lst-kix_k39ns5nc81d5-4.start {
 		counter-reset: lst-ctn-kix_k39ns5nc81d5-4 0;
@@ -745,6 +863,9 @@
 	ul.lst-kix_eymv275zzudt-6 {
 		list-style-type: none;
 	}
+	ol.lst-kix_5a9hdng83p25-0.start {
+		counter-reset: lst-ctn-kix_5a9hdng83p25-0 0;
+	}
 	ul.lst-kix_eymv275zzudt-3 {
 		list-style-type: none;
 	}
@@ -772,6 +893,9 @@
 	ol.lst-kix_l4163ogvpnex-1.start {
 		counter-reset: lst-ctn-kix_l4163ogvpnex-1 0;
 	}
+	.lst-kix_5a9hdng83p25-1 > li {
+		counter-increment: lst-ctn-kix_5a9hdng83p25-1;
+	}
 	.lst-kix_kpbry39snu81-6 > li:before {
 		content: '\0025cf   ';
 	}
@@ -795,6 +919,12 @@
 	}
 	.lst-kix_5n9jywy0rmvt-5 > li {
 		counter-increment: lst-ctn-kix_5n9jywy0rmvt-5;
+	}
+	.lst-kix_5a9hdng83p25-2 > li {
+		counter-increment: lst-ctn-kix_5a9hdng83p25-2;
+	}
+	.lst-kix_5a9hdng83p25-8 > li {
+		counter-increment: lst-ctn-kix_5a9hdng83p25-8;
 	}
 	.lst-kix_nznj7f2h3dvk-4 > li:before {
 		content: '\0025cb   ';
@@ -865,6 +995,9 @@
 	.lst-kix_38zswjdicgwh-7 > li:before {
 		content: '\0025cb   ';
 	}
+	ol.lst-kix_5a9hdng83p25-2.start {
+		counter-reset: lst-ctn-kix_5a9hdng83p25-2 0;
+	}
 	.lst-kix_eymv275zzudt-7 > li:before {
 		content: '\0025cb   ';
 	}
@@ -877,11 +1010,38 @@
 	.lst-kix_4mdn3jwye9e0-0 > li:before {
 		content: '\0025cf   ';
 	}
+	ol.lst-kix_5a9hdng83p25-5 {
+		list-style-type: none;
+	}
+	ol.lst-kix_5a9hdng83p25-6 {
+		list-style-type: none;
+	}
+	ol.lst-kix_5a9hdng83p25-7 {
+		list-style-type: none;
+	}
+	ol.lst-kix_5a9hdng83p25-8 {
+		list-style-type: none;
+	}
+	ol.lst-kix_5a9hdng83p25-1 {
+		list-style-type: none;
+	}
+	ol.lst-kix_5a9hdng83p25-2 {
+		list-style-type: none;
+	}
+	ol.lst-kix_5a9hdng83p25-3 {
+		list-style-type: none;
+	}
+	ol.lst-kix_5a9hdng83p25-4 {
+		list-style-type: none;
+	}
 	.lst-kix_4mdn3jwye9e0-6 > li:before {
 		content: '\0025cf   ';
 	}
 	.lst-kix_l4163ogvpnex-0 > li {
 		counter-increment: lst-ctn-kix_l4163ogvpnex-0;
+	}
+	ol.lst-kix_5a9hdng83p25-0 {
+		list-style-type: none;
 	}
 	.lst-kix_4mdn3jwye9e0-4 > li:before {
 		content: '\0025cb   ';
@@ -891,6 +1051,9 @@
 	}
 	ul.lst-kix_1kqqzx8lmu5v-2 {
 		list-style-type: none;
+	}
+	.lst-kix_5a9hdng83p25-5 > li {
+		counter-increment: lst-ctn-kix_5a9hdng83p25-5;
 	}
 	ul.lst-kix_1kqqzx8lmu5v-3 {
 		list-style-type: none;
@@ -1042,11 +1205,17 @@
 	.lst-kix_k39ns5nc81d5-2 > li:before {
 		content: '' counter(lst-ctn-kix_k39ns5nc81d5-2, lower-roman) '. ';
 	}
+	.lst-kix_5a9hdng83p25-7 > li {
+		counter-increment: lst-ctn-kix_5a9hdng83p25-7;
+	}
 	.lst-kix_k39ns5nc81d5-3 > li:before {
 		content: '' counter(lst-ctn-kix_k39ns5nc81d5-3, decimal) '. ';
 	}
 	.lst-kix_k39ns5nc81d5-4 > li:before {
 		content: '' counter(lst-ctn-kix_k39ns5nc81d5-4, lower-latin) '. ';
+	}
+	ol.lst-kix_5a9hdng83p25-4.start {
+		counter-reset: lst-ctn-kix_5a9hdng83p25-4 0;
 	}
 	ol.lst-kix_k39ns5nc81d5-3.start {
 		counter-reset: lst-ctn-kix_k39ns5nc81d5-3 0;
@@ -1098,6 +1267,9 @@
 	}
 	ol.lst-kix_5n9jywy0rmvt-7 {
 		list-style-type: none;
+	}
+	ol.lst-kix_5a9hdng83p25-5.start {
+		counter-reset: lst-ctn-kix_5a9hdng83p25-5 0;
 	}
 	ul.lst-kix_s8ga7gzevg2y-0 {
 		list-style-type: none;
@@ -1228,6 +1400,9 @@
 	.lst-kix_k39ns5nc81d5-2 > li {
 		counter-increment: lst-ctn-kix_k39ns5nc81d5-2;
 	}
+	.lst-kix_5a9hdng83p25-3 > li {
+		counter-increment: lst-ctn-kix_5a9hdng83p25-3;
+	}
 	.lst-kix_k39ns5nc81d5-8 > li {
 		counter-increment: lst-ctn-kix_k39ns5nc81d5-8;
 	}
@@ -1287,6 +1462,9 @@
 	}
 	.lst-kix_nznj7f2h3dvk-7 > li:before {
 		content: '\0025cb   ';
+	}
+	ol.lst-kix_5a9hdng83p25-8.start {
+		counter-reset: lst-ctn-kix_5a9hdng83p25-8 0;
 	}
 	.lst-kix_5n9jywy0rmvt-3 > li {
 		counter-increment: lst-ctn-kix_5n9jywy0rmvt-3;
@@ -1353,7 +1531,7 @@
 	table th {
 		padding: 0;
 	}
-	.c18 {
+	.c7 {
 		-webkit-text-decoration-skip: none;
 		color: #ebebeb;
 		font-weight: 400;
@@ -1364,12 +1542,21 @@
 		font-family: 'Arial';
 		font-style: italic;
 	}
-	.c16 {
+	.c9 {
 		color: #ebebeb;
 		font-weight: 400;
 		text-decoration: none;
 		vertical-align: baseline;
-		font-size: 22pt;
+		font-size: 10pt;
+		font-family: 'Arial';
+		font-style: normal;
+	}
+	.c4 {
+		color: #666666;
+		font-weight: 400;
+		text-decoration: none;
+		vertical-align: baseline;
+		font-size: 10pt;
 		font-family: 'Arial';
 		font-style: normal;
 	}
@@ -1382,7 +1569,7 @@
 		font-family: 'Arial';
 		font-style: normal;
 	}
-	.c20 {
+	.c16 {
 		color: #666666;
 		font-weight: 400;
 		text-decoration: none;
@@ -1391,59 +1578,23 @@
 		font-family: 'Arial';
 		font-style: italic;
 	}
-	.c13 {
-		color: #ebebeb;
-		font-weight: 400;
-		text-decoration: none;
-		vertical-align: baseline;
-		font-size: 10pt;
-		font-family: 'Arial';
-		font-style: normal;
-	}
-	.c12 {
-		color: #ebebeb;
-		font-weight: 400;
-		text-decoration: none;
-		vertical-align: baseline;
-		font-size: 20pt;
-		font-family: 'Arial';
-		font-style: normal;
-	}
-	.c10 {
-		color: #ebebeb;
-		font-weight: 400;
-		text-decoration: none;
-		vertical-align: baseline;
-		font-size: 15pt;
-		font-family: 'Arial';
-		font-style: normal;
-	}
-	.c14 {
-		color: #666666;
-		font-weight: 400;
-		text-decoration: none;
-		vertical-align: baseline;
-		font-size: 10pt;
-		font-family: 'Arial';
-		font-style: normal;
-	}
 	.c2 {
 		padding-top: 0pt;
 		padding-bottom: 0pt;
 		line-height: 1.15;
 		orphans: 2;
 		widows: 2;
-		text-align: center;
-	}
-	.c15 {
-		padding-top: 0pt;
-		padding-bottom: 10pt;
-		line-height: 1.15;
-		orphans: 2;
-		widows: 2;
 		text-align: left;
 	}
-	.c8 {
+	.c10 {
+		color: #ebebeb;
+		font-weight: 400;
+		text-decoration: none;
+		vertical-align: baseline;
+		font-family: 'Arial';
+		font-style: normal;
+	}
+	.c19 {
 		color: #ebebeb;
 		text-decoration: none;
 		vertical-align: baseline;
@@ -1451,49 +1602,63 @@
 		font-family: 'Arial';
 		font-style: normal;
 	}
-	.c1 {
+	.c12 {
 		padding-top: 0pt;
 		padding-bottom: 0pt;
 		line-height: 1.15;
 		orphans: 2;
 		widows: 2;
+		text-align: center;
+	}
+	.c13 {
+		padding-top: 0pt;
+		padding-bottom: 10pt;
+		line-height: 1.15;
+		orphans: 2;
+		widows: 2;
 		text-align: left;
 	}
-	.c11 {
+	.c17 {
 		text-decoration-skip-ink: none;
 		-webkit-text-decoration-skip: none;
 		color: #1155cc;
 		text-decoration: underline;
 	}
-	.c19 {
+	.c20 {
 		background-color: #ffffff;
 		max-width: 468pt;
 		padding: 72pt 72pt 72pt 72pt;
-	}
-	.c6 {
-		margin-left: 36pt;
-		padding-left: 0pt;
-	}
-	.c7 {
-		color: inherit;
-		text-decoration: inherit;
-	}
-	.c9 {
-		padding: 0;
-		margin: 0;
 	}
 	.c5 {
 		margin-left: 72pt;
 		padding-left: 0pt;
 	}
-	.c4 {
-		font-weight: 700;
+	.c6 {
+		margin-left: 36pt;
+		padding-left: 0pt;
 	}
-	.c17 {
-		font-size: 22pt;
+	.c15 {
+		color: inherit;
+		text-decoration: inherit;
+	}
+	.c8 {
+		padding: 0;
+		margin: 0;
 	}
 	.c3 {
 		height: 11pt;
+	}
+	.c11 {
+		font-weight: 700;
+	}
+	.c1 {
+		font-size: 22pt;
+	}
+	.c14 {
+		font-size: 15pt;
+	}
+	.c18 {
+		font-size: 20pt;
 	}
 	.title {
 		padding-top: 0pt;

@@ -1,6 +1,4 @@
 <script lang="ts">
-	import { writable } from 'svelte/store';
-	import { setContext } from 'svelte';
 	import { page } from '$app/stores';
 
 	import Settings from '$lib/icons/Settings.svelte';
@@ -32,7 +30,7 @@
 <div class="flex w-full h-full text-white text-[14px]">
 	{#if open}
 		<div class="flex flex-col pt-[40px] w-[62px] bg-[#272727] border-r-[.3px] border-gray-500">
-			<div class="h-0 w-[42px] ml-auto mr-auto border-b-[.3px] border-gray-500 mb-1" />
+			<div class="h-0 w-[42px] ml-auto mr-auto border-b-[.3px] border-gray-500 mb-[8px]" />
 			<a
 				href="/home/docs"
 				class="tab {currentUrl === 'docs' ? 'bg-[#454545]' : 'hover:bg-[#45454570]'}">Docs</a
@@ -42,16 +40,8 @@
 				class="tab {currentUrl === 'tree' ? 'bg-[#454545]' : 'hover:bg-[#45454570]'}">Tree</a
 			>
 			<a
-				href="/home/plan"
-				class="tab {currentUrl === 'plan' ? 'bg-[#454545]' : 'hover:bg-[#45454570]'}">Plan</a
-			>
-			<a
 				href="/home/team"
 				class="tab {currentUrl === 'team' ? 'bg-[#454545]' : 'hover:bg-[#45454570]'}">Team</a
-			>
-			<a
-				href="/home/ideas"
-				class="tab {currentUrl === 'ideas' ? 'bg-[#454545]' : 'hover:bg-[#45454570]'}">Ideas</a
 			>
 			<a
 				href="/home/learn"
@@ -78,7 +68,7 @@
 		align-items: center;
 		justify-content: center;
 		border-radius: 10px;
-		margin-top: 3px;
+		margin-top: 6px;
 		margin-left: auto;
 		margin-right: auto;
 		width: 47px;

@@ -3,7 +3,6 @@
 </div> -->
 
 <script lang="ts">
-	import Joi from 'joi';
 	import { enhance } from '$app/forms';
 	import { fly } from 'svelte/transition';
 	import { quintOut } from 'svelte/easing';

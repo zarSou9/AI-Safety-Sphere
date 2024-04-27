@@ -10,7 +10,7 @@
 				<div class="mt-10 flex justify-center items-center">
 					<p class="mr-auto w-[560px]">
 						Welcome to the AI Safety Sphere, or AISS (pronounced: ice), the epicenter for AI Safety
-						research. We reach to re-envision how research is developed, and how solutions are
+						research. We seek to re-envision how research is developed, and how solutions are
 						ideated. We are currently focused on developing solutions to align AI.
 					</p>
 				</div>
