@@ -200,7 +200,7 @@
 		horizontalOffset = (viewPort?.clientWidth - canvas?.clientWidth * minZoom) / 2 / minZoom;
 		verticalOffset = (viewPort?.clientHeight - canvas?.clientHeight * minZoom) / 2 / minZoom;
 
-		if ($userCoords[0] === 91291312402 || data.props?.newUser) {
+		if ($userCoords[0] === 91291312402) {
 			z = minZoom;
 			x = horizontalOffset * z;
 			y = verticalOffset * z;
