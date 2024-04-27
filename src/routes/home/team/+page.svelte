@@ -67,5 +67,11 @@
 			{/if}
 		</button>
 	</div>
-	<p class="mt-[100px]">This page is for communication</p>
+	<p class="mt-[100px]">
+		This is the link to our discord server: <a
+			class="hover:underline text-[#1155cc]"
+			href="https://discord.gg/QCaQFKxu"
+			target="_blank">https://discord.gg/QCaQFKxu</a
+		>
+	</p>
 </div>
