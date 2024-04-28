@@ -49,9 +49,7 @@ export const POST: RequestHandler = async ({ request, locals: { supabase, supaba
 			);
 		}
 		postPromises.push(supabaseService.from('Tree').update({ data: tree.getTree() }).eq('id', 1));
-		postPromises.push(
-			supabase.from('Profiles').update({ selected_strategies: [] }).eq('user_id', userId)
-		);
+		postPromises.push(supabase.from('Profiles').update({ selected_strategies: [] }));
 
 		await Promise.all(postPromises);
 
