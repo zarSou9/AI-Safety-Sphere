@@ -29,8 +29,8 @@
 		if (!toolbarResult.title) {
 			failurePopUp.set('Please provide a title');
 			return;
-		} else if (toolbarResult.title.length > 28) {
-			failurePopUp.set("Title can't be greater than 28 characters");
+		} else if (toolbarResult.title.length > 32) {
+			failurePopUp.set("Title can't be greater than 32 characters");
 			return;
 		}
 		dispatch('save');

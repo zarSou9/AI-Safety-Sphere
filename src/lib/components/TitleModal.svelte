@@ -8,7 +8,7 @@
 
 	export let titleResult: any;
 	export let titleMessage: string = 'New Title';
-	export let maxLength: number = 28;
+	export let maxLength: number = 32;
 
 	const dispatch = createEventDispatcher();
 

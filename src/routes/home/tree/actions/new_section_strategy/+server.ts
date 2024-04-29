@@ -8,7 +8,7 @@ export const POST: RequestHandler = async ({ request, locals: { supabase, supaba
 		const { id, uuid, sectionTitle, after, userId } = await request.json();
 
 		const idValid = Joi.string().validate(id);
-		const sectionValid = Joi.string().max(28).validate(sectionTitle);
+		const sectionValid = Joi.string().max(32).validate(sectionTitle);
 		const userIdValid = Joi.string().validate(userId);
 		const uuidValid = Joi.string().validate(uuid);
 
