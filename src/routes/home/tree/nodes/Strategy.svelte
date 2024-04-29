@@ -3424,7 +3424,7 @@
 				throw new Error(result.error || 'Failed to submit data');
 			}
 			tree.setTree(result.data.tree, tree.getSelections());
-			tree.getObjFromId(treeData.id, treeData.uuid);
+			treeData = tree.getObjFromId(treeData.id, treeData.uuid);
 			children = treeData.problems;
 			$processing = false;
 		} catch (error: any) {
