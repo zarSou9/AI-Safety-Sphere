@@ -925,7 +925,9 @@
 						}
 						if (!found) {
 							if (ud.ops[1]?.insert) {
-								base = base.compose({ ops: [{ retain: ud.ops[0].retain - l }, ud.ops[1]] });
+								const newD = { ops: [{ retain: ud.ops[0].retain - l }, ud.ops[1]] };
+								if (newD.ops[0].retain - l <= 0) newD.ops.splice(0, 1);
+								base = base.compose(newD);
 								for (let existingChange of changes) {
 									if (!existingChange.pos.l) {
 										if (existingChange.pos.i >= ud.ops[0].retain) {
