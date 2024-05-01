@@ -25,20 +25,20 @@
 <style>
 	.grid {
 		display: grid;
-		grid-template-columns: 1fr 1fr; /* Creates two columns of equal width */
-		gap: 20px; /* Space between grid items */
+		grid-template-columns: 1fr 1fr;
+		gap: 20px;
 	}
 
 	.grid img {
 		width: 100%;
 		height: auto;
-		max-width: 500px; /* Maximum width of the image */
-		max-height: 500px; /* Maximum height of the image */
+		max-width: 500px;
+		max-height: 500px;
 	}
 
 	@media (max-width: 768px) {
 		.grid {
-			grid-template-columns: 1fr; /* Creates one column when screen width is 768px or less */
+			grid-template-columns: 1fr;
 		}
 	}
 </style>
