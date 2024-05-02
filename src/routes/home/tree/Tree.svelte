@@ -30,6 +30,7 @@
 	const successPopUp: Writable<any> = getContext('successPopUpStore');
 	const redoTree: Writable<boolean> = getContext('redoTreeStore');
 	const processing: Writable<boolean> = getContext('processingStore');
+	const loginNotif: Writable<any> = getContext('loginNotifStore');
 
 	let newProbTitle: string;
 	let viewingNodeDiv: HTMLDivElement | undefined;
@@ -475,8 +476,12 @@
 						</div>
 						<button
 							on:click={() => {
-								newStrategyProblem = { id: problem.id, uuid: problem.uuid };
-								$newStrategyTitleModal.visible = true;
+								if (!data.props?.loggedIn) {
+									if (!$loginNotif) $loginNotif = true;
+								} else {
+									newStrategyProblem = { id: problem.id, uuid: problem.uuid };
+									$newStrategyTitleModal.visible = true;
+								}
 							}}
 							class="absolute left-[22px] bottom-[-25px] text-[#5f66a0] text-[12px] underline hover:text-[#8a93eb]"
 							>New Strategy</button
