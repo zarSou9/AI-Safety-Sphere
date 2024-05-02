@@ -20,7 +20,7 @@
 	<div class="h-full w-full overflow-y-auto flex flex-col items-center">
 		<div class="w-[80%] max-w-[717px] flex flex-col items-start mt-[80px] mb-[120px]">
 			<p class="c29"><span class="c13">Welcome to </span></p>
-			<p class="c8"><span class="c12 c16">AI Safaty Sphere!</span></p>
+			<p class="c8"><span class="c12 c16">AI Safety Sphere!</span></p>
 			<p class="c8">
 				<span class="c0"
 					>or AISS (pronounced: ice). If you are an alignment researcher or someone interested in
@@ -368,6 +368,13 @@
 </div>
 
 <style>
+	::selection {
+		background: #3f7bb06a;
+	}
+
+	::-moz-selection {
+		background: #3f7bb06a;
+	}
 	ol.lst-kix_5n9jywy0rmvt-0.start {
 		counter-reset: lst-ctn-kix_5n9jywy0rmvt-0 0;
 	}
