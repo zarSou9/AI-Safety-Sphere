@@ -15,14 +15,12 @@
 
 	export let data;
 
-	let profileDropE: HTMLDivElement;
 	let toolBarDropE: HTMLButtonElement;
 	let toolbarResult: any = { title: '', after: '', div: {} };
 	let titleResult: any = { title: '', div: {} };
-
-	let initials = false;
-	let profDropdown = false;
 	let toolBarMenuDropdown = false;
+
+	const profDropdown: Writable<boolean> = getContext('profDropdownStore');
 
 	const nodeAction = writable<string | null>(null);
 	setContext('nodeActionStore', nodeAction);
@@ -105,6 +103,8 @@
 	setContext('successPopUpStore', successPopUp);
 	const failurePopUp = writable(false);
 	setContext('failurePopUpStore', failurePopUp);
+	const loginNotif = writable(false);
+	setContext('loginNotifStore', loginNotif);
 	const sectionContextE = writable(undefined);
 	setContext('sectionContextEStore', sectionContextE);
 	const nodeToRemove = writable<any>(undefined);
@@ -115,36 +115,14 @@
 
 	const tree = createTree();
 	if (data.props?.hier[0]?.data?.problem)
-		tree.setTree(data.props.hier[0].data, data.props.profile.selected_strategies);
+		if (data.props?.profile?.selected_strategies) {
+			tree.setTree(data.props.hier[0].data, data.props.profile.selected_strategies);
+		} else {
+			tree.setTree(data.props.hier[0].data, []);
+		}
+
 	setContext('tree', tree);
 
-	function noImage(e: any) {
-		e.target.src = '';
-		initials = true;
-	}
-	function profileDropdown() {
-		if (!profDropdown) {
-			profDropdown = true;
-			setTimeout(() => {
-				window.addEventListener('click', click);
-			}, 200);
-		}
-	}
-
-	function click(event: MouseEvent) {
-		const { clientX, clientY } = event;
-		const rect = profileDropE.getBoundingClientRect();
-		const isWithinProfileDropE =
-			clientX >= rect.left &&
-			clientX <= rect.right &&
-			clientY >= rect.top &&
-			clientY <= rect.bottom;
-
-		if (!isWithinProfileDropE) {
-			profDropdown = false;
-			window.removeEventListener('click', click);
-		}
-	}
 	$: if ($titleModal.visible) {
 		titleResult.title = $titleModal.title;
 		tick().then(() => titleResult.div?.focus());
@@ -171,6 +149,10 @@
 	}
 	function failureWait() {
 		setTimeout(() => ($failurePopUp = false), 5000);
+		return true;
+	}
+	function loginWait() {
+		setTimeout(() => ($loginNotif = false), 5000);
 		return true;
 	}
 
@@ -267,24 +249,6 @@
 	/>
 {/if}
 
-{#if profDropdown}
-	<div
-		class="fixed z-[200] top-[46px] right-[8px] w-[63px] h-[50px] rounded-md bg-[#515151] grid text-sm"
-		bind:this={profileDropE}
-	>
-		<a
-			href="/home/settings"
-			class="hover:bg-[#676767] rounded-t-md flex items-center justify-center pt-[3px]">Profile</a
-		>
-		<form
-			action="/home?/signout"
-			method="post"
-			class="hover:bg-[#676767] text-red-400 flex items-center justify-center pb-[3px]"
-		>
-			<button>Log out</button>
-		</form>
-	</div>
-{/if}
 {#if $successPopUp && successWait()}
 	<div
 		in:fly={{ duration: 300, x: 0, y: 200, opacity: 0.5, easing: quintOut }}
@@ -314,6 +278,21 @@
 		</div>
 	</div>
 {/if}
+{#if $loginNotif && loginWait()}
+	<div
+		in:fly={{ duration: 300, x: 0, y: 200, opacity: 0.5, easing: quintOut }}
+		class="z-[400] fixed left-0 bottom-[20px] w-[100vw] flex items-center justify-center"
+	>
+		<div class="flex bg-[#ffffff] py-[10px] rounded-[6px]" style="box-shadow: -4px 4px #be4141;">
+			<p class="text-[#000000] mr-[20px] ml-[25px]">
+				You must <a class="text-[#3476c2] hover:underline" href="/login">log in</a> to make edits
+			</p>
+			<button class="mr-[15px]" on:click={() => ($loginNotif = false)}
+				><Cross color="#70747c" size="16px" /></button
+			>
+		</div>
+	</div>
+{/if}
 {#if $processing}
 	<div class="spinner fixed bottom-[20px] right-[20px]" />
 {/if}
@@ -325,7 +304,7 @@
 		{#if $toolBarShown}
 			<div
 				transition:fade={{ duration: 100 }}
-				class="h-[28px] bg-[#303032] flex rounded-full w-full ml-[230px] mr-[182px] items-center"
+				class="h-[28px] bg-[#303032] flex rounded-full ml-[233px] w-[69%] items-center flex-shrink-0"
 			>
 				<button
 					on:click={() => {
@@ -389,19 +368,17 @@
 				{/if}
 			</div>
 		{/if}
-		<div class="w-[.6px] h-[26px] bg-[#70747c] mr-[15px] ml-auto" />
-		<button
-			class="flex items-center mr-[12px] rounded-full size-[25px] flex-grow-0 flex-shrink-0 overflow-hidden {initials
-				? 'bg-[#525555]'
-				: ''}"
-			on:click={profileDropdown}
+		<div
+			class="relative flex items-center w-full h-[40px] bg-[#272727] border-b-[.3px] border-b-[#70747c]"
 		>
-			{#if initials}
-				<p class="text-sm">MH</p>
-			{:else}
-				<img src="/images/profile_pic.png" on:error={noImage} alt="profile" />
-			{/if}
-		</button>
+			<div class="w-[.6px] h-[26px] bg-[#70747c] mr-[15px] ml-auto" />
+			<button
+				class="flex items-center mr-[12px] rounded-full size-[25px] flex-grow-0 flex-shrink-0 overflow-hidden"
+				on:click={() => ($profDropdown = true)}
+			>
+				<img src="/images/profile_pic.png" alt="profile" />
+			</button>
+		</div>
 	</div>
 	<div class="flex-1 overflow-hidden">
 		<InfiniteCanvas />

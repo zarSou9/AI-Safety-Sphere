@@ -1,9 +1,53 @@
 <script lang="ts">
+	import { writable, type Writable } from 'svelte/store';
+	import { setContext, tick } from 'svelte';
 	import { page } from '$app/stores';
-
 	import Settings from '$lib/icons/Settings.svelte';
 	import Menu from '$lib/icons/Menu.svelte';
 	import Cross from '$lib/icons/Cross.svelte';
+
+	export let data;
+
+	const profDropdown = writable<boolean>(false);
+	setContext('profDropdownStore', profDropdown);
+
+	let profileDropE: HTMLDivElement;
+	let initials = false;
+
+	function noImage(e: any) {
+		e.target.src = '';
+		initials = true;
+	}
+	profDropdown.subscribe((v) => {
+		if (v) {
+			setTimeout(() => {
+				window.addEventListener('click', click);
+			}, 200);
+		}
+	});
+	function click(event: MouseEvent) {
+		const { clientX, clientY } = event;
+		const rect = profileDropE.getBoundingClientRect();
+		const isWithinProfileDropE =
+			clientX >= rect.left &&
+			clientX <= rect.right &&
+			clientY >= rect.top &&
+			clientY <= rect.bottom;
+
+		if (!isWithinProfileDropE) {
+			$profDropdown = false;
+			window.removeEventListener('click', click);
+		}
+	}
+	async function signout() {
+		await fetch('/home/actions/signout', {
+			method: 'POST',
+			headers: {
+				'Content-Type': 'application/json'
+			}
+		});
+		location.reload();
+	}
 
 	let open = false;
 	let currentUrl: string;
@@ -16,6 +60,43 @@
 		open = false;
 	}
 </script>
+
+{#if $profDropdown}
+	<div
+		class="fixed z-[200] top-[46px] right-[8px] w-[63px] rounded-md bg-[#515151] grid text-sm text-[#ebebeb]"
+		on:click={() => {
+			$profDropdown = false;
+			window.removeEventListener('click', click);
+		}}
+		role="presentation"
+		bind:this={profileDropE}
+	>
+		{#if data?.props?.loggedIn}
+			<a
+				href="/home/settings"
+				class="hover:bg-[#676767] rounded-t-md flex items-center justify-center pt-[3px] pb-[2px]"
+				>Profile</a
+			>
+			<button
+				on:click={signout}
+				class="hover:bg-[#676767] text-red-400 rounded-b-md flex items-center justify-center pb-[4px]"
+			>
+				Log out
+			</button>
+		{:else}
+			<a
+				href="/login"
+				class="hover:bg-[#676767] rounded-t-md flex items-center justify-center pt-[3px] pb-[2px]"
+				>Log in</a
+			>
+			<a
+				href="/signup"
+				class="hover:bg-[#676767] rounded-b-md flex items-center justify-center pt-[3px] pb-[4px]"
+				>Sign up</a
+			>
+		{/if}
+	</div>
+{/if}
 
 {#if open}
 	<button class="btn-icon button-div" on:click={closeRail}

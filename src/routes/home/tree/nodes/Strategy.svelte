@@ -50,6 +50,7 @@
 	}> = getContext('newProblemTitleModalStore');
 	const redoTree: Writable<boolean> = getContext('redoTreeStore');
 	const processing: Writable<boolean> = getContext('processingStore');
+	const loginNotif: Writable<any> = getContext('loginNotifStore');
 
 	export let treeData: any;
 
@@ -100,7 +101,7 @@
 	let sessionTimeout: any;
 
 	let userColor: string = colors[0];
-	let username = data.props?.profile.username;
+	let username = data.props?.profile?.username;
 	if (treeData.owners.includes(username)) {
 		userColor = 'owner';
 	}
@@ -3546,7 +3547,7 @@
 			children = treeData.problems;
 			startListening();
 			treeAction.set('find-node-position');
-		} else {
+		} else if (data?.props?.loggedIn) {
 			if (editable) {
 				editBtnActive = false;
 				isSaving = false;
@@ -3616,6 +3617,8 @@
 						}
 					});
 			}
+		} else {
+			if (!$loginNotif) $loginNotif = true;
 		}
 	}
 	function editTitle() {
@@ -3683,12 +3686,13 @@
 	<button
 		on:click={changeEditable}
 		disabled={!editBtnActive}
-		class="absolute top-[55px] right-[65px] rounded-md w-[36px] h-[36px] items-center justify-center {editBtnActive
+		class="absolute top-[55px] right-[65px] rounded-md w-[36px] h-[36px] items-center justify-center {editBtnActive &&
+		data?.props?.loggedIn
 			? 'hover:bg-[#4949495a]'
 			: ''}"
 	>
 		{#if editIconActive}
-			<Edit color={editBtnActive ? '#9c9c9c' : '#595959'} size="36px" />
+			<Edit color={editBtnActive && data?.props?.loggedIn ? '#9c9c9c' : '#595959'} size="36px" />
 		{:else}
 			<View color="#9c9c9c" size="36px" />
 		{/if}

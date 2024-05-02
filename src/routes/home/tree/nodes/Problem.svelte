@@ -45,6 +45,8 @@
 	const sectionContextE: Writable<any> = getContext('sectionContextEStore');
 	const nodeToRemove: Writable<any> = getContext('nodeToRemoveStore');
 	const processing: Writable<boolean> = getContext('processingStore');
+	const loginNotif: Writable<any> = getContext('loginNotifStore');
+
 
 
 	export let treeData: any;
@@ -94,7 +96,7 @@
 	let sessionTimeout: any;
 
 	let userColor: string = colors[0];
-	let username = data.props?.profile.username;
+	let username = data.props?.profile?.username;
 	if (treeData.owners.includes(username)) {
 		userColor = 'owner';
 	}
@@ -3464,7 +3466,7 @@
 			$viewingNode = treeData.id;
 			startListening();
 			treeAction.set('find-node-position');
-		} else {
+		} else if (data?.props?.loggedIn) {
 			if (editable) {
 				editBtnActive = false;
 				isSaving = false;
@@ -3527,6 +3529,8 @@
 					}
 				);
 			}
+		} else {
+			if (!$loginNotif) $loginNotif = true;
 		}
 	}
 	function editTitle() {
@@ -3579,23 +3583,24 @@
 	function checkWorking() {
 		return true;
 	}
+
 </script>
 
 <div
 	class="grid bg-[#1f1f1f] rounded-[20px] w-[800px] p-[60px] relative selection:bg-[#6a87b389]"
 	style="box-shadow: -2px 2px #a53a3a;"
->
-	<button
-		on:click={changeEditable}
-		disabled={!editBtnActive}
-		class="absolute top-[55px] right-[65px] rounded-md w-[36px] h-[36px] items-center justify-center {editBtnActive ? 'hover:bg-[#4949495a]' : ''}"
-	>
-		{#if editIconActive}
-			<Edit color={editBtnActive ? '#9c9c9c' : '#595959'} size="36px" />
-		{:else}
-			<View color="#9c9c9c" size="36px" />
-		{/if}
-	</button>
+>	
+		<button
+			on:click={changeEditable}
+			disabled={!editBtnActive}
+			class="absolute top-[55px] right-[65px] rounded-md w-[36px] h-[36px] items-center justify-center {editBtnActive && data?.props?.loggedIn ? 'hover:bg-[#4949495a]' : ''}"
+		>
+			{#if editIconActive}
+				<Edit color={editBtnActive && data?.props?.loggedIn ? '#9c9c9c' : '#595959'} size="36px" />
+			{:else}
+				<View color="#9c9c9c" size="36px" />
+			{/if}
+		</button>
 	<p class="ml-[14px] mr-[50px] title mb-[25px]" on:dblclick={editTitle}>
 		{title ?? 'untitled'}
 	</p>

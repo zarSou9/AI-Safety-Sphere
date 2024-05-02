@@ -4,12 +4,3 @@ import type { PageServerLoad } from './$types';
 export const load: PageServerLoad = () => {
 	throw redirect(303, 'home/docs');
 };
-
-export const actions: Actions = {
-	signout: async ({ locals: { supabase, getSession } }) => {
-		const session = await getSession();
-		if (session) {
-			await supabase.auth.signOut();
-		}
-	}
-};

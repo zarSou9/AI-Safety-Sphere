@@ -4,7 +4,7 @@ import { v4 as uuidv4 } from 'uuid';
 export function createTree() {
 	let tree: Tree = {};
 	let ySpace = 560;
-	let selectedStrategies: SelectedStrategy[];
+	let selectedStrategies: SelectedStrategy[] = [];
 
 	function endNodes(
 		obj: any,

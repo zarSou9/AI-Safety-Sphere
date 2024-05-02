@@ -1,76 +1,33 @@
 <script lang="ts">
-	let profDropdown = false;
-	let profileDropE: HTMLDivElement;
-	let initials = false;
+	import { getContext } from 'svelte';
+	import type { Writable } from 'svelte/store';
 
-	function noImage(e: any) {
-		e.target.src = '';
-		initials = true;
-	}
-	function profileDropdown() {
-		if (!profDropdown) {
-			profDropdown = true;
-			setTimeout(() => {
-				window.addEventListener('click', click);
-			}, 200);
-		}
-	}
-	function click(event: MouseEvent) {
-		const { clientX, clientY } = event;
-		const rect = profileDropE.getBoundingClientRect();
-		const isWithinProfileDropE =
-			clientX >= rect.left &&
-			clientX <= rect.right &&
-			clientY >= rect.top &&
-			clientY <= rect.bottom;
-
-		if (!isWithinProfileDropE) {
-			profDropdown = false;
-			window.removeEventListener('click', click);
-		}
-	}
+	const profDropdown: Writable<boolean> = getContext('profDropdownStore');
 </script>
 
-{#if profDropdown}
-	<div
-		class="fixed z-[200] top-[46px] right-[8px] w-[63px] h-[50px] rounded-md bg-[#515151] grid text-sm"
-		bind:this={profileDropE}
-	>
-		<a
-			href="/home/settings"
-			class="hover:bg-[#676767] rounded-t-md flex items-center justify-center pt-[3px]">Profile</a
-		>
-		<form
-			action="/home?/signout"
-			method="post"
-			class="hover:bg-[#676767] text-red-400 flex items-center justify-center pb-[3px]"
-		>
-			<button>Log out</button>
-		</form>
-	</div>
-{/if}
 <div class="h-full w-full bg-[#151515] relative">
 	<div
-		class="relative flex items-center w-full h-[40px] bg-[#272727] border-b-[.3px] border-b-[#70747c] flex-shrink-0"
+		class="relative flex items-center w-full h-[40px] bg-[#272727] border-b-[.3px] border-b-[#70747c]"
 	>
 		<div class="w-[.6px] h-[26px] bg-[#70747c] mr-[15px] ml-auto" />
 		<button
-			class="flex items-center mr-[12px] rounded-full size-[25px] flex-grow-0 flex-shrink-0 overflow-hidden {initials
-				? 'bg-[#525555]'
-				: ''}"
-			on:click={profileDropdown}
+			class="flex items-center mr-[12px] rounded-full size-[25px] flex-grow-0 flex-shrink-0 overflow-hidden"
+			on:click={() => ($profDropdown = true)}
 		>
-			{#if initials}
-				<p class="text-sm">MH</p>
-			{:else}
-				<img src="/images/profile_pic.png" on:error={noImage} alt="profile" />
-			{/if}
+			<img src="/images/profile_pic.png" alt="profile" />
 		</button>
 	</div>
 	<div class="h-full w-full overflow-y-auto flex flex-col items-center">
 		<div class="w-[80%] max-w-[717px] flex flex-col items-start mt-[80px] mb-[120px]">
-			<p class="c29"><span class="c13">Thank you for participating in this </span></p>
-			<p class="c8"><span class="c12 c16">feedback</span><span class="c16">&nbsp;session!</span></p>
+			<p class="c29"><span class="c13">Welcome to </span></p>
+			<p class="c8"><span class="c12 c16">AI Safaty Sphere!</span></p>
+			<p class="c8">
+				<span class="c0"
+					>or AISS (pronounced: ice). If you are an alignment researcher or someone interested in
+					the topic, this is a collaborative tool designed to help frame your thinking while
+					tackling this large issue.
+				</span>
+			</p>
 			<h2 class="c7" id="h.meeyn6ng8eou"><span class="c2">TO DO:</span></h2>
 			<ol class="c10 lst-kix_5n9jywy0rmvt-0 start" start="1">
 				<li class="c5 li-bullet-0">
@@ -1618,7 +1575,7 @@
 		padding-top: 0pt;
 		padding-left: 0pt;
 		padding-bottom: 10pt;
-		line-height: 1.15;
+		line-height: 1.4;
 		orphans: 2;
 		widows: 2;
 		text-align: left;
@@ -1628,7 +1585,7 @@
 		padding-top: 0pt;
 		padding-left: 0pt;
 		padding-bottom: 0pt;
-		line-height: 1.15;
+		line-height: 1.4;
 		orphans: 2;
 		widows: 2;
 		text-align: left;
@@ -1648,7 +1605,7 @@
 		padding-top: 0pt;
 		padding-left: 0pt;
 		padding-bottom: 0pt;
-		line-height: 1.15;
+		line-height: 1.4;
 		orphans: 2;
 		widows: 2;
 		text-align: left;
@@ -1692,7 +1649,7 @@
 	.c7 {
 		padding-top: 18pt;
 		padding-bottom: 10pt;
-		line-height: 1.15;
+		line-height: 1.4;
 		page-break-after: avoid;
 		orphans: 2;
 		widows: 2;
@@ -1702,7 +1659,7 @@
 		margin-left: 36pt;
 		padding-top: 0pt;
 		padding-bottom: 10pt;
-		line-height: 1.15;
+		line-height: 1.4;
 		orphans: 2;
 		widows: 2;
 		text-align: left;
@@ -1719,7 +1676,7 @@
 	.c8 {
 		padding-top: 0pt;
 		padding-bottom: 10pt;
-		line-height: 1.15;
+		line-height: 1.4;
 		orphans: 2;
 		widows: 2;
 		text-align: left;
@@ -1727,7 +1684,7 @@
 	.c24 {
 		padding-top: 0pt;
 		padding-bottom: 0pt;
-		line-height: 1.15;
+		line-height: 1.4;
 		orphans: 2;
 		widows: 2;
 		text-align: center;
@@ -1735,7 +1692,7 @@
 	.c29 {
 		padding-top: 0pt;
 		padding-bottom: 0pt;
-		line-height: 1.15;
+		line-height: 1.4;
 		orphans: 2;
 		widows: 2;
 		text-align: left;
@@ -1743,7 +1700,7 @@
 	.c26 {
 		padding-top: 0pt;
 		padding-bottom: 10pt;
-		line-height: 1.15;
+		line-height: 1.4;
 		orphans: 2;
 		widows: 2;
 		text-align: center;
@@ -1751,7 +1708,7 @@
 	.c22 {
 		padding-top: 18pt;
 		padding-bottom: 10pt;
-		line-height: 1.15;
+		line-height: 1.4;
 		orphans: 2;
 		widows: 2;
 		text-align: left;
@@ -1759,7 +1716,7 @@
 	.c11 {
 		padding-top: 0pt;
 		padding-bottom: 20pt;
-		line-height: 1.15;
+		line-height: 1.4;
 		orphans: 2;
 		widows: 2;
 		text-align: left;
@@ -1829,7 +1786,7 @@
 		font-size: 26pt;
 		padding-bottom: 3pt;
 		font-family: 'Arial';
-		line-height: 1.15;
+		line-height: 1.4;
 		page-break-after: avoid;
 		orphans: 2;
 		widows: 2;
@@ -1841,7 +1798,7 @@
 		font-size: 15pt;
 		padding-bottom: 16pt;
 		font-family: 'Arial';
-		line-height: 1.15;
+		line-height: 1.4;
 		page-break-after: avoid;
 		orphans: 2;
 		widows: 2;
@@ -1864,7 +1821,7 @@
 		font-size: 20pt;
 		padding-bottom: 6pt;
 		font-family: 'Arial';
-		line-height: 1.15;
+		line-height: 1.4;
 		page-break-after: avoid;
 		orphans: 2;
 		widows: 2;
@@ -1876,7 +1833,7 @@
 		font-size: 16pt;
 		padding-bottom: 6pt;
 		font-family: 'Arial';
-		line-height: 1.15;
+		line-height: 1.4;
 		page-break-after: avoid;
 		orphans: 2;
 		widows: 2;
@@ -1888,7 +1845,7 @@
 		font-size: 14pt;
 		padding-bottom: 4pt;
 		font-family: 'Arial';
-		line-height: 1.15;
+		line-height: 1.4;
 		page-break-after: avoid;
 		orphans: 2;
 		widows: 2;
@@ -1900,7 +1857,7 @@
 		font-size: 12pt;
 		padding-bottom: 4pt;
 		font-family: 'Arial';
-		line-height: 1.15;
+		line-height: 1.4;
 		page-break-after: avoid;
 		orphans: 2;
 		widows: 2;
@@ -1912,7 +1869,7 @@
 		font-size: 11pt;
 		padding-bottom: 4pt;
 		font-family: 'Arial';
-		line-height: 1.15;
+		line-height: 1.4;
 		page-break-after: avoid;
 		orphans: 2;
 		widows: 2;
@@ -1924,7 +1881,7 @@
 		font-size: 11pt;
 		padding-bottom: 4pt;
 		font-family: 'Arial';
-		line-height: 1.15;
+		line-height: 1.4;
 		page-break-after: avoid;
 		font-style: italic;
 		orphans: 2;
