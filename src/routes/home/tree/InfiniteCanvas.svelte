@@ -199,7 +199,12 @@
 				: viewPort?.clientHeight / canvas?.clientHeight) / 1.1;
 		horizontalOffset = (viewPort?.clientWidth - canvas?.clientWidth * minZoom) / 2 / minZoom;
 		verticalOffset = (viewPort?.clientHeight - canvas?.clientHeight * minZoom) / 2 / minZoom;
-
+		if (
+			canvas?.clientWidth / canvas?.clientHeight <
+			viewPort?.clientWidth / viewPort?.clientHeight
+		) {
+			vertical = true;
+		}
 		if ($userCoords[0] === 91291312402) {
 			z = minZoom;
 			x = horizontalOffset * z;
@@ -210,15 +215,21 @@
 		} else {
 			[x, y, z, homeX, homeY, homeZ] = $userCoords;
 		}
-		motionX.set(x);
-		motionY.set(y);
-		motionZ.set(z);
-		if (
-			canvas?.clientWidth / canvas?.clientHeight <
-			viewPort?.clientWidth / viewPort?.clientHeight
-		) {
-			vertical = true;
-		}
+		canvas.style.transform = `translate(${x}px, ${y}px) scale(${z})`;
+
+		setTimeout(() => {
+			if ($userCoords[0] === 91291312402) {
+				z = minZoom;
+				x = horizontalOffset * z;
+				y = verticalOffset * z;
+				homeX = x;
+				homeY = y;
+				homeZ = z;
+			} else {
+				[x, y, z, homeX, homeY, homeZ] = $userCoords;
+			}
+			canvas.style.transform = `translate(${x}px, ${y}px) scale(${z})`;
+		}, 300);
 
 		return () => {
 			document.body.style.overflow = '';
