@@ -501,7 +501,7 @@
 		}
 	}
 	function handleGrab(e: MouseEvent) {
-		if (!shifted) {
+		if (!shifted && !$viewingNode) {
 			grabbed = true;
 			grabX = e.clientX;
 			grabY = e.clientY;

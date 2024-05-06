@@ -94,6 +94,7 @@
 	let editCounter = 3;
 	let pasting = false;
 	let sessionTimeout: any;
+	let escBtn = false;
 
 	let userColor: string = colors[0];
 	let username = data.props?.profile?.username;
@@ -2266,6 +2267,7 @@
 		}
 	}
 	function escapeNode() {
+		escBtn = false;
 		editBtnActive = true;
 		clearTimeout(sessionTimeout);
 		if (problemChannel) data.supabase.removeChannel(problemChannel);
@@ -3465,6 +3467,7 @@
 			editIconActive = true;
 			$viewingNode = treeData.id;
 			startListening();
+			escBtn = true;
 			treeAction.set('find-node-position');
 		} else if (data?.props?.loggedIn) {
 			if (editable) {
@@ -3590,17 +3593,25 @@
 	class="grid bg-[#1f1f1f] rounded-[20px] w-[800px] p-[60px] relative selection:bg-[#6a87b389]"
 	style="box-shadow: -2px 2px #a53a3a;"
 >	
+	{#if escBtn}
 		<button
-			on:click={changeEditable}
-			disabled={!editBtnActive}
-			class="absolute top-[55px] right-[65px] rounded-md w-[36px] h-[36px] items-center justify-center {editBtnActive && data?.props?.loggedIn ? 'hover:bg-[#4949495a]' : ''}"
-		>
-			{#if editIconActive}
-				<Edit color={editBtnActive && data?.props?.loggedIn ? '#9c9c9c' : '#595959'} size="36px" />
-			{:else}
-				<View color="#9c9c9c" size="36px" />
-			{/if}
+			on:click={escapeNode}
+			class="absolute top-[14px] left-[15px] h-[17px] w-[40px] rounded-full border-[#595959] border-[1px] hover:bg-[#292929]"
+			>
+			<code class="absolute top-[-5px] left-[10px] text-[10px] text-[#595959]">esc</code>
 		</button>
+	{/if}
+	<button
+		on:click={changeEditable}
+		disabled={!editBtnActive}
+		class="absolute top-[55px] right-[65px] rounded-md w-[36px] h-[36px] items-center justify-center {editBtnActive && data?.props?.loggedIn ? 'hover:bg-[#4949495a]' : ''}"
+	>
+		{#if editIconActive}
+			<Edit color={editBtnActive && data?.props?.loggedIn ? '#9c9c9c' : '#595959'} size="36px" />
+		{:else}
+			<View color="#9c9c9c" size="36px" />
+		{/if}
+	</button>
 	<p class="ml-[14px] mr-[50px] title mb-[25px]" on:dblclick={editTitle}>
 		{title ?? 'untitled'}
 	</p>

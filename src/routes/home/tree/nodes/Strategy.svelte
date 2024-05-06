@@ -86,6 +86,7 @@
 	let sectionsReady = false;
 	let nodeReady = false;
 	let savingTimeout: any;
+	let escBtn = false;
 
 	let nodeActionUnsubscribe: any;
 	let colors = ['#3dfc53', '#0040ff', '#9500ff', '#25faf6', '#f7b757', '#ff78d7', '#b6ed34'];
@@ -2276,6 +2277,7 @@
 		}
 	}
 	function escapeNode() {
+		escBtn = false;
 		editBtnActive = true;
 		clearTimeout(sessionTimeout);
 		if (strategyChannel) data.supabase.removeChannel(strategyChannel);
@@ -3547,6 +3549,7 @@
 			children = treeData.problems;
 			startListening();
 			treeAction.set('find-node-position');
+			escBtn = true;
 		} else if (data?.props?.loggedIn) {
 			if (editable) {
 				editBtnActive = false;
@@ -3683,6 +3686,14 @@
 	class="grid bg-[#1f1f1f] rounded-[20px] w-[800px] p-[60px] relative selection:bg-[#6a87b389]"
 	style="box-shadow: -2px 2px #3b753c;"
 >
+	{#if escBtn}
+		<button
+			on:click={escapeNode}
+			class="absolute top-[14px] left-[15px] h-[17px] w-[40px] rounded-full border-[#595959] border-[1px] hover:bg-[#292929]"
+		>
+			<code class="absolute top-[-5px] left-[10px] text-[10px] text-[#595959]">esc</code>
+		</button>
+	{/if}
 	<button
 		on:click={changeEditable}
 		disabled={!editBtnActive}
