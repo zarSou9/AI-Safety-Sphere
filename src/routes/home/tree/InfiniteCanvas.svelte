@@ -52,6 +52,13 @@
 	let smoothMoving = false;
 	let nodeHeightUnsubscribe: any;
 	let canvasActionUnsubscribe: any;
+	let isZooming = false;
+	let currentDir = '';
+	let grabX: number;
+	let grabY: number;
+	let shifted = false;
+	let grabbed = false;
+
 	let viewPortOffset = {
 		x: 0,
 		y: 0
@@ -191,6 +198,7 @@
 		canvasResizeObserver.observe(canvas);
 		viewPortResizeObserver.observe(viewPort);
 		window.addEventListener('keydown', shortCuts);
+		window.addEventListener('keyup', handleKeyUp);
 		window.addEventListener('beforeunload', beforeUnload);
 
 		minZoom =
@@ -239,6 +247,9 @@
 
 			if (viewPort) {
 				window.removeEventListener('keydown', shortCuts);
+				window.removeEventListener('keyup', handleKeyUp);
+				window.removeEventListener('beforeunload', beforeUnload);
+				window.removeEventListener('beforeunload', beforeUnload);
 				canvasResizeObserver.unobserve(canvas);
 				viewPortResizeObserver.unobserve(viewPort);
 			}
@@ -278,17 +289,41 @@
 				setHome();
 			} else if (k === 'h') {
 				goHome();
-			} else if (k === '=' && (e.ctrlKey || e.metaKey)) {
+			} else if ((e.ctrlKey || e.metaKey) && k === '=') {
 				e.preventDefault();
 				zoomIn();
-			} else if (k === '-' && (e.ctrlKey || e.metaKey)) {
+			} else if ((e.ctrlKey || e.metaKey) && k === '-') {
 				e.preventDefault();
 				zoomOut();
+			} else if (k === '=' || k === 'x') {
+				if (!isZooming) zooming(true);
+			} else if (k === '-' || k === 'z') {
+				if (!isZooming) zooming(false);
+			} else if (k === 'w' || k === 'a' || k === 's' || k === 'd') {
+				moving(k);
 			} else if (k === 'f') {
 				moveToPos(horizontalOffset * minZoom, verticalOffset * minZoom, minZoom);
-			}
+			} else if (e.shiftKey) shifted = true;
 		} else if ((k === '=' && (e.ctrlKey || e.metaKey)) || (k === '-' && (e.ctrlKey || e.metaKey)))
 			e.preventDefault();
+	}
+	function handleKeyUp(e: KeyboardEvent) {
+		const k = e.key;
+		if (isZooming) {
+			if (k === '=' || k === '-' || k === 'z' || k === 'x') {
+				isZooming = false;
+			}
+		}
+		if (currentDir) {
+			if (currentDir.includes(k)) {
+				const newDir = currentDir.replace(k, '');
+				currentDir = '';
+				if (newDir) {
+					moving(newDir);
+				}
+			}
+		}
+		if (k === 'Shift') shifted = false;
 	}
 	function zoomIn() {
 		scale(z * (1 + zoomIntensity + 0.15));
@@ -303,6 +338,207 @@
 	}
 	function goHome() {
 		moveToPos(homeX, homeY, homeZ, 400, 900);
+	}
+
+	async function moving(dir: string) {
+		if (currentDir.includes(dir)) return;
+		let speed = 3.5;
+		let dx = 0;
+		let dy = 0;
+		if (currentDir === 'w') {
+			if (dir === 'a') {
+				currentDir = 'wa';
+				dy = (speed / Math.sqrt(2)) * -1;
+				dx = (speed / Math.sqrt(2)) * -1;
+			} else if (dir === 's') {
+				currentDir = '';
+				moving(dir);
+				return;
+			} else if (dir === 'd') {
+				currentDir = 'wd';
+				dy = (speed / Math.sqrt(2)) * -1;
+				dx = speed / Math.sqrt(2);
+			}
+		} else if (currentDir === 'a') {
+			if (dir === 'w') {
+				currentDir = 'wa';
+				dy = (speed / Math.sqrt(2)) * -1;
+				dx = (speed / Math.sqrt(2)) * -1;
+			} else if (dir === 's') {
+				currentDir = 'as';
+				dy = speed / Math.sqrt(2);
+				dx = (speed / Math.sqrt(2)) * -1;
+			} else if (dir === 'd') {
+				currentDir = '';
+				moving(dir);
+				return;
+			}
+		} else if (currentDir === 's') {
+			if (dir === 'w') {
+				currentDir = '';
+				moving(dir);
+				return;
+			} else if (dir === 'a') {
+				currentDir = 'as';
+				dy = speed / Math.sqrt(2);
+				dx = (speed / Math.sqrt(2)) * -1;
+			} else if (dir === 'd') {
+				currentDir = 'sd';
+				dy = speed / Math.sqrt(2);
+				dx = speed / Math.sqrt(2);
+			}
+		} else if (currentDir === 'd') {
+			if (dir === 'w') {
+				currentDir = 'wd';
+				dy = (speed / Math.sqrt(2)) * -1;
+				dx = speed / Math.sqrt(2);
+			} else if (dir === 'a') {
+				currentDir = '';
+				moving(dir);
+				return;
+			} else if (dir === 's') {
+				currentDir = 'sd';
+				dy = speed / Math.sqrt(2);
+				dx = speed / Math.sqrt(2);
+			}
+		} else if (!currentDir) {
+			currentDir = dir;
+			if (dir === 'w') dy = -speed;
+			else if (dir === 'a') dx = -speed;
+			else if (dir === 's') dy = speed;
+			else if (dir === 'd') dx = speed;
+		} else {
+			currentDir = '';
+			return;
+		}
+		let prevDir = currentDir;
+		while (currentDir === prevDir) {
+			prevDir = currentDir;
+			if ((x - dx) / z <= horizontalOffset) {
+				if (
+					viewPort.clientWidth / z - ((x - dx) / z + canvas.clientWidth) >=
+					horizontalOffset + 1
+				) {
+					x = (viewPort.clientWidth / z - (horizontalOffset + 1) - canvas.clientWidth) * z;
+				} else {
+					x -= dx;
+					if (x / z > horizontalOffset) {
+						x = horizontalOffset * z;
+					}
+				}
+			} else {
+				x = horizontalOffset * z;
+			}
+			if ((y - dy) / z <= verticalOffset) {
+				if (viewPort.clientHeight / z - ((y - dy) / z + canvas.clientHeight) >= verticalOffset) {
+					y = (viewPort.clientHeight / z - verticalOffset - canvas.clientHeight) * z;
+				} else {
+					y -= dy;
+					if (y / z > verticalOffset) {
+						y = verticalOffset * z;
+					}
+				}
+			} else {
+				y = verticalOffset * z;
+			}
+
+			canvas.style.transform = `translate(${x}px, ${y}px) scale(${z})`;
+			await new Promise((resolve) => setTimeout(resolve, 1));
+		}
+	}
+	async function zooming(dir: boolean) {
+		let zf;
+		if (!smoothMoving) {
+			isZooming = true;
+			while (isZooming) {
+				if (dir) {
+					zf = z * 1.008;
+				} else {
+					zf = z * 0.992;
+				}
+				const scaleMultiplier = zf / z;
+				z = Math.min(Math.max(zf, minZoom), 100);
+				if (!(z === 100) && !(z === minZoom)) {
+					const offsetX = (viewPort.clientWidth / 2 - x) * (1 - scaleMultiplier);
+					const offsetY = (viewPort.clientHeight / 2 - y) * (1 - scaleMultiplier);
+					if ((x + offsetX) / z <= horizontalOffset) {
+						if (
+							viewPort.clientWidth / z - ((x + offsetX) / z + canvas.clientWidth) >=
+							horizontalOffset + 1
+						) {
+							x = (viewPort.clientWidth / z - (horizontalOffset + 1) - canvas.clientWidth) * z;
+						} else {
+							x += offsetX;
+							if (x / z > horizontalOffset) {
+								x = horizontalOffset * z;
+							}
+						}
+					} else {
+						x = horizontalOffset * z;
+					}
+					if ((y + offsetY) / z <= verticalOffset) {
+						if (
+							viewPort.clientHeight / z - ((y + offsetY) / z + canvas.clientHeight) >=
+							verticalOffset + 1
+						) {
+							y = (viewPort.clientHeight / z - (verticalOffset + 1) - canvas.clientHeight) * z;
+						} else {
+							y += offsetY;
+							if (y / z > verticalOffset) {
+								y = verticalOffset * z;
+							}
+						}
+					} else {
+						y = verticalOffset * z;
+					}
+				} else if (z === minZoom) {
+					x = horizontalOffset * z;
+					y = verticalOffset * z;
+				}
+				canvas.style.transform = `translate(${x}px, ${y}px) scale(${z})`;
+				await new Promise((resolve) => setTimeout(resolve, 2));
+			}
+		}
+	}
+	function handleGrab(e: MouseEvent) {
+		if (!shifted) {
+			grabbed = true;
+			grabX = e.clientX;
+			grabY = e.clientY;
+			window.addEventListener('mousemove', grabMove);
+		}
+	}
+	function grabMove(e: MouseEvent) {
+		let dx = grabX - e.clientX;
+		let dy = grabY - e.clientY;
+		grabX = e.clientX;
+		grabY = e.clientY;
+		if ((x - dx) / z <= horizontalOffset) {
+			if (viewPort.clientWidth / z - ((x - dx) / z + canvas.clientWidth) >= horizontalOffset + 1) {
+				x = (viewPort.clientWidth / z - (horizontalOffset + 1) - canvas.clientWidth) * z;
+			} else {
+				x -= dx;
+				if (x / z > horizontalOffset) {
+					x = horizontalOffset * z;
+				}
+			}
+		} else {
+			x = horizontalOffset * z;
+		}
+		if ((y - dy) / z <= verticalOffset) {
+			if (viewPort.clientHeight / z - ((y - dy) / z + canvas.clientHeight) >= verticalOffset) {
+				y = (viewPort.clientHeight / z - verticalOffset - canvas.clientHeight) * z;
+			} else {
+				y -= dy;
+				if (y / z > verticalOffset) {
+					y = verticalOffset * z;
+				}
+			}
+		} else {
+			y = verticalOffset * z;
+		}
+
+		canvas.style.transform = `translate(${x}px, ${y}px) scale(${z})`;
 	}
 
 	function scale(zf: number, dur = 250, delay = dur) {
@@ -495,8 +731,13 @@
 {/if}
 
 <div
-	class="h-full w-full overflow-hidden bg-[#151515]"
+	class="h-full w-full overflow-hidden bg-[#151515] {grabbed ? 'cursor-grabbing' : ''}"
 	on:wheel={$viewingNode ? scrollEditing : handlePanZoom}
+	on:mousedown={handleGrab}
+	on:mouseup={() => {
+		window.removeEventListener('mousemove', grabMove);
+		grabbed = false;
+	}}
 	on:contextmenu={context}
 	bind:this={viewPort}
 	role="presentation"
