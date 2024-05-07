@@ -1,14 +1,17 @@
 <script lang="ts">
-	import { getContext, onMount } from 'svelte';
+	import { getContext, onMount, tick } from 'svelte';
 	import Problem from './nodes/Problem.svelte';
 	import Strategy from './nodes/Strategy.svelte';
 	import Left from '$lib/icons/Left.svelte';
 	import Right from '$lib/icons/Right.svelte';
 	import Curve from '$lib/components/Curve.svelte';
-	import { tick } from 'svelte';
 	import type { TreeInterface } from '$lib/types/nodes';
 	import type { Writable } from 'svelte/store';
 	import type { PageData } from './$types';
+	import { slide } from 'svelte/transition';
+	import FolderArrow from '$lib/icons/FolderArrow.svelte';
+
+	import { quintOut } from 'svelte/easing';
 
 	const tree: TreeInterface = getContext('tree');
 	const viewingNodeRect: { l: number; t: number; w: number; h: number } =
@@ -33,6 +36,7 @@
 	const loginNotif: Writable<any> = getContext('loginNotifStore');
 
 	let newProbTitle: string;
+	let sectionsOpen: any;
 	let viewingNodeDiv: HTMLDivElement | undefined;
 	let treeContainer: {
 		width: number;
@@ -61,6 +65,7 @@
 		left: number;
 		probs: any[];
 		owners: Array<string>;
+		arrow: any;
 	}[] = [];
 	let openTree = false;
 	let extraShown = true;
@@ -68,6 +73,8 @@
 	let moving = false;
 	let lastNavigatedNode = 'r';
 	let newStrategyProblem: any;
+	let sectionFunction: any;
+
 	viewingNode.set(undefined);
 	$quillsReady = false;
 	$: if (openTree) {
@@ -206,7 +213,8 @@
 				top: obj.top,
 				left: obj.left,
 				probs: probs,
-				owners: obj.owners
+				owners: obj.owners,
+				arrow: undefined
 			});
 		}
 	}
@@ -384,6 +392,42 @@
 			});
 		}
 	}
+	function switchToStrategy(stratI: number, id: string) {
+		const nRect = findNodeInTreeArrays(id)?.div?.getBoundingClientRect();
+		if (nRect) {
+			stratChange.pl = nRect.left;
+			stratChange.pt = nRect.top;
+		}
+		let problem = tree.getObjFromId(tree.getParent(id) as string);
+		$quillsReady = false;
+		problem.selectedStrategy = stratI;
+		tree.updateSelected(tree.getParent(id), problem.selectedStrategy);
+		problems = [];
+		strategies = [];
+		treeContainer = tree.calculateSpacing();
+		updateTreeArrays();
+		data.supabase
+			.from('Profiles')
+			.update({ selected_strategies: tree.getSelections() })
+			.eq('user_id', data.session?.user.id)
+			.then(({ error }) => {
+				if (error) console.log(error);
+			});
+		tick().then(() => {
+			const nRect = findNodeInTreeArrays(
+				problem.strategies[problem.selectedStrategy].id
+			)?.div?.getBoundingClientRect();
+
+			if (nRect) {
+				stratChange.l = nRect.left;
+				stratChange.t = nRect.top;
+			}
+			canvasAction.set('adjust-for-strat-change');
+			setTimeout(() => {
+				$quillsReady = true;
+			}, 40);
+		});
+	}
 
 	function calculateTitleSpacing(probs: any[]) {
 		const spacing = 800 / (probs.length + 1);
@@ -520,6 +564,52 @@
 					<div role="presentation" bind:this={strategy.div}>
 						<Strategy treeData={tree.getObjFromId(strategy.id)}></Strategy>
 						{#if $quillsReady}
+							{#if tree.getObjFromId(tree.getParent(strategy.id) || '')?.strategies.length > 1}
+								<button
+									on:click={() => {
+										if (sectionsOpen) {
+											strategy.arrow.style.transform = `rotate(90deg)`;
+											sectionsOpen = false;
+											window.removeEventListener('click', sectionFunction);
+										} else {
+											strategy.arrow.style.transform = `rotate(270deg)`;
+											sectionsOpen = strategy.id;
+											sectionFunction = () => {
+												strategy.arrow.style.transform = `rotate(90deg)`;
+												sectionsOpen = false;
+												window.removeEventListener('click', sectionFunction);
+											};
+											setTimeout(() => window.addEventListener('click', sectionFunction), 2);
+										}
+									}}
+									class="text-[11px] text-[#b0b0b0] h-[23px] rounded-[5px] absolute top-[-30px] left-[70px] w-[160px] border-[#606060] border-[1px]"
+								>
+									<p class="p-0 mt-[-1.8px]">{strategy.data.title}</p>
+									<div bind:this={strategy.arrow} class="absolute top-[2.5px] right-[3px] arrow">
+										<FolderArrow color="#484848" size="16px" />
+									</div>
+									{#if sectionsOpen === strategy.id}
+										<div
+											transition:slide={{ duration: 150, easing: quintOut }}
+											class="z-[400] absolute bg-[#474747] rounded-[6px] top-[25px] right-[0px] left-0 flex flex-col text-[11px] py-[6px] space-y-[3px] text-[#e9e9e9]"
+										>
+											{#each tree.getObjFromId(tree.getParent(strategy.id) || '')?.strategies || [] as strat, i}
+												{#if strat.id !== strategy.id}
+													<button
+														on:click={() => {
+															sectionsOpen = false;
+															window.removeEventListener('click', sectionFunction);
+															switchToStrategy(i, strategy.id);
+														}}
+														class="hover:bg-[#626262] pl-[10px] flex justify-start"
+														>{strat.data.title}</button
+													>
+												{/if}
+											{/each}
+										</div>
+									{/if}
+								</button>
+							{/if}
 							<div
 								class="absolute flex w-[800px] justify-center"
 								style="top: {strategy.div.clientHeight + 6}px;"
@@ -566,3 +656,10 @@
 	</div>
 {/if}
 <div class="h-[20px]" />
+
+<style>
+	.arrow {
+		transform: rotate(90deg);
+		transition: transform 150ms ease-out;
+	}
+</style>

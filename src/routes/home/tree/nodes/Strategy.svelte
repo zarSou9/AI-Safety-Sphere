@@ -2457,13 +2457,7 @@
 						newSects.push(sect.title);
 					}
 					$sectionModal.sections = newSects;
-					$sectionModal.suggestions = [
-						'Prerequisites',
-						'Measurable Objective',
-						'Skills Needed',
-						'Existing Work',
-						'References'
-					];
+					$sectionModal.suggestions = ['Prerequisites', 'References'];
 					$sectionModal.visible = true;
 				} else if (action === 'save-section-title') {
 					const store = get(sectionTitleModal);
