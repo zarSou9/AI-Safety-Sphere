@@ -115,6 +115,18 @@ export function createTree() {
 			}
 		}
 	}
+	function appendAllProblems(obj: any, problems: any) {
+		if (obj?.strategies !== undefined) {
+			problems.push({ title: obj.data.title, uuid: obj.uuid, id: obj.id });
+			for (let strat of obj.strategies) {
+				appendAllProblems(strat, problems);
+			}
+		} else {
+			for (let prob of obj.problems) {
+				appendAllProblems(prob, problems);
+			}
+		}
+	}
 
 	return {
 		setTree(t: Tree, sS: SelectedStrategy[] | undefined = undefined) {
@@ -337,6 +349,11 @@ export function createTree() {
 		},
 		setSelections(newSelects: any) {
 			selectedStrategies = newSelects;
+		},
+		findAllProblems() {
+			let problems: any = [];
+			appendAllProblems(tree.problem, problems);
+			return problems;
 		}
 	};
 }

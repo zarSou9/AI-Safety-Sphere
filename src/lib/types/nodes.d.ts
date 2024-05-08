@@ -102,6 +102,7 @@ interface TreeInterface {
 	updateSelections: () => void;
 	getSelections: () => SelectedStrategy[];
 	setSelections: (newSelects: any) => void;
+	findAllProblems: () => any;
 }
 
 interface NodeChange {
