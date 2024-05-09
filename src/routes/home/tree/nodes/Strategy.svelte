@@ -2496,6 +2496,24 @@
 			};
 			section.quill.setContents(section.base);
 			section.quill.on('editor-change', section.eventFunction);
+			if (userColor === 'owner') {
+				const newHis = {
+					b: new Delta(JSON.parse(JSON.stringify(section.base))),
+					c: JSON.parse(JSON.stringify(section.suggestions))
+				};
+				for (let chan of newHis.c) {
+					chan.cd = new Delta(chan.cd);
+				}
+				section.history.push(newHis);
+			} else {
+				const newHis = {
+					c: JSON.parse(JSON.stringify(section.suggestions))
+				};
+				for (let chan of newHis.c) {
+					chan.cd = new Delta(chan.cd);
+				}
+				section.history.push(newHis);
+			}
 		}
 		switchCurrent(sections[0]);
 		window.addEventListener('keydown', handleKeyDown);
