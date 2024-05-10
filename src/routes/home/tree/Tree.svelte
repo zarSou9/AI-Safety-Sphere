@@ -613,7 +613,7 @@
 {#if openTree}
 	<div class="relative" style="height: {treeContainer.height}px; width: {treeContainer.width}px;">
 		{#each problems as problem (problem.id)}
-			{#if extraShown || problem.uuid === $viewingNode.uuid}
+			{#if extraShown || problem.id === $viewingNode.id}
 				<div
 					role="presentation"
 					bind:this={problem.div}
@@ -664,7 +664,7 @@
 			{/if}
 		{/each}
 		{#each strategies as strategy (strategy.id)}
-			{#if extraShown || strategy.uuid === $viewingNode.uuid}
+			{#if extraShown || strategy.id === $viewingNode.id}
 				<div
 					class="flex items-center absolute"
 					style="left: {strategy.left}px; top: {strategy.top}px;"

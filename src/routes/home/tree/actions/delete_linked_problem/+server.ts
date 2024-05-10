@@ -2,6 +2,7 @@ import type { RequestHandler } from './$types';
 import { json } from '@sveltejs/kit';
 import { createTree } from '$lib/stores/nodes';
 import Joi from 'joi';
+import { error } from 'console';
 
 export const POST: RequestHandler = async ({ request, locals: { supabase, supabaseService } }) => {
 	try {
@@ -39,21 +40,9 @@ export const POST: RequestHandler = async ({ request, locals: { supabase, supaba
 		const deleteResult = tree.deleteProblem(undefined, uuid, true);
 		if (deleteResult?.error) throw { status: 400, message: deleteResult.error };
 
-		const postPromises = [];
+		const re = await supabaseService.from('Tree').update({ data: tree.getTree() }).eq('id', 1);
 
-		postPromises.push(supabaseService.from('Problems').delete().eq('uuid', uuid));
-
-		for (let updateProbId of deleteResult.data.newProbIds) {
-			postPromises.push(
-				supabaseService
-					.from('Problems')
-					.update({ id: updateProbId.new })
-					.eq('uuid', updateProbId.old)
-			);
-		}
-		postPromises.push(supabaseService.from('Tree').update({ data: tree.getTree() }).eq('id', 1));
-
-		await Promise.all(postPromises);
+		if (re?.error) throw { status: 400, message: re.error.message };
 
 		return json(
 			{ message: 'Data submitted successfully', data: { tree: tree.getTree() } },

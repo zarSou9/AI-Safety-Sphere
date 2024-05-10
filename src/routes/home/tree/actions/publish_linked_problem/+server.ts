@@ -31,19 +31,21 @@ export const POST: RequestHandler = async ({ request, locals: { supabase, supaba
 		const tree = createTree();
 
 		tree.setTree(treeData.data[0].data);
-		const treeNode = tree.getObjFromId(stratId);
+		const treeNode = tree.getObjFromId(stratId, stratUUID);
 		const owners = treeNode?.owners;
 		if (!owners?.includes(username)) {
 			throw { status: 400, message: 'Unauthorized' };
 		}
 
-		const s = tree.getObjFromId(stratId, stratUUID);
-		if (!s?.id)
+		if (!treeNode?.id)
 			throw { status: 400, message: 'Parent strategy of problem node could not be found' };
+
+		if (!tree.checkIfProbAboveStrat(stratId, stratUUID, p.id, p.uuid))
+			throw { status: 400, message: 'Cannot link parent node due to recursion' };
 
 		tree.createLinkedProblem(stratId, stratUUID, p.uuid, username);
 
-		if (s.problems.length > 8)
+		if (treeNode.problems.length > 8)
 			throw { status: 400, message: 'Strategies have a maximum of 8 subproblems' };
 
 		const treeResult = await supabaseService

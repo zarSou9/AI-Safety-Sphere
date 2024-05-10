@@ -116,19 +116,6 @@ export function createTree() {
 			}
 		}
 	}
-	function appendAllProblems(obj: any, problems: any) {
-		if (obj?.referenced) {
-		} else if (obj?.strategies !== undefined) {
-			problems.push({ title: obj.data.title, uuid: obj.uuid, id: obj.id });
-			for (let strat of obj.strategies) {
-				appendAllProblems(strat, problems);
-			}
-		} else {
-			for (let prob of obj.problems) {
-				appendAllProblems(prob, problems);
-			}
-		}
-	}
 	function fillReferenced(obj: any) {
 		if (obj?.referenced) {
 			const refProb = JSON.parse(JSON.stringify(findObjFromUUID(tree.problem, obj.referenced)));
@@ -171,6 +158,21 @@ export function createTree() {
 			});
 			obj.id = id;
 			obj.referenced = uuid;
+		}
+	}
+	function appendAllProblems(obj: any, problems: any, sId: string) {
+		if (obj?.referenced) {
+		} else if (obj?.strategies !== undefined) {
+			if (!sId.includes(obj.id)) {
+				problems.push({ title: obj.data.title, uuid: obj.uuid, id: obj.id });
+			}
+			for (let strat of obj.strategies) {
+				appendAllProblems(strat, problems, sId);
+			}
+		} else {
+			for (let prob of obj.problems) {
+				appendAllProblems(prob, problems, sId);
+			}
 		}
 	}
 
@@ -435,8 +437,19 @@ export function createTree() {
 		},
 		findAllProblems(sID: string, sUUID: string) {
 			let problems: any = [];
-			appendAllProblems(tree.problem, problems);
+			appendAllProblems(tree.problem, problems, sID);
 			return problems;
+		},
+		checkIfProbAboveStrat(
+			stratID: string | undefined,
+			stratUUID: string | undefined,
+			probID: string | undefined,
+			probUUID: string | undefined
+		) {
+			const stratid = this.getObjFromId(stratID, stratUUID)?.id;
+			const probid = this.getObjFromId(probID, probUUID)?.id;
+			if (!stratID || !probID || stratid.includes(probid)) return false;
+			return true;
 		}
 	};
 }
