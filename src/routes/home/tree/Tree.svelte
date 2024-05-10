@@ -55,6 +55,7 @@
 		parent: any;
 		last: boolean;
 		owners: Array<string>;
+		referenced?: string;
 	}[] = [];
 	let strategies: {
 		id: string;
@@ -66,6 +67,7 @@
 		probs: any[];
 		owners: Array<string>;
 		arrow: any;
+		referenced?: string;
 	}[] = [];
 	let openTree = false;
 	let extraShown = true;
@@ -101,7 +103,11 @@
 		}
 		viewingNodeUnsubscribe = viewingNode.subscribe((v) => {
 			if (v) {
-				viewingNodeDiv = findNodeInTreeArrays(v)?.div;
+				if (v.referenced) {
+					viewingNodeDiv = findNodeInTreeArrays(tree.getObjFromId(undefined, v.referenced).id)?.div;
+				} else {
+					viewingNodeDiv = findNodeInTreeArrays(v.id)?.div;
+				}
 			} else if (v === false) {
 				if ($redoTree) {
 					problems = [];
@@ -164,6 +170,13 @@
 						deleteProblem($nodeToRemove.id, $nodeToRemove.uuid);
 					}
 					nodeToRemove.set(undefined);
+				} else if (action === 'remove-linked-node') {
+					if (tree.getNodeType($nodeToRemove.id) === 's') {
+						failurePopUp.set('Error: Cannot delete child of referenced node');
+					} else {
+						deleteLinkedProblem($nodeToRemove.uuid);
+					}
+					nodeToRemove.set(undefined);
 				}
 				treeAction.set(null);
 			}
@@ -181,41 +194,106 @@
 		obj: any = tree.getTree().problem,
 		parent = { data: { title: '' }, id: '' }
 	) {
-		if (obj?.strategies !== undefined) {
-			let last = false;
-			if (obj.strategies.length !== 0) {
-				updateTreeArrays(obj.strategies[obj.selectedStrategy]);
-			} else last = true;
-			problems.push({
-				id: obj.id,
-				uuid: obj.uuid,
-				data: obj.data,
-				top: obj.top,
-				left: obj.left,
-				parent: parent,
-				last: last,
-				owners: obj.owners
-			});
-		} else {
-			const probs: any[] = [];
-			for (let i = 0; i < obj.problems.length; i++) {
-				updateTreeArrays(obj.problems[i], { data: obj.data, id: obj.id });
-				probs.push({
-					id: obj.problems[i].id,
-					data: obj.problems[i].data,
-					pos: { top: obj.problems[i].top, left: obj.problems[i].left }
+		if (obj?.strategies) {
+			if (obj?.referenced) {
+				const refProb = tree.getObjFromId(undefined, obj.referenced);
+				let last = false;
+				if (obj.strategies.length !== 0) {
+					updateTreeArrays(obj.strategies[obj.selectedStrategy]);
+				} else last = true;
+				problems.push({
+					id: obj.id,
+					uuid: refProb.uuid,
+					data: refProb.data,
+					top: obj.top,
+					left: obj.left,
+					parent: parent,
+					last: last,
+					owners: refProb.owners,
+					referenced: obj.uuid
+				});
+			} else {
+				let last = false;
+				if (obj.strategies.length !== 0) {
+					updateTreeArrays(obj.strategies[obj.selectedStrategy]);
+				} else last = true;
+				problems.push({
+					id: obj.id,
+					uuid: obj.uuid,
+					data: obj.data,
+					top: obj.top,
+					left: obj.left,
+					parent: parent,
+					last: last,
+					owners: obj.owners
 				});
 			}
-			strategies.push({
-				id: obj.id,
-				uuid: obj.uuid,
-				data: obj.data,
-				top: obj.top,
-				left: obj.left,
-				probs: probs,
-				owners: obj.owners,
-				arrow: undefined
-			});
+		} else if (obj?.problems) {
+			const probs: any[] = [];
+			for (let i = 0; i < obj.problems.length; i++) {
+				if (obj?.referenced) {
+					if (obj.problems[i]?.referenced) {
+						const refStrat = tree.getObjFromId(undefined, obj.referenced);
+						const refProb = tree.getObjFromId(undefined, obj.problems[i].referenced);
+						updateTreeArrays(obj.problems[i], { data: refStrat.data, id: obj.id });
+						probs.push({
+							id: obj.problems[i].id,
+							data: refProb.data,
+							pos: { top: obj.problems[i].top, left: obj.problems[i].left }
+						});
+					} else {
+						const refStrat = tree.getObjFromId(undefined, obj.referenced);
+						updateTreeArrays(obj.problems[i], { data: refStrat.data, id: obj.id });
+						probs.push({
+							id: obj.problems[i].id,
+							data: refStrat.problems[i].data,
+							pos: { top: obj.problems[i].top, left: obj.problems[i].left }
+						});
+					}
+				} else {
+					if (obj.problems[i]?.referenced) {
+						const refProb = tree.getObjFromId(undefined, obj.problems[i].referenced);
+						updateTreeArrays(obj.problems[i], { data: obj.data, id: obj.id });
+						probs.push({
+							id: obj.problems[i].id,
+							data: refProb.data,
+							pos: { top: obj.problems[i].top, left: obj.problems[i].left }
+						});
+					} else {
+						updateTreeArrays(obj.problems[i], { data: obj.data, id: obj.id });
+						probs.push({
+							id: obj.problems[i].id,
+							data: obj.problems[i].data,
+							pos: { top: obj.problems[i].top, left: obj.problems[i].left }
+						});
+					}
+				}
+			}
+			if (obj.referenced) {
+				const refStrat = tree.getObjFromId(undefined, obj.referenced);
+				strategies.push({
+					id: obj.id,
+					uuid: refStrat.uuid,
+					data: refStrat.data,
+					top: obj.top,
+					left: obj.left,
+					probs,
+					owners: refStrat.owners,
+					arrow: undefined,
+					referenced: obj.uuid
+				});
+			} else {
+				strategies.push({
+					id: obj.id,
+					uuid: obj.uuid,
+					data: obj.data,
+					top: obj.top,
+					left: obj.left,
+					probs,
+					owners: obj.owners,
+					arrow: undefined
+				});
+			}
 		}
 	}
 
@@ -238,7 +316,7 @@
 			quillsReady.set(false);
 			problems = [];
 			strategies = [];
-			tree.setTree(result.data.tree, tree.getSelections());
+			tree.setClientTree(result.data.tree, tree.getSelections());
 			tick().then(() => {
 				treeContainer = tree.calculateSpacing();
 				updateTreeArrays();
@@ -271,7 +349,41 @@
 			quillsReady.set(false);
 			problems = [];
 			strategies = [];
-			tree.setTree(result.data.tree, tree.getSelections());
+			tree.setClientTree(result.data.tree, tree.getSelections());
+			tick().then(() => {
+				treeContainer = tree.calculateSpacing();
+				updateTreeArrays();
+				setTimeout(() => {
+					quillsReady.set(true);
+					successPopUp.set('Problem successfully deleted');
+				}, 20);
+			});
+			$processing = false;
+		} catch (error: any) {
+			failurePopUp.set('Error: ' + error.message);
+			$processing = false;
+		}
+	}
+	async function deleteLinkedProblem(uuid: string): Promise<void> {
+		$processing = true;
+		try {
+			const response = await fetch('/home/tree/actions/delete_linked_problem', {
+				method: 'POST',
+				headers: {
+					'Content-Type': 'application/json'
+				},
+				body: JSON.stringify({ uuid, userId: data.session?.user.id })
+			});
+
+			const result: any = await response.json();
+
+			if (!response.ok) {
+				throw new Error(result.error || 'Failed to submit data');
+			}
+			quillsReady.set(false);
+			problems = [];
+			strategies = [];
+			tree.setClientTree(result.data.tree, tree.getSelections());
 			tick().then(() => {
 				treeContainer = tree.calculateSpacing();
 				updateTreeArrays();
@@ -305,7 +417,7 @@
 			quillsReady.set(false);
 			problems = [];
 			strategies = [];
-			tree.setTree(result.data.tree, []);
+			tree.setClientTree(result.data.tree, []);
 			tick().then(() => {
 				treeContainer = tree.calculateSpacing();
 				updateTreeArrays();
@@ -501,7 +613,7 @@
 {#if openTree}
 	<div class="relative" style="height: {treeContainer.height}px; width: {treeContainer.width}px;">
 		{#each problems as problem (problem.id)}
-			{#if extraShown || problem.id === $viewingNode}
+			{#if extraShown || problem.uuid === $viewingNode.uuid}
 				<div
 					role="presentation"
 					bind:this={problem.div}
@@ -531,7 +643,10 @@
 							>New Strategy</button
 						>
 					{/if}
-					<Problem treeData={tree.getObjFromId(problem.id)}></Problem>
+					<Problem
+						treeData={tree.getObjFromId(problem.id, problem.uuid)}
+						referenced={problem?.referenced}
+					></Problem>
 				</div>
 				{#if $quillsReady && !problem.last}
 					<Curve
@@ -549,7 +664,7 @@
 			{/if}
 		{/each}
 		{#each strategies as strategy (strategy.id)}
-			{#if extraShown || strategy.id === $viewingNode}
+			{#if extraShown || strategy.uuid === $viewingNode.uuid}
 				<div
 					class="flex items-center absolute"
 					style="left: {strategy.left}px; top: {strategy.top}px;"
@@ -562,7 +677,10 @@
 						<div class="h-[40px] w-[40px]" />
 					{/if}
 					<div role="presentation" bind:this={strategy.div}>
-						<Strategy treeData={tree.getObjFromId(strategy.id)}></Strategy>
+						<Strategy
+							treeData={tree.getObjFromId(strategy.id, strategy.uuid)}
+							referenced={strategy?.referenced}
+						></Strategy>
 						{#if $quillsReady}
 							{#if tree.getObjFromId(tree.getParent(strategy.id) || '')?.strategies.length > 1}
 								<button

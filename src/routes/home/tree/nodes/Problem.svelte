@@ -50,6 +50,7 @@
 
 
 	export let treeData: any;
+	export let referenced: string | undefined;
 
 	let sections: any = [
 		{
@@ -2462,10 +2463,17 @@
 					deleteSection(deleteI);
 				} else if (action === 'delete') {
 					escapeNode();
-					setTimeout(() => {
-						nodeToRemove.set({ id: treeData.id, uuid: treeData.uuid });
-						treeAction.set('remove-node');
-					}, 300);
+					if (referenced) {
+						setTimeout(() => {
+							nodeToRemove.set({ uuid: referenced });
+							treeAction.set('remove-linked-node');
+						}, 300);
+					} else {
+						setTimeout(() => {
+							nodeToRemove.set({ id: treeData.id, uuid: treeData.uuid });
+							treeAction.set('remove-node');
+						}, 300);
+					}
 				}
 				nodeAction.set(null);
 			}
@@ -3483,7 +3491,7 @@
 			loadData();
 			$shortCutsEnabled = false;
 			editIconActive = true;
-			$viewingNode = treeData.id;
+			$viewingNode = { id: treeData.id, referenced };
 			startListening();
 			escBtn = true;
 			treeAction.set('find-node-position');

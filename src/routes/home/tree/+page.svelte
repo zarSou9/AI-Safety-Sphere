@@ -70,7 +70,7 @@
 		title: ''
 	});
 	setContext('newStrategyTitleModalStore', newStrategyTitleModal);
-	const newProblemTitleModal = writable({
+	const newProblemTitleModal: any = writable({
 		visible: false,
 		title: ''
 	});
@@ -117,9 +117,9 @@
 	const tree = createTree();
 	if (data.props?.hier[0]?.data?.problem)
 		if (data.props?.profile?.selected_strategies) {
-			tree.setTree(data.props.hier[0].data, data.props.profile.selected_strategies);
+			tree.setClientTree(data.props.hier[0].data, data.props.profile.selected_strategies);
 		} else {
-			tree.setTree(data.props.hier[0].data, []);
+			tree.setClientTree(data.props.hier[0].data, []);
 		}
 
 	setContext('tree', tree);
@@ -239,7 +239,7 @@
 	<ProblemTitleModal
 		{titleResult}
 		titleMessage="New Problem Title"
-		problems={tree.findAllProblems()}
+		problems={tree.findAllProblems($newProblemTitleModal.s.id, $newProblemTitleModal.s.uuid)}
 		on:close={() => {
 			$newProblemTitleModal.visible = false;
 		}}

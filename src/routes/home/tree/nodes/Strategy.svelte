@@ -44,15 +44,13 @@
 	const failurePopUp: Writable<any> = getContext('failurePopUpStore');
 	const sectionContextE: Writable<any> = getContext('sectionContextEStore');
 	const nodeToRemove: Writable<any> = getContext('nodeToRemoveStore');
-	const newProblemTitleModal: Writable<{
-		visible: boolean;
-		title: string;
-	}> = getContext('newProblemTitleModalStore');
+	const newProblemTitleModal: Writable<any> = getContext('newProblemTitleModalStore');
 	const redoTree: Writable<boolean> = getContext('redoTreeStore');
 	const processing: Writable<boolean> = getContext('processingStore');
 	const loginNotif: Writable<any> = getContext('loginNotifStore');
 
 	export let treeData: any;
+	export let referenced: string | undefined;
 
 	let children = treeData.problems;
 
@@ -2466,12 +2464,23 @@
 					deleteSection(deleteI);
 				} else if (action === 'delete') {
 					escapeNode();
-					setTimeout(() => {
-						nodeToRemove.set({ id: treeData.id, uuid: treeData.uuid });
-						treeAction.set('remove-node');
-					}, 250);
+					if (referenced) {
+						setTimeout(() => {
+							nodeToRemove.set({ uuid: referenced });
+							treeAction.set('remove-linked-node');
+						}, 300);
+					} else {
+						setTimeout(() => {
+							nodeToRemove.set({ id: treeData.id, uuid: treeData.uuid });
+							treeAction.set('remove-node');
+						}, 300);
+					}
 				} else if (action === 'create-new-problem') {
-					publishProblem(treeData.id, treeData.uuid, $newProblemTitleModal.title);
+					if ($newProblemTitleModal.title?.uuid) {
+						publishLinkedProblem(treeData.id, treeData.uuid, $newProblemTitleModal.title);
+					} else {
+						publishProblem(treeData.id, treeData.uuid, $newProblemTitleModal.title);
+					}
 					redoTree.set(true);
 					$newProblemTitleModal.title = '';
 				}
@@ -3440,8 +3449,33 @@
 			if (!response.ok) {
 				throw new Error(result.error || 'Failed to submit data');
 			}
-			tree.setTree(result.data.tree, tree.getSelections());
+			tree.setClientTree(result.data.tree, tree.getSelections());
 			treeData = tree.getObjFromId(treeData.id, treeData.uuid);
+			children = treeData.problems;
+			$processing = false;
+		} catch (error: any) {
+			$processing = false;
+			failurePopUp.set('Error: ' + error.message);
+		}
+	}
+	async function publishLinkedProblem(stratId: string, stratUUID: string, p: any): Promise<void> {
+		$processing = true;
+		try {
+			const response = await fetch('/home/tree/actions/publish_linked_problem', {
+				method: 'POST',
+				headers: {
+					'Content-Type': 'application/json'
+				},
+				body: JSON.stringify({ stratId, stratUUID, p, userId: data.session?.user.id })
+			});
+
+			const result: any = await response.json();
+
+			if (!response.ok) {
+				throw new Error(result.error || 'Failed to submit data');
+			}
+			tree.setClientTree(result.data.tree, tree.getSelections());
+			treeData = tree.getObjFromId(undefined, treeData.uuid);
 			children = treeData.problems;
 			$processing = false;
 		} catch (error: any) {
@@ -3557,7 +3591,7 @@
 			loadData();
 			$shortCutsEnabled = false;
 			editIconActive = true;
-			$viewingNode = treeData.id;
+			$viewingNode = { id: treeData.id, referenced };
 			children = treeData.problems;
 			startListening();
 			treeAction.set('find-node-position');
@@ -3775,14 +3809,20 @@
 		<div class="absolute bottom-[-30px] left-0 right-0 flex">
 			<div class="mr-auto" />
 			{#each children as problem}
-				<p class="text-[12px] underline text-[#c5c5c5] mx-auto">{problem.data.title}</p>
+				<p class="text-[12px] underline text-[#c5c5c5] mx-auto">
+					{problem?.referenced
+						? tree.getObjFromId(undefined, problem.referenced).data.title
+						: problem.data.title}
+				</p>
 			{/each}
 			<div class="ml-auto" />
 		</div>
 		<button
 			on:click={() => {
-				if (children.length < 8) $newProblemTitleModal.visible = true;
-				else failurePopUp.set('Strategies have a maximum of 8 subproblems');
+				if (children.length < 8) {
+					$newProblemTitleModal.s = { id: treeData.id, uuid: treeData.uuid };
+					$newProblemTitleModal.visible = true;
+				} else failurePopUp.set('Strategies have a maximum of 8 subproblems');
 			}}
 			class="absolute bottom-[-26px] right-[20px]"><Plus color="#c5c5c5" size="15px"></Plus></button
 		>

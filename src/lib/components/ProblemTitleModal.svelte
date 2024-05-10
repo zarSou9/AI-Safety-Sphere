@@ -35,12 +35,16 @@
 		dispatch('close');
 	}
 	function save() {
-		if (!titleResult.title) {
-			failurePopUp.set('Please provide a title');
-			return;
-		} else if (titleResult.title.length > maxLength) {
-			failurePopUp.set(`Title can't be greater than ${maxLength} characters`);
-			return;
+		if (linkedProblem) {
+			titleResult.title = linkedProblem;
+		} else {
+			if (!titleResult.title) {
+				failurePopUp.set('Please provide a title');
+				return;
+			} else if (titleResult.title.length > maxLength) {
+				failurePopUp.set(`Title can't be greater than ${maxLength} characters`);
+				return;
+			}
 		}
 		dispatch('save');
 	}

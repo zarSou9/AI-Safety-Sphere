@@ -61,9 +61,10 @@ interface TreeStrategy {
 interface TreeInterface {
 	getTree: () => Tree;
 	setTree: (t: Tree, sS?: SelectedStrategy[] | undefined) => void;
+	setClientTree: (t: Tree, sS?: SelectedStrategy[] | undefined) => void;
 	getParent: (id: string | undefined) => string | undefined;
 	getNodeType: (id: string | undefined) => string | undefined;
-	getObjFromId: (id: string, UUID?: string) => any;
+	getObjFromId: (id?: string, UUID?: string) => any;
 	calculateSpacing: () => { width: number; height: number };
 	createRootProblem: (title?: string) => [Problem, Object];
 	createProblem: (
