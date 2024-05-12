@@ -8,6 +8,7 @@
 	import Check from '$lib/icons/Check.svelte';
 	import Cross from '$lib/icons/Cross.svelte';
 	import Paragraph from '$lib/icons/Paragraph.svelte';
+	import Linked from '$lib/icons/Linked.svelte';
 
 	const tree: TreeInterface = getContext('tree');
 	const charPos: { v: number } = getContext('charPos');
@@ -3696,8 +3697,13 @@
 			<View color="#9c9c9c" size="36px" />
 		{/if}
 	</button>
-	<p class="ml-[14px] mr-[50px] title mb-[25px]" on:dblclick={editTitle}>
-		{title ?? 'untitled'}
+	<p class="ml-[14px] mr-[50px] title mb-[25px] relative" on:dblclick={editTitle}>
+		{title || 'untitled'}
+		{#if referenced.uuid}
+			<div class="absolute left-[-9px] top-[-11px]" title="This is a linked problem">
+				<Linked color="#9c9c9c" size="12px" />
+			</div>
+		{/if}
 	</p>
 	{#each sections as section, i (section.title)}
 		<div class="relative">

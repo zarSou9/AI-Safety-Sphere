@@ -33,11 +33,11 @@ export const POST: RequestHandler = async ({ request, locals: { supabase, supaba
 			throw { status: 400, message: 'Unauthorized' };
 		}
 
-		if (tree.getObjFromId(tree.getParent(tree.getObjFromId(undefined, uuid).id))?.referenced) {
+		if (tree.getObjFromId(tree.getParent(treeNode.id))?.referenced) {
 			throw { status: 400, message: 'Error: Cannot delete child of referenced node' };
 		}
 
-		const deleteResult = tree.deleteProblem(undefined, uuid, true);
+		const deleteResult = tree.deleteProblem(treeNode.id, uuid);
 		if (deleteResult?.error) throw { status: 400, message: deleteResult.error };
 
 		const re = await supabaseService.from('Tree').update({ data: tree.getTree() }).eq('id', 1);

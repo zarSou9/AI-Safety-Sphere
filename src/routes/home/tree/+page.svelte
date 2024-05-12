@@ -6,6 +6,7 @@
 	import TitleModal from '$lib/components/TitleModal.svelte';
 	import NewSection from '$lib/components/NewSection.svelte';
 	import ProblemTitleModal from '$lib/components/ProblemTitleModal.svelte';
+	import ConfirmationModal from '$lib/components/ConfirmationModal.svelte';
 	import Bold from '$lib/icons/Bold.svelte';
 	import Italic from '$lib/icons/Italic.svelte';
 	import Endnote from '$lib/icons/Endnote.svelte';
@@ -20,6 +21,7 @@
 	let toolbarResult: any = { title: '', after: '', div: {} };
 	let titleResult: any = { title: '', div: {} };
 	let toolBarMenuDropdown = false;
+	let confirmationModalVisible = false;
 
 	const profDropdown: Writable<boolean> = getContext('profDropdownStore');
 
@@ -249,6 +251,16 @@
 			$newProblemTitleModal.visible = false;
 		}}
 	/>
+{:else if confirmationModalVisible}
+	<ConfirmationModal
+		on:delete={() => {
+			confirmationModalVisible = false;
+			nodeAction.set('delete');
+		}}
+		on:close={() => {
+			confirmationModalVisible = false;
+		}}
+	/>
 {/if}
 
 {#if $successPopUp && successWait()}
@@ -357,7 +369,7 @@
 								>
 								<button
 									on:click={() => {
-										nodeAction.set('delete');
+										confirmationModalVisible = true;
 									}}
 									class="hover:bg-[#934a4a] pl-[10px] flex justify-start">Delete Node</button
 								>

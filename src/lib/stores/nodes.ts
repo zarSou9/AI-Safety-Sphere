@@ -137,26 +137,28 @@ export function createTree() {
 			replaceWithReferenced(refProb, obj.id);
 			obj.strategies = refProb?.strategies || [];
 		} else if (obj?.strategies !== undefined) {
+			let i = 0;
 			for (let strat of obj.strategies) {
-				replaceWithReferenced(strat, pID);
+				replaceWithReferenced(strat, pID + 's' + i);
+				i += 1;
 			}
-			const id = obj.id;
 			const uuid = obj.uuid;
 			Object.keys(obj).forEach((key) => {
 				if (key !== 'strategies') delete obj[key];
 			});
-			obj.id = pID + id.substring(pID.length);
+			obj.id = pID;
 			obj.referenced = uuid;
 		} else {
+			let i = 0;
 			for (let prob of obj.problems) {
-				replaceWithReferenced(prob, pID);
+				replaceWithReferenced(prob, pID + 'p' + i);
+				i += 1;
 			}
-			const id = obj.id;
 			const uuid = obj.uuid;
 			Object.keys(obj).forEach((key) => {
 				if (key !== 'problems') delete obj[key];
 			});
-			obj.id = pID + id.substring(pID.length);
+			obj.id = pID;
 			obj.referenced = uuid;
 		}
 	}
@@ -183,6 +185,19 @@ export function createTree() {
 			}
 		}
 		return d;
+	}
+	function updateChildIDS(obj: any, id: string) {
+		if (obj?.strategies) {
+			for (let strat of obj.strategies) {
+				updateChildIDS(strat, id);
+			}
+			obj.id = id + obj.id.substring(id.length);
+		} else if (obj?.problems) {
+			for (let prob of obj.problems) {
+				updateChildIDS(prob, id);
+			}
+			obj.id = id + obj.id.substring(id.length);
+		}
 	}
 
 	return {
@@ -241,11 +256,9 @@ export function createTree() {
 				while (running) {
 					if (id.charAt(0) === 's') {
 						obj = obj?.strategies;
-
 						id = id.substring(1);
 					} else if (id.charAt(0) === 'p') {
 						obj = obj?.problems;
-
 						id = id.substring(1);
 					} else if (!isNaN(Number(id.charAt(0))) && id.length > 0) {
 						let index = 0;
@@ -253,7 +266,7 @@ export function createTree() {
 							index++;
 						}
 						if (!obj?.length) {
-							return false;
+							break;
 						}
 						const i = Number(id.substring(0, index));
 						if (i >= obj.length) break;
@@ -365,11 +378,11 @@ export function createTree() {
 
 			return { id, uuid };
 		},
-		deleteProblem(probId: string | undefined, probUUID: string, linked: boolean = false) {
+		deleteProblem(probId: string | undefined, probUUID: string) {
 			let strategyTreeObj = this.getObjFromId(this.getParent(probId));
 			if (!strategyTreeObj) return { error: 'Invalid problem ID' };
 
-			if (this.getObjFromId(probId, probUUID)?.strategies?.length && !linked)
+			if (this.getObjFromId(probId, probUUID)?.strategies?.length)
 				return { error: 'Problem has child strategies' };
 
 			const index = strategyTreeObj.problems.findIndex((prob: any) => prob.uuid === probUUID);
@@ -388,6 +401,7 @@ export function createTree() {
 					const newNum = Number(prob.id.substring(j + 2)) - 1;
 
 					prob.id = prob.id.substring(0, j + 2) + newNum;
+					updateChildIDS(prob, prob.id);
 
 					updateProbId.new = prob.id;
 					data.newProbIds.push(updateProbId);
@@ -420,6 +434,7 @@ export function createTree() {
 					const newNum = Number(strat.id.substring(j + 2)) - 1;
 
 					strat.id = strat.id.substring(0, j + 2) + newNum;
+					updateChildIDS(strat, strat.id);
 
 					updateStratId.new = strat.id;
 					data.newStratIds.push(updateStratId);
