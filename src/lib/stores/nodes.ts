@@ -119,7 +119,7 @@ export function createTree() {
 	function fillReferenced(obj: any) {
 		if (obj?.referenced) {
 			const refProb = JSON.parse(JSON.stringify(findObjFromUUID(tree.problem, obj.referenced)));
-			replaceWithReferenced(refProb);
+			replaceWithReferenced(refProb, obj.id);
 			obj.strategies = refProb?.strategies || [];
 		} else if (obj?.strategies !== undefined) {
 			for (let strat of obj.strategies) {
@@ -131,39 +131,39 @@ export function createTree() {
 			}
 		}
 	}
-	function replaceWithReferenced(obj: any) {
+	function replaceWithReferenced(obj: any, pID: string) {
 		if (obj?.referenced) {
 			const refProb = JSON.parse(JSON.stringify(findObjFromUUID(tree.problem, obj.referenced)));
-			replaceWithReferenced(refProb);
+			replaceWithReferenced(refProb, obj.id);
 			obj.strategies = refProb?.strategies || [];
 		} else if (obj?.strategies !== undefined) {
 			for (let strat of obj.strategies) {
-				replaceWithReferenced(strat);
+				replaceWithReferenced(strat, pID);
 			}
 			const id = obj.id;
 			const uuid = obj.uuid;
 			Object.keys(obj).forEach((key) => {
 				if (key !== 'strategies') delete obj[key];
 			});
-			obj.id = id;
+			obj.id = pID + id.substring(pID.length);
 			obj.referenced = uuid;
 		} else {
 			for (let prob of obj.problems) {
-				replaceWithReferenced(prob);
+				replaceWithReferenced(prob, pID);
 			}
 			const id = obj.id;
 			const uuid = obj.uuid;
 			Object.keys(obj).forEach((key) => {
 				if (key !== 'problems') delete obj[key];
 			});
-			obj.id = id;
+			obj.id = pID + id.substring(pID.length);
 			obj.referenced = uuid;
 		}
 	}
 	function appendAllProblems(obj: any, problems: any, sId: string) {
 		if (obj?.referenced) {
 		} else if (obj?.strategies !== undefined) {
-			if (!sId.includes(obj.id)) {
+			if (nDepth(obj.id) > nDepth(sId)) {
 				problems.push({ title: obj.data.title, uuid: obj.uuid, id: obj.id });
 			}
 			for (let strat of obj.strategies) {
@@ -174,6 +174,15 @@ export function createTree() {
 				appendAllProblems(prob, problems, sId);
 			}
 		}
+	}
+	function nDepth(id: string) {
+		let d = 0;
+		for (let c of id) {
+			if (c === 's' || c === 'p') {
+				d += 1;
+			}
+		}
+		return d;
 	}
 
 	return {
@@ -448,7 +457,7 @@ export function createTree() {
 		) {
 			const stratid = this.getObjFromId(stratID, stratUUID)?.id;
 			const probid = this.getObjFromId(probID, probUUID)?.id;
-			if (!stratID || !probID || stratid.includes(probid)) return false;
+			if (!stratID || !probID || nDepth(probid) < nDepth(stratid)) return false;
 			return true;
 		}
 	};

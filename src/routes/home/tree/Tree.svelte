@@ -103,11 +103,7 @@
 		}
 		viewingNodeUnsubscribe = viewingNode.subscribe((v) => {
 			if (v) {
-				if (v.referenced) {
-					viewingNodeDiv = findNodeInTreeArrays(tree.getObjFromId(undefined, v.referenced).id)?.div;
-				} else {
-					viewingNodeDiv = findNodeInTreeArrays(v.id)?.div;
-				}
+				viewingNodeDiv = findNodeInTreeArrays(v)?.div;
 			} else if (v === false) {
 				if ($redoTree) {
 					problems = [];
@@ -171,7 +167,7 @@
 					}
 					nodeToRemove.set(undefined);
 				} else if (action === 'remove-linked-node') {
-					if (tree.getNodeType($nodeToRemove.id) === 's') {
+					if ($nodeToRemove.uuid === true) {
 						failurePopUp.set('Error: Cannot delete child of referenced node');
 					} else {
 						deleteLinkedProblem($nodeToRemove.uuid);
@@ -201,6 +197,9 @@
 				if (obj.strategies.length !== 0) {
 					updateTreeArrays(obj.strategies[obj.selectedStrategy]);
 				} else last = true;
+				let referenced: any;
+				if (obj?.uuid) referenced = obj.uuid;
+				else referenced = true;
 				problems.push({
 					id: obj.id,
 					uuid: refProb.uuid,
@@ -210,7 +209,7 @@
 					parent: parent,
 					last: last,
 					owners: refProb.owners,
-					referenced: obj.uuid
+					referenced
 				});
 			} else {
 				let last = false;
@@ -271,6 +270,9 @@
 			}
 			if (obj.referenced) {
 				const refStrat = tree.getObjFromId(undefined, obj.referenced);
+				let referenced: any;
+				if (obj?.uuid) referenced = obj.uuid;
+				else referenced = true;
 				strategies.push({
 					id: obj.id,
 					uuid: refStrat.uuid,
@@ -280,7 +282,7 @@
 					probs,
 					owners: refStrat.owners,
 					arrow: undefined,
-					referenced: obj.uuid
+					referenced
 				});
 			} else {
 				strategies.push({
@@ -613,7 +615,7 @@
 {#if openTree}
 	<div class="relative" style="height: {treeContainer.height}px; width: {treeContainer.width}px;">
 		{#each problems as problem (problem.id)}
-			{#if extraShown || problem.id === $viewingNode.id}
+			{#if extraShown || problem.id === $viewingNode}
 				<div
 					role="presentation"
 					bind:this={problem.div}
@@ -645,7 +647,7 @@
 					{/if}
 					<Problem
 						treeData={tree.getObjFromId(problem.id, problem.uuid)}
-						referenced={problem?.referenced}
+						referenced={{ id: problem?.id, uuid: problem?.referenced }}
 					></Problem>
 				</div>
 				{#if $quillsReady && !problem.last}
@@ -664,7 +666,7 @@
 			{/if}
 		{/each}
 		{#each strategies as strategy (strategy.id)}
-			{#if extraShown || strategy.id === $viewingNode.id}
+			{#if extraShown || strategy.id === $viewingNode}
 				<div
 					class="flex items-center absolute"
 					style="left: {strategy.left}px; top: {strategy.top}px;"
@@ -679,7 +681,7 @@
 					<div role="presentation" bind:this={strategy.div}>
 						<Strategy
 							treeData={tree.getObjFromId(strategy.id, strategy.uuid)}
-							referenced={strategy?.referenced}
+							referenced={{ id: strategy?.id, uuid: strategy?.referenced }}
 						></Strategy>
 						{#if $quillsReady}
 							{#if tree.getObjFromId(tree.getParent(strategy.id) || '')?.strategies.length > 1}
@@ -720,7 +722,9 @@
 															switchToStrategy(i, strategy.id);
 														}}
 														class="hover:bg-[#626262] pl-[10px] flex justify-start"
-														>{strat.data.title}</button
+														>{strat?.referenced
+															? tree.getObjFromId(undefined, strat.referenced).data.title
+															: strat.data.title}</button
 													>
 												{/if}
 											{/each}

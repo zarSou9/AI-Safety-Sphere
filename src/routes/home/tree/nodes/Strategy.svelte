@@ -50,7 +50,7 @@
 	const loginNotif: Writable<any> = getContext('loginNotifStore');
 
 	export let treeData: any;
-	export let referenced: string | undefined;
+	export let referenced: any;
 
 	let children = treeData.problems;
 
@@ -2464,9 +2464,9 @@
 					deleteSection(deleteI);
 				} else if (action === 'delete') {
 					escapeNode();
-					if (referenced) {
+					if (referenced.uuid) {
 						setTimeout(() => {
-							nodeToRemove.set({ uuid: referenced });
+							nodeToRemove.set({ uuid: referenced.uuid });
 							treeAction.set('remove-linked-node');
 						}, 300);
 					} else {
@@ -3591,7 +3591,8 @@
 			loadData();
 			$shortCutsEnabled = false;
 			editIconActive = true;
-			$viewingNode = { id: treeData.id, referenced };
+			if (referenced.uuid) $viewingNode = referenced.id;
+			else $viewingNode = treeData.id;
 			children = treeData.problems;
 			startListening();
 			treeAction.set('find-node-position');

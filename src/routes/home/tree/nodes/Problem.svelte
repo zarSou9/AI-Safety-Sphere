@@ -9,7 +9,6 @@
 	import Cross from '$lib/icons/Cross.svelte';
 	import Paragraph from '$lib/icons/Paragraph.svelte';
 
-
 	const tree: TreeInterface = getContext('tree');
 	const charPos: { v: number } = getContext('charPos');
 	const titleModal: Writable<{
@@ -47,10 +46,8 @@
 	const processing: Writable<boolean> = getContext('processingStore');
 	const loginNotif: Writable<any> = getContext('loginNotifStore');
 
-
-
 	export let treeData: any;
-	export let referenced: string | undefined;
+	export let referenced: any;
 
 	let sections: any = [
 		{
@@ -84,7 +81,7 @@
 	let savingTimeout: any;
 
 	let nodeActionUnsubscribe: any;
-	let colors = ['#3dfc53', '#0040ff', '#9500ff', '#25faf6','#f7b757','#ff78d7','#b6ed34'];
+	let colors = ['#3dfc53', '#0040ff', '#9500ff', '#25faf6', '#f7b757', '#ff78d7', '#b6ed34'];
 	let userColors: any = [];
 	let editBtnActive = true;
 	let currentUser = null;
@@ -141,7 +138,8 @@
 					else italicized.set(false);
 
 					const pos =
-						currentEditor.getBoundingClientRect().top + quill.getBounds(range.index + range.length).bottom;
+						currentEditor.getBoundingClientRect().top +
+						quill.getBounds(range.index + range.length).bottom;
 					if (pos > viewPort.height) {
 						canvasAction.set('move-page-up');
 					}
@@ -921,7 +919,7 @@
 						}
 						if (!found) {
 							if (ud.ops[1]?.insert) {
-								const newD = { ops: [{ retain: ud.ops[0].retain - l }, ud.ops[1]] }
+								const newD = { ops: [{ retain: ud.ops[0].retain - l }, ud.ops[1]] };
 								if (newD.ops[0].retain - l <= 0) newD.ops.splice(0, 1);
 								base = base.compose(newD);
 								for (let existingChange of changes) {
@@ -2188,7 +2186,10 @@
 						}
 					}
 					sections.find((s: any) => s.title === title).base = base;
-					sections = sections.map((section: any) => ({ ...section, suggestions: section.suggestions.map((suggestion: any) => ({ ...suggestion })) }));
+					sections = sections.map((section: any) => ({
+						...section,
+						suggestions: section.suggestions.map((suggestion: any) => ({ ...suggestion }))
+					}));
 					switchCurrent(sections.find((s: any) => s.title === title));
 				}
 				treeAction.set('calibrate-node-height');
@@ -2210,11 +2211,11 @@
 		const Scroll = Quill.import('blots/scroll');
 		const Text = Quill.import('blots/text');
 		const Bold = Quill.import('formats/bold');
-        const Italic = Quill.import('formats/italic');
-        const Color = Quill.import('formats/color');
-        const Script = Quill.import('formats/script');
-        const Strike = Quill.import('formats/strike');
-        const Underline = Quill.import('formats/underline');
+		const Italic = Quill.import('formats/italic');
+		const Color = Quill.import('formats/color');
+		const Script = Quill.import('formats/script');
+		const Strike = Quill.import('formats/strike');
+		const Underline = Quill.import('formats/underline');
 
 		const registry = new Parchment.Registry();
 
@@ -2463,9 +2464,9 @@
 					deleteSection(deleteI);
 				} else if (action === 'delete') {
 					escapeNode();
-					if (referenced) {
+					if (referenced.uuid) {
 						setTimeout(() => {
-							nodeToRemove.set({ uuid: referenced });
+							nodeToRemove.set({ uuid: referenced.uuid });
 							treeAction.set('remove-linked-node');
 						}, 300);
 					} else {
@@ -2623,8 +2624,11 @@
 				}
 			)
 			.subscribe();
-		data.supabase.from('Problems').select('*').eq('uuid', treeData.uuid).then(
-			({ data: problemData }) => {
+		data.supabase
+			.from('Problems')
+			.select('*')
+			.eq('uuid', treeData.uuid)
+			.then(({ data: problemData }) => {
 				if (problemData) {
 					currentUser = problemData[0].active_user;
 					if (currentUser === username || !currentUser) editBtnActive = true;
@@ -2634,11 +2638,13 @@
 						else {
 							editBtnActive = false;
 							clearTimeout(sessionTimeout);
-							sessionTimeout = setTimeout(() => {
-								editBtnActive = true;
-							}, 100000 - (now - problemData[0].last_edit));
+							sessionTimeout = setTimeout(
+								() => {
+									editBtnActive = true;
+								},
+								100000 - (now - problemData[0].last_edit)
+							);
 						}
-					
 					}
 					const bases = JSON.parse(
 						JSON.stringify([problemData[0].tldr, ...problemData[0].content])
@@ -2649,8 +2655,7 @@
 						fillQuills();
 					} else sectionsReady = true;
 				}
-			}
-		);
+			});
 	}
 
 	function approveChange(change: any, i: number, section: any) {
@@ -2971,7 +2976,10 @@
 			}
 		}
 		sections.find((s: any) => s.title === section.title).base = base;
-		sections = sections.map((section: any) => ({ ...section, suggestions: section.suggestions.map((suggestion: any) => ({ ...suggestion })) }));
+		sections = sections.map((section: any) => ({
+			...section,
+			suggestions: section.suggestions.map((suggestion: any) => ({ ...suggestion }))
+		}));
 		switchCurrent(sections.find((s: any) => s.title === section.title));
 		updateQuillWithChanges();
 		checkChangeInUserColors();
@@ -3007,7 +3015,10 @@
 			}
 		}
 		sections.find((s: any) => s.title === section.title).base = base;
-		sections = sections.map((section: any) => ({ ...section, suggestions: section.suggestions.map((suggestion: any) => ({ ...suggestion })) }));
+		sections = sections.map((section: any) => ({
+			...section,
+			suggestions: section.suggestions.map((suggestion: any) => ({ ...suggestion }))
+		}));
 		switchCurrent(sections.find((s: any) => s.title === section.title));
 		updateQuillWithChanges();
 		checkChangeInUserColors();
@@ -3182,7 +3193,9 @@
 	}
 	function checkChangeInUserColors() {
 		let updatedUsedColors = findAllUserColors();
-		userColors = userColors.filter((uc: any) => updatedUsedColors.find((uuc: any) => uuc === uc.color))
+		userColors = userColors.filter((uc: any) =>
+			updatedUsedColors.find((uuc: any) => uuc === uc.color)
+		);
 		activateUser(undefined, userColors);
 	}
 
@@ -3275,7 +3288,12 @@
 				headers: {
 					'Content-Type': 'application/json'
 				},
-				body: JSON.stringify({ id: treeData.id, uuid: treeData.uuid, newTitle, userId: data.session?.user.id })
+				body: JSON.stringify({
+					id: treeData.id,
+					uuid: treeData.uuid,
+					newTitle,
+					userId: data.session?.user.id
+				})
 			});
 
 			const result = await response.json();
@@ -3321,7 +3339,13 @@
 				headers: {
 					'Content-Type': 'application/json'
 				},
-				body: JSON.stringify({ id: treeData.id, uuid: treeData.uuid, sectionTitle, after, userId: data.session?.user.id })
+				body: JSON.stringify({
+					id: treeData.id,
+					uuid: treeData.uuid,
+					sectionTitle,
+					after,
+					userId: data.session?.user.id
+				})
 			});
 
 			const result = await response.json();
@@ -3350,7 +3374,13 @@
 				headers: {
 					'Content-Type': 'application/json'
 				},
-				body: JSON.stringify({ id: treeData.id, uuid: treeData.uuid, i, sectionTitle, userId: data.session?.user.id })
+				body: JSON.stringify({
+					id: treeData.id,
+					uuid: treeData.uuid,
+					i,
+					sectionTitle,
+					userId: data.session?.user.id
+				})
 			});
 
 			const result = await response.json();
@@ -3375,7 +3405,12 @@
 				headers: {
 					'Content-Type': 'application/json'
 				},
-				body: JSON.stringify({ id: treeData.id, uuid: treeData.uuid, i, userId: data.session?.user.id })
+				body: JSON.stringify({
+					id: treeData.id,
+					uuid: treeData.uuid,
+					i,
+					userId: data.session?.user.id
+				})
 			});
 
 			const result = await response.json();
@@ -3427,7 +3462,14 @@
 				headers: {
 					'Content-Type': 'application/json'
 				},
-				body: JSON.stringify({ id: treeData.id, userId: data.session?.user.id, uuid: treeData.uuid, color, userColors, nodeType: true })
+				body: JSON.stringify({
+					id: treeData.id,
+					userId: data.session?.user.id,
+					uuid: treeData.uuid,
+					color,
+					userColors,
+					nodeType: true
+				})
 			});
 
 			const result = await response.json();
@@ -3491,7 +3533,8 @@
 			loadData();
 			$shortCutsEnabled = false;
 			editIconActive = true;
-			$viewingNode = { id: treeData.id, referenced };
+			if (referenced.uuid) $viewingNode = referenced.id;
+			else $viewingNode = treeData.id;
 			startListening();
 			escBtn = true;
 			treeAction.set('find-node-position');
@@ -3513,8 +3556,11 @@
 				editIconActive = false;
 				editBtnActive = false;
 				$processing = true;
-				data.supabase.from('Problems').select('*').eq('uuid', treeData.uuid).then(
-					({ data: problemData }) => {
+				data.supabase
+					.from('Problems')
+					.select('*')
+					.eq('uuid', treeData.uuid)
+					.then(({ data: problemData }) => {
 						if (problemData) {
 							const bases = JSON.parse(
 								JSON.stringify([problemData[0].tldr, ...problemData[0].content])
@@ -3526,7 +3572,9 @@
 								let color = undefined;
 								userColors = problemData[0].userColors;
 								if (userColor !== 'owner') {
-									let colorMatching = problemData[0].userColors.find((uc: any) => uc.user === username);
+									let colorMatching = problemData[0].userColors.find(
+										(uc: any) => uc.user === username
+									);
 									if (colorMatching) {
 										userColor = colorMatching.color;
 									} else {
@@ -3539,44 +3587,46 @@
 										color = userColor;
 									}
 								}
-								activateUser(color, problemData[0].userColors).then(() => {
-									saving(true);
-									enableQuills(true);
-									editable = true;
-									toolBarShown.set(true);
-									if (userColor === 'owner') {
-										toolBarDotsShown.set(true);
+								activateUser(color, problemData[0].userColors).then(
+									() => {
+										saving(true);
+										enableQuills(true);
+										editable = true;
+										toolBarShown.set(true);
+										if (userColor === 'owner') {
+											toolBarDotsShown.set(true);
+										}
+										editBtnActive = true;
+										$processing = false;
+									},
+									() => {
+										editIconActive = true;
+										$processing = false;
 									}
-									editBtnActive = true;
-									$processing = false;
-								}, () => {
-									editIconActive = true;
-									$processing = false;
-								})
+								);
 							});
 						}
-					}
-				);
+					});
 			}
 		} else {
 			if (!$loginNotif) $loginNotif = true;
 		}
 	}
 	function editTitle() {
-		if (editable && userColor==='owner') {
+		if (editable && userColor === 'owner') {
 			$titleModal.title = title;
 			$titleModal.visible = true;
 		}
 	}
 	function editSectionTitle(i: number, currentTitle: string) {
-		if (i && editable && userColor==='owner') {
+		if (i && editable && userColor === 'owner') {
 			$sectionTitleModal.title = currentTitle;
 			$sectionTitleModal.i = i;
 			$sectionTitleModal.visible = true;
 		}
 	}
 	function handleSectionTitleContext(e: any, i: any) {
-		if (i && editable && userColor==='owner') {
+		if (i && editable && userColor === 'owner') {
 			e.preventDefault();
 			deleteI = i;
 			sectionContextE.set(e);
@@ -3595,42 +3645,50 @@
 			}
 			section.quill.setSelection(change.pos.i + l, change.pos.l, 'user');
 		} else {
-			section.quill.setSelection(change.pos.i, change.cd.ops[0].delete , 'user');
+			section.quill.setSelection(change.pos.i, change.cd.ops[0].delete, 'user');
 		}
 		function handleSuggestionCleanup() {
 			sections[pi].suggestions[i].selected = undefined;
 			window.removeEventListener('click', handleSuggestionCleanup);
-			sections = sections.map((section: any) => ({ ...section, suggestions: section.suggestions.map((suggestion: any) => ({ ...suggestion })) }));
+			sections = sections.map((section: any) => ({
+				...section,
+				suggestions: section.suggestions.map((suggestion: any) => ({ ...suggestion }))
+			}));
 			switchCurrent(sections.find((s: any) => s.title === section.title));
 		}
 		setTimeout(() => {
 			window.addEventListener('click', handleSuggestionCleanup);
 		}, 2);
-		sections = sections.map((section: any) => ({ ...section, suggestions: section.suggestions.map((suggestion: any) => ({ ...suggestion })) }));
+		sections = sections.map((section: any) => ({
+			...section,
+			suggestions: section.suggestions.map((suggestion: any) => ({ ...suggestion }))
+		}));
 		switchCurrent(sections.find((s: any) => s.title === section.title));
 	}
 	function checkWorking() {
 		return true;
 	}
-
 </script>
 
 <div
 	class="grid bg-[#1f1f1f] rounded-[20px] w-[800px] p-[60px] relative selection:bg-[#6a87b389]"
 	style="box-shadow: -2px 2px #a53a3a;"
->	
+>
 	{#if escBtn}
 		<button
 			on:click={escapeNode}
 			class="absolute top-[14px] left-[15px] h-[17px] w-[40px] rounded-full border-[#595959] border-[1px] hover:bg-[#292929]"
-			>
+		>
 			<code class="absolute top-[-5px] left-[10px] text-[10px] text-[#595959]">esc</code>
 		</button>
 	{/if}
 	<button
 		on:click={changeEditable}
 		disabled={!editBtnActive}
-		class="absolute top-[55px] right-[65px] rounded-md w-[36px] h-[36px] items-center justify-center {editBtnActive && data?.props?.loggedIn ? 'hover:bg-[#4949495a]' : ''}"
+		class="absolute top-[55px] right-[65px] rounded-md w-[36px] h-[36px] items-center justify-center {editBtnActive &&
+		data?.props?.loggedIn
+			? 'hover:bg-[#4949495a]'
+			: ''}"
 	>
 		{#if editIconActive}
 			<Edit color={editBtnActive && data?.props?.loggedIn ? '#9c9c9c' : '#595959'} size="36px" />
@@ -3661,16 +3719,32 @@
 				<div class="absolute top-[15px] right-[-185px] flex flex-col space-y-[5px]">
 					{#if section?.suggestions}
 						{#each section.suggestions as change, k}
-							<div class="flex p-[2px] bg-[#252525] space-x-[3px] rounded-[2px] {change?.selected && checkWorking() ? 'border-[.5px] border-[#758ed2]' : ''}">
-								<button class="p-[2px] rounded-[2px] hover:bg-[#303030]" on:click={() => approveChange(change, k, section)}><Check size="12px" color="#6e6e6e"/></button>
-								<button class="p-[2px] rounded-[2px] hover:bg-[#303030]" on:click={() => denyChange(change, k, section)}><Cross size="12px" color="#6e6e6e"/></button>
-								<button class="p-[2px] rounded-[2px] hover:bg-[#303030]" on:click={() => handleSuggestionClick(change, k, section, i)}><Paragraph size="12px" color="#6e6e6e"/></button>
+							<div
+								class="flex p-[2px] bg-[#252525] space-x-[3px] rounded-[2px] {change?.selected &&
+								checkWorking()
+									? 'border-[.5px] border-[#758ed2]'
+									: ''}"
+							>
+								<button
+									class="p-[2px] rounded-[2px] hover:bg-[#303030]"
+									on:click={() => approveChange(change, k, section)}
+									><Check size="12px" color="#6e6e6e" /></button
+								>
+								<button
+									class="p-[2px] rounded-[2px] hover:bg-[#303030]"
+									on:click={() => denyChange(change, k, section)}
+									><Cross size="12px" color="#6e6e6e" /></button
+								>
+								<button
+									class="p-[2px] rounded-[2px] hover:bg-[#303030]"
+									on:click={() => handleSuggestionClick(change, k, section, i)}
+									><Paragraph size="12px" color="#6e6e6e" /></button
+								>
 							</div>
 						{/each}
 					{/if}
 				</div>
 			{/if}
-		
 		</div>
 	{/each}
 </div>
