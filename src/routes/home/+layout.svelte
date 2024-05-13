@@ -49,7 +49,9 @@
 		location.reload();
 	}
 
-	let open = false;
+	let open = true;
+	if (data.props.loggedIn) open = false;
+
 	let currentUrl: string;
 	$: currentUrl = $page.url.pathname.split('/').filter(Boolean).pop() as string;
 

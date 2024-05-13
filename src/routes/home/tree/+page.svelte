@@ -7,6 +7,7 @@
 	import NewSection from '$lib/components/NewSection.svelte';
 	import ProblemTitleModal from '$lib/components/ProblemTitleModal.svelte';
 	import ConfirmationModal from '$lib/components/ConfirmationModal.svelte';
+	import InfoModal from '$lib/components/InfoModal.svelte';
 	import Bold from '$lib/icons/Bold.svelte';
 	import Italic from '$lib/icons/Italic.svelte';
 	import Endnote from '$lib/icons/Endnote.svelte';
@@ -22,6 +23,8 @@
 	let titleResult: any = { title: '', div: {} };
 	let toolBarMenuDropdown = false;
 	let confirmationModalVisible = false;
+	let infoModalVisible = true;
+	if (data.props.loggedIn) infoModalVisible = false;
 
 	const profDropdown: Writable<boolean> = getContext('profDropdownStore');
 
@@ -259,6 +262,12 @@
 		}}
 		on:close={() => {
 			confirmationModalVisible = false;
+		}}
+	/>
+{:else if infoModalVisible}
+	<InfoModal
+		on:close={() => {
+			infoModalVisible = false;
 		}}
 	/>
 {/if}
