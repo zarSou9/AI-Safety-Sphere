@@ -704,7 +704,11 @@
 									}}
 									class="text-[11px] text-[#b0b0b0] h-[23px] rounded-[5px] absolute top-[-30px] left-[70px] w-[160px] border-[#606060] border-[1px]"
 								>
-									<p class="p-0 mt-[-1.8px]">{strategy.data.title}</p>
+									<p class="p-0 mt-[-1.8px]">
+										{strategy.data.title.length < 20
+											? strategy.data.title
+											: strategy.data.title.substring(0, 18) + '..'}
+									</p>
 									<div bind:this={strategy.arrow} class="absolute top-[2.5px] right-[3px] arrow">
 										<FolderArrow color="#484848" size="16px" />
 									</div>

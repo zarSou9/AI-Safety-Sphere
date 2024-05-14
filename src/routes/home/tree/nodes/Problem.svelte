@@ -9,6 +9,7 @@
 	import Cross from '$lib/icons/Cross.svelte';
 	import Paragraph from '$lib/icons/Paragraph.svelte';
 	import Linked from '$lib/icons/Linked.svelte';
+	import { v4 as uuidv4 } from 'uuid';
 
 	const tree: TreeInterface = getContext('tree');
 	const charPos: { v: number } = getContext('charPos');
@@ -53,6 +54,7 @@
 	let sections: any = [
 		{
 			title: 'TL;DR',
+			id: uuidv4(),
 			editor: undefined,
 			base: undefined,
 			suggestions: undefined,
@@ -2526,7 +2528,7 @@
 		sections[0].base = new Delta(bases[0]);
 		bases.splice(0, 1);
 		for (let b of bases) {
-			sections.push({ base: new Delta(b.delta), title: b.title, history: [] });
+			sections.push({ base: new Delta(b.delta), title: b.title, history: [], id: uuidv4() });
 		}
 		for (let c of suggestions) {
 			for (let chan of c.changes) {
@@ -3316,6 +3318,7 @@
 		posting = true;
 		sections.splice(after + 1, 0, {
 			title: sectionTitle,
+			id: uuidv4(),
 			editor: undefined,
 			base: new Delta(),
 			suggestions: [],
@@ -3361,6 +3364,7 @@
 		posting = false;
 	}
 	async function changeSectionTitle(i: number, sectionTitle: string) {
+		if (sections[i].title === sectionTitle) return;
 		if (sections.find((s: any) => s.title === sectionTitle)) {
 			failurePopUp.set('Error: Sections must be unique!');
 			return;
@@ -3705,7 +3709,7 @@
 			</div>
 		{/if}
 	</p>
-	{#each sections as section, i (section.title)}
+	{#each sections as section, i (section.id)}
 		<div class="relative">
 			<p
 				class="ml-[14px] mt-[10px] sub-header-text"
