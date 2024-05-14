@@ -10,56 +10,75 @@ export const POST: RequestHandler = async ({ request, locals: { supabase, supaba
 		const userIdValid = Joi.string().validate(userId);
 		const stratIdValid = Joi.string().validate(stratId);
 		const titleValid = Joi.string().max(32).validate(title);
+		let tree;
 
 		if (userIdValid.error || stratIdValid.error || titleValid.error)
 			throw { status: 400, message: 'Bad request: missing or incorrect fields' };
 
-		const treeDataPromise = supabase.from('Tree').select('data').eq('id', 1);
-		const usernamePromise = supabase.from('Profiles').select('username').eq('user_id', userId);
+		while (true) {
+			const now = Date.now();
+			const nowCompare = now - 10000;
 
-		const [treeData, usernameResult] = await Promise.all([treeDataPromise, usernamePromise]);
+			const treeDataPromise = supabaseService
+				.from('Tree')
+				.update({ changing: now })
+				.lt('changing', nowCompare)
+				.select('data');
+			const usernamePromise = supabase.from('Profiles').select('username').eq('user_id', userId);
 
-		if (treeData?.error) throw { status: 400, message: treeData.error.message };
-		if (usernameResult?.error) throw { status: 400, message: usernameResult.error.message };
+			const [treeData, usernameResult] = await Promise.all([treeDataPromise, usernamePromise]);
 
-		const username = usernameResult.data[0].username;
+			if (treeData?.error) throw { status: 400, message: treeData.error.message };
+			if (usernameResult?.error) throw { status: 400, message: usernameResult.error.message };
 
-		const tree = createTree();
+			if (!treeData.data.length) continue;
 
-		tree.setTree(treeData.data[0].data);
-		const treeNode = tree.getObjFromId(stratId);
-		const owners = treeNode?.owners;
-		if (!owners?.includes(username)) {
-			throw { status: 400, message: 'Unauthorized' };
+			const username = usernameResult.data[0].username;
+
+			tree = createTree();
+
+			tree.setTree(treeData.data[0].data);
+			const treeNode = tree.getObjFromId(stratId);
+			const owners = treeNode?.owners;
+			if (!owners?.includes(username)) {
+				throw { status: 400, message: 'Unauthorized' };
+			}
+
+			const sId = tree.getObjFromId(stratId, stratUUID)?.id;
+
+			if (!sId)
+				throw { status: 400, message: 'Parent strategy of problem node could not be found' };
+
+			const prob = tree.createProblem(sId, stratUUID, title, undefined, [username]);
+			if (!prob) throw { status: 400, message: 'error occured while creating problem' };
+
+			let j = prob.id.length - 1;
+			let c = '0';
+
+			while (c !== 's' && c !== 'p' && j >= 0) {
+				c = prob.id.charAt(j);
+				j--;
+			}
+			const problemLen = Number(prob.id.substring(j + 2));
+
+			if (problemLen > 8)
+				throw { status: 400, message: 'Strategies have a maximum of 8 subproblems' };
+
+			const problemsPromise = supabaseService
+				.from('Problems')
+				.insert({ id: prob.id, uuid: prob.uuid, title, tldr: { ops: [] } });
+			const treePromise = supabaseService
+				.from('Tree')
+				.update({ data: tree.getTree(), changing: 0 })
+				.eq('id', 1);
+
+			const [problemsResult, treeResult] = await Promise.all([problemsPromise, treePromise]);
+
+			if (problemsResult?.error) throw { status: 400, message: problemsResult.error.message };
+			if (treeResult?.error) throw { status: 400, message: treeResult.error.message };
+
+			break;
 		}
-
-		const sId = tree.getObjFromId(stratId, stratUUID)?.id;
-
-		if (!sId) throw { status: 400, message: 'Parent strategy of problem node could not be found' };
-
-		const prob = tree.createProblem(sId, stratUUID, title, undefined, [username]);
-		if (!prob) throw { status: 400, message: 'error occured while creating problem' };
-
-		let j = prob.id.length - 1;
-		let c = '0';
-
-		while (c !== 's' && c !== 'p' && j >= 0) {
-			c = prob.id.charAt(j);
-			j--;
-		}
-		const problemLen = Number(prob.id.substring(j + 2));
-
-		if (problemLen > 8)
-			throw { status: 400, message: 'Strategies have a maximum of 8 subproblems' };
-
-		const problemsPromise = supabaseService
-			.from('Problems')
-			.insert({ id: prob.id, uuid: prob.uuid, title, tldr: { ops: [] } });
-		const treePromise = supabaseService.from('Tree').update({ data: tree.getTree() }).eq('id', 1);
-		const [problemsResult, treeResult] = await Promise.all([problemsPromise, treePromise]);
-
-		if (problemsResult?.error) throw { status: 400, message: problemsResult.error.message };
-		if (treeResult?.error) throw { status: 400, message: treeResult.error.message };
 
 		return json(
 			{ message: 'Data submitted successfully', data: { tree: tree.getTree() } },

@@ -15,43 +15,54 @@ export const POST: RequestHandler = async ({
 
 		if (newTitleValid.error || uuidValid.error)
 			throw { status: 400, message: 'Bad request: missing or incorrect fields' };
+		while (true) {
+			const now = Date.now();
+			const nowCompare = now - 10000;
+			const usernamePromise = supabase.from('Profiles').select('username').eq('user_id', userId);
+			const treePromise = supabaseService
+				.from('Tree')
+				.update({ changing: now })
+				.lt('changing', nowCompare)
+				.select('data');
 
-		const usernamePromise = supabase.from('Profiles').select('username').eq('user_id', userId);
-		const treePromise = supabase.from('Tree').select('data').eq('id', 1);
+			const [usernameResult, treeResult] = await Promise.all([usernamePromise, treePromise]);
 
-		const [usernameResult, treeResult] = await Promise.all([usernamePromise, treePromise]);
+			if (usernameResult?.error) throw { status: 400, message: usernameResult.error.message };
+			if (treeResult?.error) throw { status: 400, message: treeResult.error.message };
 
-		if (usernameResult?.error) throw { status: 400, message: usernameResult.error.message };
-		if (treeResult?.error) throw { status: 400, message: treeResult.error.message };
+			if (!treeResult.data.length) continue;
 
-		const username = usernameResult.data[0].username;
-		const tree = createTree();
+			const username = usernameResult.data[0].username;
+			const tree = createTree();
 
-		tree.setTree(treeResult.data[0].data);
-		const treeNode = tree.getObjFromId(id, uuid);
-		const owners = treeNode?.owners;
-		if (!owners?.includes(username)) {
-			throw { status: 400, message: 'Unauthorized' };
+			tree.setTree(treeResult.data[0].data);
+			const treeNode = tree.getObjFromId(id, uuid);
+			const owners = treeNode?.owners;
+			if (!owners?.includes(username)) {
+				throw { status: 400, message: 'Unauthorized' };
+			}
+
+			treeNode.data.title = newTitle;
+
+			const treePostPromise = supabaseService
+				.from('Tree')
+				.update({ data: tree.getTree(), changing: 0 })
+				.eq('changing', now)
+				.select('id');
+			const problemPostPromise = supabaseService
+				.from('Problems')
+				.update({ title: newTitle })
+				.eq('uuid', uuid);
+
+			const [problemPostResult, treePostResult] = await Promise.all([
+				problemPostPromise,
+				treePostPromise
+			]);
+			if (problemPostResult?.error) throw { status: 400, message: problemPostResult.error.message };
+			if (treePostResult?.error) throw { status: 400, message: treePostResult.error.message };
+
+			if (treePostResult.data.length) break;
 		}
-
-		treeNode.data.title = newTitle;
-
-		const treePostPromise = supabaseService
-			.from('Tree')
-			.update({ data: tree.getTree() })
-			.eq('id', 1);
-		const problemPostPromise = supabaseService
-			.from('Problems')
-			.update({ title: newTitle })
-			.eq('uuid', uuid);
-
-		const [problemPostResult, treePostResult] = await Promise.all([
-			problemPostPromise,
-			treePostPromise
-		]);
-		if (problemPostResult?.error) throw { status: 400, message: problemPostResult.error.message };
-		if (treePostResult?.error) throw { status: 400, message: treePostResult.error.message };
-
 		return json({ message: 'Edit successfully pushed!' }, { status: 200 });
 	} catch (error: any) {
 		return json(

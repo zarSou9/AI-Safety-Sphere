@@ -2501,7 +2501,7 @@
 			if (userColor === 'owner') {
 				const newHis = {
 					b: new Delta(JSON.parse(JSON.stringify(section.base))),
-					c: JSON.parse(JSON.stringify(section.suggestions))
+					c: section.suggestions ? JSON.parse(JSON.stringify(section.suggestions)) : []
 				};
 				for (let chan of newHis.c) {
 					chan.cd = new Delta(chan.cd);
@@ -2509,7 +2509,7 @@
 				section.history.push(newHis);
 			} else {
 				const newHis = {
-					c: JSON.parse(JSON.stringify(section.suggestions))
+					c: section.suggestions ? JSON.parse(JSON.stringify(section.suggestions)) : []
 				};
 				for (let chan of newHis.c) {
 					chan.cd = new Delta(chan.cd);

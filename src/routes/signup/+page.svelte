@@ -1,7 +1,3 @@
-<!-- <div class="flex size-full justify-center items-center">
-	<p>You can't sign up quite yet. Come back soon!</p>
-</div> -->
-
 <script lang="ts">
 	import { enhance } from '$app/forms';
 	import { fly } from 'svelte/transition';

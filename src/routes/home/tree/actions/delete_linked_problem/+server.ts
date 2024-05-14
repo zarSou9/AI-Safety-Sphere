@@ -7,6 +7,7 @@ import { error } from 'console';
 export const POST: RequestHandler = async ({ request, locals: { supabase, supabaseService } }) => {
 	try {
 		const { uuid, userId } = await request.json();
+		let tree;
 
 		const userIdValid = Joi.string().validate(userId);
 		const uuidValid = Joi.string().validate(uuid);
@@ -14,35 +15,52 @@ export const POST: RequestHandler = async ({ request, locals: { supabase, supaba
 		if (userIdValid.error || uuidValid.error)
 			throw { status: 400, message: 'Bad request: missing or incorrect fields' };
 
-		const treeDataPromise = supabase.from('Tree').select('data').eq('id', 1);
-		const usernamePromise = supabase.from('Profiles').select('username').eq('user_id', userId);
+		while (true) {
+			const now = Date.now();
+			const nowCompare = now - 10000;
 
-		const [treeData, usernameResult] = await Promise.all([treeDataPromise, usernamePromise]);
+			const treeDataPromise = supabaseService
+				.from('Tree')
+				.update({ changing: now })
+				.lt('changing', nowCompare)
+				.select('data');
+			const usernamePromise = supabase.from('Profiles').select('username').eq('user_id', userId);
 
-		if (treeData?.error) throw { status: 400, message: treeData.error.message };
-		if (usernameResult?.error) throw { status: 400, message: usernameResult.error.message };
+			const [treeData, usernameResult] = await Promise.all([treeDataPromise, usernamePromise]);
 
-		const username = usernameResult.data[0].username;
+			if (treeData?.error) throw { status: 400, message: treeData.error.message };
+			if (usernameResult?.error) throw { status: 400, message: usernameResult.error.message };
 
-		const tree = createTree();
+			if (!treeData.data.length) continue;
 
-		tree.setTree(treeData.data[0].data);
-		const treeNode = tree.getObjFromId(undefined, uuid);
-		const owners = treeNode?.owners;
-		if (!owners?.includes(username)) {
-			throw { status: 400, message: 'Unauthorized' };
+			const username = usernameResult.data[0].username;
+
+			tree = createTree();
+
+			tree.setTree(treeData.data[0].data);
+			const treeNode = tree.getObjFromId(undefined, uuid);
+			const owners = treeNode?.owners;
+			if (!owners?.includes(username)) {
+				throw { status: 400, message: 'Unauthorized' };
+			}
+
+			if (tree.getObjFromId(tree.getParent(treeNode.id))?.referenced) {
+				throw { status: 400, message: 'Error: Cannot delete child of referenced node' };
+			}
+
+			const deleteResult = tree.deleteProblem(treeNode.id, uuid);
+			if (deleteResult?.error) throw { status: 400, message: deleteResult.error };
+
+			const re = await supabaseService
+				.from('Tree')
+				.update({ data: tree.getTree(), changing: 0 })
+				.eq('changing', now)
+				.select('id');
+
+			if (re?.error) throw { status: 400, message: re.error.message };
+
+			if (re.data.length) break;
 		}
-
-		if (tree.getObjFromId(tree.getParent(treeNode.id))?.referenced) {
-			throw { status: 400, message: 'Error: Cannot delete child of referenced node' };
-		}
-
-		const deleteResult = tree.deleteProblem(treeNode.id, uuid);
-		if (deleteResult?.error) throw { status: 400, message: deleteResult.error };
-
-		const re = await supabaseService.from('Tree').update({ data: tree.getTree() }).eq('id', 1);
-
-		if (re?.error) throw { status: 400, message: re.error.message };
 
 		return json(
 			{ message: 'Data submitted successfully', data: { tree: tree.getTree() } },

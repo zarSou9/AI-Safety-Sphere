@@ -10,38 +10,53 @@ export const POST: RequestHandler = async ({ request, locals: { supabase, supaba
 		const userIdValid = Joi.string().validate(userId);
 		const probIdValid = Joi.string().validate(probId);
 		const titleValid = Joi.string().max(32).validate(title);
+		let tree;
 
 		if (userIdValid.error || probIdValid.error || titleValid.error)
 			throw { status: 400, message: 'Bad request: missing or incorrect fields' };
 
-		const treeDataPromise = supabase.from('Tree').select('data').eq('id', 1);
-		const usernamePromise = supabase.from('Profiles').select('username').eq('user_id', userId);
+		while (true) {
+			const now = Date.now();
+			const nowCompare = now - 10000;
 
-		const [treeData, usernameResult] = await Promise.all([treeDataPromise, usernamePromise]);
+			const treeDataPromise = supabaseService
+				.from('Tree')
+				.update({ changing: now })
+				.lt('changing', nowCompare)
+				.select('data');
+			const usernamePromise = supabase.from('Profiles').select('username').eq('user_id', userId);
 
-		if (treeData?.error) throw { status: 400, message: treeData.error.message };
-		if (usernameResult?.error) throw { status: 400, message: usernameResult.error.message };
+			const [treeData, usernameResult] = await Promise.all([treeDataPromise, usernamePromise]);
 
-		const username = usernameResult.data[0].username;
+			if (treeData?.error) throw { status: 400, message: treeData.error.message };
+			if (usernameResult?.error) throw { status: 400, message: usernameResult.error.message };
 
-		const tree = createTree();
+			if (!treeData.data.length) continue;
 
-		tree.setTree(treeData.data[0].data);
-		const pId = tree.getObjFromId(probId, probUUID)?.id;
+			const username = usernameResult.data[0].username;
 
-		if (!pId) throw { status: 400, message: 'Parent problem of strategy node could not be found' };
+			tree = createTree();
 
-		const strat = tree.createStrategy(pId, probUUID, title, undefined, [username]);
-		if (!strat) throw { status: 400, message: 'error occured while creating strategy' };
+			tree.setTree(treeData.data[0].data);
+			const pId = tree.getObjFromId(probId, probUUID)?.id;
 
-		const strategiesPromise = supabaseService
-			.from('Strategies')
-			.insert({ id: strat.id, uuid: strat.uuid, title, tldr: { ops: [] } });
-		const treePromise = supabaseService.from('Tree').update({ data: tree.getTree() }).eq('id', 1);
-		const [strategiesResult, treeResult] = await Promise.all([strategiesPromise, treePromise]);
+			if (!pId)
+				throw { status: 400, message: 'Parent problem of strategy node could not be found' };
 
-		if (strategiesResult?.error) throw { status: 400, message: strategiesResult.error.message };
-		if (treeResult?.error) throw { status: 400, message: treeResult.error.message };
+			const strat = tree.createStrategy(pId, probUUID, title, undefined, [username]);
+			if (!strat) throw { status: 400, message: 'error occured while creating strategy' };
+
+			const strategiesPromise = supabaseService
+				.from('Strategies')
+				.insert({ id: strat.id, uuid: strat.uuid, title, tldr: { ops: [] } });
+			const treePromise = supabaseService.from('Tree').update({ data: tree.getTree() }).eq('id', 1);
+			const [strategiesResult, treeResult] = await Promise.all([strategiesPromise, treePromise]);
+
+			if (strategiesResult?.error) throw { status: 400, message: strategiesResult.error.message };
+			if (treeResult?.error) throw { status: 400, message: treeResult.error.message };
+
+			break;
+		}
 
 		return json(
 			{ message: 'Data submitted successfully', data: { tree: tree.getTree() } },
