@@ -1,34 +1,37 @@
 import type { RequestHandler } from './$types';
 import { json } from '@sveltejs/kit';
-import { changeSchema, delta } from '$lib/server/schemas';
+import { delta } from '$lib/server/schemas';
 import Joi from 'joi';
 import { createTree } from '$lib/stores/nodes';
-import { randomUUID } from 'crypto';
-import axios from 'axios';
 
-export const POST: RequestHandler = async ({
-	request,
-	locals: { supabase, supabaseService, getSession }
-}) => {
+export const POST: RequestHandler = async ({ request, locals: { supabase, supabaseService } }) => {
 	try {
-		const { id, uuid, base, newChanges, section, userId } = await request.json();
+		const { id, uuid, base, section, userId, location } = await request.json();
 
 		const idValid = Joi.string().validate(id);
 		const sectionValid = Joi.string().validate(section);
 		const userIdValid = Joi.string().validate(userId);
 		const uuidValid = Joi.string().validate(uuid);
+		const locationValid = Joi.string().validate(location);
 
-		if (idValid.error || sectionValid.error || userIdValid.error || uuidValid.error)
+		if (
+			idValid.error ||
+			sectionValid.error ||
+			userIdValid.error ||
+			uuidValid.error ||
+			locationValid.error
+		)
 			throw { status: 400, message: 'Bad request: missing or incorrect fields' };
 
 		while (true) {
 			const now = Date.now();
 			const nowCompare = now - 10000;
+
 			const last_edit = Date.now();
 
-			const strategiesPromise = supabase
-				.from('Strategies')
-				.select('tldr, content, suggestions, active_user')
+			const nodePromise = supabase
+				.from(location)
+				.select('tldr, content, active_user')
 				.eq('uuid', uuid);
 			const usernamePromise = supabase.from('Profiles').select('username').eq('user_id', userId);
 			const treePromise = supabaseService
@@ -37,19 +40,18 @@ export const POST: RequestHandler = async ({
 				.lt('changing', nowCompare)
 				.select('data');
 
-			const [strategyResult, usernameResult, treeResult] = await Promise.all([
-				strategiesPromise,
+			const [nodeResult, usernameResult, treeResult] = await Promise.all([
+				nodePromise,
 				usernamePromise,
 				treePromise
 			]);
 
-			if (strategyResult?.error) throw { status: 400, message: strategyResult.error.message };
+			if (nodeResult?.error) throw { status: 400, message: nodeResult.error.message };
 			if (usernameResult?.error) throw { status: 400, message: usernameResult.error.message };
 			if (treeResult?.error) throw { status: 400, message: treeResult.error.message };
 
 			if (!treeResult.data.length) continue;
 
-			const suggestions = strategyResult.data[0].suggestions;
 			const username = usernameResult.data[0].username;
 			const tree = createTree();
 
@@ -59,22 +61,8 @@ export const POST: RequestHandler = async ({
 			if (!owners?.includes(username)) {
 				throw { status: 400, message: 'Unauthorized' };
 			}
-
-			if (username !== strategyResult.data[0].active_user)
+			if (username !== nodeResult.data[0].active_user)
 				throw { status: 400, message: 'Another user is currently editing this node' };
-
-			let suggestion = suggestions.find((s: any) => s.title === section);
-			if (!suggestion) {
-				suggestion = { title: section, changes: [] };
-				suggestions.push(suggestion);
-			}
-
-			for (let newChange of newChanges) {
-				const changeValid = changeSchema.validate(newChange);
-				if (changeValid.error)
-					throw { status: 400, message: 'Bad request: missing or incorrect fields' };
-			}
-			suggestion.changes = newChanges;
 
 			let baseValid;
 			if (section === 'TL;DR') {
@@ -84,22 +72,22 @@ export const POST: RequestHandler = async ({
 				treeNode.data.tldr = base;
 				const treePostPromise = supabaseService
 					.from('Tree')
-					.update({ data: tree.getTree() })
+					.update({ data: tree.getTree(), changing: 0 })
 					.eq('id', 1);
-				const strategyPostPromise = supabaseService
-					.from('Strategies')
-					.update({ tldr: base, suggestions, last_edit })
+				const problemPostPromise = supabaseService
+					.from(location)
+					.update({ tldr: base, last_edit })
 					.eq('uuid', uuid);
 
-				const [strategyPostResult, treePostResult] = await Promise.all([
-					strategyPostPromise,
+				const [problemPostResult, treePostResult] = await Promise.all([
+					problemPostPromise,
 					treePostPromise
 				]);
-				if (strategyPostResult?.error)
-					throw { status: 400, message: strategyPostResult.error.message };
+				if (problemPostResult?.error)
+					throw { status: 400, message: problemPostResult.error.message };
 				if (treePostResult?.error) throw { status: 400, message: treePostResult.error.message };
 			} else {
-				const content = strategyResult.data[0].content;
+				const content = nodeResult.data[0].content;
 				baseValid = delta.validate(base);
 				if (baseValid.error)
 					throw { status: 400, message: 'Bad request: missing or incorrect fields' };
@@ -111,9 +99,10 @@ export const POST: RequestHandler = async ({
 					content.push({ title: section, delta: base });
 				}
 				const { error } = await supabaseService
-					.from('Strategies')
-					.update({ content, suggestions, last_edit })
+					.from(location)
+					.update({ content, last_edit })
 					.eq('uuid', uuid);
+
 				if (error) throw { status: 400, message: error.message };
 			}
 			break;

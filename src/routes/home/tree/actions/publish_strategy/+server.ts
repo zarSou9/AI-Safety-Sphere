@@ -49,7 +49,10 @@ export const POST: RequestHandler = async ({ request, locals: { supabase, supaba
 			const strategiesPromise = supabaseService
 				.from('Strategies')
 				.insert({ id: strat.id, uuid: strat.uuid, title, tldr: { ops: [] } });
-			const treePromise = supabaseService.from('Tree').update({ data: tree.getTree() }).eq('id', 1);
+			const treePromise = supabaseService
+				.from('Tree')
+				.update({ data: tree.getTree(), changing: 0 })
+				.eq('id', 1);
 			const [strategiesResult, treeResult] = await Promise.all([strategiesPromise, treePromise]);
 
 			if (strategiesResult?.error) throw { status: 400, message: strategiesResult.error.message };

@@ -4,21 +4,14 @@ import Joi from 'joi';
 
 export const POST: RequestHandler = async ({ request, locals: { supabaseService, supabase } }) => {
 	try {
-		const { id, userId, uuid, color, userColors, nodeType } = await request.json();
+		const { id, userId, uuid, nodeType } = await request.json();
 
 		const idValid = Joi.string().validate(id);
 		const userIdValid = Joi.string().validate(userId);
-		const colorValid = Joi.string().validate(color);
 		const uuidValid = Joi.string().validate(uuid);
 		const nodeTypeValid = Joi.boolean().validate(nodeType);
 
-		if (
-			idValid.error ||
-			userIdValid.error ||
-			colorValid.error ||
-			uuidValid.error ||
-			nodeTypeValid.error
-		)
+		if (idValid.error || userIdValid.error || uuidValid.error || nodeTypeValid.error)
 			throw { status: 400, message: 'Bad request: missing or incorrect fields' };
 
 		let location;
@@ -43,11 +36,9 @@ export const POST: RequestHandler = async ({ request, locals: { supabaseService,
 			}
 		}
 
-		if (color) userColors.push({ color, user: username });
-
 		const { error } = await supabaseService
 			.from(location)
-			.update({ active_user: username, userColors, last_edit: Date.now() })
+			.update({ active_user: username, last_edit: Date.now() })
 			.eq('uuid', uuid);
 		if (error) throw { status: 400, message: error.message };
 
