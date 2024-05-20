@@ -2,9 +2,13 @@
 	import { writable, type Writable } from 'svelte/store';
 	import { setContext, tick } from 'svelte';
 	import { page } from '$app/stores';
-	import Settings from '$lib/icons/Settings.svelte';
 	import Menu from '$lib/icons/Menu.svelte';
 	import Cross from '$lib/icons/Cross.svelte';
+	import Settings from '$lib/icons/nav-bar/Settings.svelte';
+	import Docs from '$lib/icons/nav-bar/Docs.svelte';
+	import Hierarchy from '$lib/icons/nav-bar/Hierarchy.svelte';
+	import Questions from '$lib/icons/nav-bar/Questions.svelte';
+	import Learn from '$lib/icons/nav-bar/Learn.svelte';
 
 	export let data;
 
@@ -113,25 +117,29 @@
 <div class="flex w-full h-full text-white text-[14px]">
 	{#if open}
 		<div class="flex flex-col pt-[40px] w-[62px] bg-[#272727] border-r-[.3px] border-gray-500">
-			<div class="h-0 w-[42px] ml-auto mr-auto border-b-[.3px] border-gray-500 mb-[8px]" />
+			<div class="h-0 w-[42px] ml-auto mr-auto border-b-[.3px] border-gray-500 mb-[4px]" />
 			<a
 				href="/home/docs"
-				class="tab {currentUrl === 'docs' ? 'bg-[#454545]' : 'hover:bg-[#45454570]'}">Docs</a
+				class="tab {currentUrl === 'docs' ? 'bg-[#454545]' : 'hover:bg-[#45454570]'}"
+				><Docs color={currentUrl === 'docs' ? '#d7d7d7' : '#9c9c9c'} size="30px" /></a
 			>
 			<a
 				href="/home/tree"
-				class="tab {currentUrl === 'tree' ? 'bg-[#454545]' : 'hover:bg-[#45454570]'}">Tree</a
+				class="tab {currentUrl === 'tree' ? 'bg-[#454545]' : 'hover:bg-[#45454570]'}"
+				><Hierarchy color={currentUrl === 'tree' ? '#d7d7d7' : '#9c9c9c'} size="33px" /></a
 			>
 			<a
-				href="/home/team"
-				class="tab {currentUrl === 'team' ? 'bg-[#454545]' : 'hover:bg-[#45454570]'}">Team</a
+				href="/home/questions"
+				class="tab {currentUrl === 'questions' ? 'bg-[#454545]' : 'hover:bg-[#45454570]'}"
+				><Questions color={currentUrl === 'questions' ? '#d7d7d7' : '#9c9c9c'} size="33px" /></a
 			>
 			<a
 				href="/home/learn"
-				class="tab {currentUrl === 'learn' ? 'bg-[#454545]' : 'hover:bg-[#45454570]'}">Learn</a
+				class="tab {currentUrl === 'learn' ? 'bg-[#454545]' : 'hover:bg-[#45454570]'}"
+				><Learn color={currentUrl === 'learn' ? '#d7d7d7' : '#9c9c9c'} size="29px" /></a
 			>
 			<a href="/home/settings" class="mt-auto ml-auto mr-auto mb-[14px]"
-				><Settings color="#9c9c9c" size="33px" /></a
+				><Settings color={currentUrl === 'settings' ? '#d7d7d7' : '#9c9c9c'} size="33px" /></a
 			>
 		</div>
 	{/if}
@@ -151,7 +159,7 @@
 		align-items: center;
 		justify-content: center;
 		border-radius: 10px;
-		margin-top: 6px;
+		margin-top: 5px;
 		margin-left: auto;
 		margin-right: auto;
 		width: 47px;

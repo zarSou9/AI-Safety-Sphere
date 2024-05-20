@@ -29,7 +29,7 @@
 		</button>
 		<h2 class="text-[24px] font-semibold mt-[7px] mb-[5px]">How To Use</h2>
 		<div class="mb-[12px] ml-[20px] mr-[30px]">
-			<div class="mt-3">
+			<div class="mt-[10px]">
 				<h3 class="font-medium">Pan:</h3>
 				<ul class="list-disc pl-[25px]">
 					<li>Two fingers on trackpad</li>
@@ -57,6 +57,7 @@
 					<li><kbd>f</kbd></li>
 				</ul>
 			</div>
+			<p class="italic text-[12px] mt-[6px]">(Reload page if tree is jumbled)</p>
 		</div>
 		<div class="flex w-full text-[13px]">
 			<a class="hover:underline text-[#005eff] mr-auto ml-[20px]" href="/home/docs">Learn more</a>

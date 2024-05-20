@@ -26,12 +26,23 @@ export const load: LayoutServerLoad = async ({
 			.single();
 
 		const hierPromise = supabase.from('Tree').select('data').eq('id', 1);
+		const questionsPromise = supabase.from('Questions').select('*');
 
-		const [profileResult, hierResult] = await Promise.all([profilePromise, hierPromise]);
+		const [profileResult, hierResult, questionsResult] = await Promise.all([
+			profilePromise,
+			hierPromise,
+			questionsPromise
+		]);
 
 		if (profileResult?.error) {
 			throw fail(400, {
 				message: profileResult.error.message
+			});
+		}
+
+		if (questionsResult?.error) {
+			throw fail(400, {
+				message: questionsResult.error.message
 			});
 		}
 
@@ -55,17 +66,27 @@ export const load: LayoutServerLoad = async ({
 				profile: profileResult.data,
 				hier: hierResult.data,
 				newUser,
+				questions: questionsResult.data,
 				loggedIn
 			}
 		};
 	} else {
-		const hierResult = await supabase.from('Tree').select('data').eq('id', 1);
+		const hierPromise = await supabase.from('Tree').select('data').eq('id', 1);
+		const questionsPromise = supabase.from('Questions').select('*');
+
+		const [hierResult, questionsResult] = await Promise.all([hierPromise, questionsPromise]);
 
 		if (hierResult?.error) {
 			throw fail(400, {
 				message: hierResult.error.message
 			});
 		}
+		if (questionsResult?.error) {
+			throw fail(400, {
+				message: questionsResult.error.message
+			});
+		}
+
 		let newUser = true;
 
 		return {
@@ -73,6 +94,7 @@ export const load: LayoutServerLoad = async ({
 			props: {
 				hier: hierResult.data,
 				newUser,
+				questions: questionsResult.data,
 				loggedIn
 			}
 		};

@@ -358,6 +358,13 @@
 					><span>. I am in need of people to help further develop the site. </span>
 				</li>
 			</ul>
+			<p class="mt-[10px]">
+				This is the link to our discord server: <a
+					class="hover:underline text-[#1155cc]"
+					href="https://discord.gg/QCaQFKxu"
+					target="_blank">https://discord.gg/QCaQFKxu</a
+				>
+			</p>
 			<a
 				class="hover:underline text-[#1155cc] text-[13px] mt-[40px] ml-auto"
 				href="https://docs.google.com/document/d/1SYBkAybnBulbF5w7YbxMIzVngomiCMs_6k7tDjz29Hk/edit?usp=sharing"
