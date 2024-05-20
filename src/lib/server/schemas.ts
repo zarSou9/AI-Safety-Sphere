@@ -4,66 +4,77 @@ const delta = Joi.object({
 	ops: Joi.array()
 		.items(
 			Joi.object({
-				insert: Joi.string(),
+				insert: Joi.alternatives().try(
+					Joi.string(),
+					Joi.object({
+						image: Joi.string()
+					}),
+					Joi.object({
+						video: Joi.string()
+					}),
+					Joi.object({
+						formula: Joi.string()
+					})
+				),
 				delete: Joi.number().positive(),
-				retain: Joi.number().min(0),
+				retain: Joi.number().positive(),
 				attributes: Joi.object({
 					bold: Joi.alternatives().try(true, null, false),
-					italic: Joi.alternatives().try(true, null, false)
+					italic: Joi.alternatives().try(true, null, false),
+					underline: Joi.alternatives().try(true, null, false),
+					strike: Joi.alternatives().try(true, null, false),
+					script: Joi.alternatives().try('super', 'sub', null, false),
+					blockquote: Joi.alternatives().try(true, null, false),
+					link: Joi.alternatives().try(Joi.string().max(10000), null, false),
+					align: Joi.alternatives().try('justify', 'right', 'left', 'center', null, false),
+					color: Joi.alternatives().try(Joi.string().max(20), null, false),
+					font: Joi.alternatives().try(Joi.string().max(100), null, false),
+					height: Joi.string().max(20),
+					width: Joi.string().max(20),
+					code: Joi.alternatives().try(true, null, false),
+					list: Joi.alternatives().try('bullet', 'ordered', null, false),
+					indent: Joi.alternatives().try(Joi.number().max(100), null, false)
 				}).min(1)
 			}).xor('insert', 'delete', 'retain')
 		)
 		.required()
 });
 
-const changeSchema = Joi.object({
-	d: delta,
-	cd: delta,
-	pos: Joi.object({ i: Joi.number(), l: Joi.number() }),
-	color: Joi.string(),
-	owner: Joi.string(),
-	attributes: Joi.array(),
-	children: Joi.array(),
-	deleteChildren: Joi.array()
+const tldrDelta = Joi.object({
+	ops: Joi.array()
+		.items(
+			Joi.object({
+				insert: Joi.alternatives().try(
+					Joi.string(),
+					Joi.object({
+						formula: Joi.string()
+					})
+				),
+				delete: Joi.number().positive(),
+				retain: Joi.number().positive(),
+				attributes: Joi.object({
+					bold: Joi.alternatives().try(true, null, false),
+					italic: Joi.alternatives().try(true, null, false),
+					underline: Joi.alternatives().try(true, null, false),
+					strike: Joi.alternatives().try(true, null, false),
+					script: Joi.alternatives().try('super', 'sub', null, false),
+					blockquote: Joi.alternatives().try(true, null, false),
+					link: Joi.alternatives().try(Joi.string().max(10000), null, false),
+					align: Joi.alternatives().try('justify', 'right', 'left', 'center', null, false),
+					color: Joi.alternatives().try(Joi.string().max(20), null, false),
+					font: Joi.alternatives().try(Joi.string().max(100), null, false),
+					code: Joi.alternatives().try(true, null, false),
+					list: Joi.alternatives().try('bullet', 'ordered', null, false),
+					indent: Joi.alternatives().try(Joi.number().max(100), null, false)
+				}).min(1)
+			}).xor('insert', 'delete', 'retain')
+		)
+		.required()
 });
-
-const problemEdit = Joi.object({
-	title: Joi.string(),
-	tldr: delta,
-	prerequisites: delta,
-	content: delta,
-	measurable_objective: delta,
-	skills_needed: delta,
-	existing_work: delta,
-	references: delta
-});
-
-const strategyEdit = Joi.object({
-	id: Joi.string(),
-	title: Joi.string(),
-	tldr: delta,
-	prerequisites: delta,
-	content: delta,
-	references: delta
-});
-
-const problems = Joi.array().items(
-	Joi.object({
-		id: Joi.string().required(),
-		title: Joi.string().required(),
-		tldr: delta.required(),
-		prerequisites: delta,
-		content: delta.required(),
-		measurable_objective: delta.required(),
-		skills_needed: delta.required(),
-		existing_work: delta,
-		references: delta
-	})
-);
 
 const strategySchema = Joi.object({
 	id: Joi.string().required(),
 	title: Joi.string().required()
 });
 
-export { problems, strategySchema, strategyEdit, problemEdit, delta, changeSchema };
+export { strategySchema, tldrDelta, delta };

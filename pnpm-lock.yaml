@@ -24,8 +24,8 @@ dependencies:
     specifier: ^17.12.2
     version: 17.12.2
   quill:
-    specifier: 2.0.0-rc.2
-    version: 2.0.0-rc.2
+    specifier: 2.0.2
+    version: 2.0.2
   quill-delta:
     specifier: ^5.1.0
     version: 5.1.0
@@ -2412,8 +2412,8 @@ packages:
       p-limit: 3.1.0
     dev: true
 
-  /parchment@3.0.0-alpha.2:
-    resolution: {integrity: sha512-r/DoIj7e8efiTWUg+BHUlolpdE9/iNVtcFg8i7SvdlF7a7fgTAAwcXrpamNrf49IsGykyDcsfUZKGFVwMXZcyg==}
+  /parchment@3.0.0:
+    resolution: {integrity: sha512-HUrJFQ/StvgmXRcQ1ftY6VEZUq3jA2t9ncFN4F84J/vN0/FPpQF+8FKXb3l6fLces6q0uOHj6NJn+2xvZnxO6A==}
     dev: false
 
   /parent-module@1.0.1:
@@ -2681,13 +2681,13 @@ packages:
       lodash.isequal: 4.5.0
     dev: false
 
-  /quill@2.0.0-rc.2:
-    resolution: {integrity: sha512-3uh7uZqXpN4t0HmHCjBHXSaeSgYNij6LP1t8ncEjr6+JMq5zR6svpH5Frx7Lxmxv1DUHYDE28eV7R3f4r8Z2Kw==}
+  /quill@2.0.2:
+    resolution: {integrity: sha512-QfazNrhMakEdRG57IoYFwffUIr04LWJxbS/ZkidRFXYCQt63c1gK6Z7IHUXMx/Vh25WgPBU42oBaNzQ0K1R/xw==}
     engines: {npm: '>=8.2.3'}
     dependencies:
       eventemitter3: 5.0.1
       lodash-es: 4.17.21
-      parchment: 3.0.0-alpha.2
+      parchment: 3.0.0
       quill-delta: 5.1.0
     dev: false
 

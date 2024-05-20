@@ -15,10 +15,7 @@ export const POST: RequestHandler = async ({ request, locals: { supabase, supaba
 		if (idValid.error || userIdValid.error || iValid.error || uuidValid.error)
 			throw { status: 400, message: 'Bad request: missing or incorrect fields' };
 
-		const problemPromise = supabase
-			.from('Problems')
-			.select('content, suggestions')
-			.eq('uuid', uuid);
+		const problemPromise = supabase.from('Problems').select('content').eq('uuid', uuid);
 		const usernamePromise = supabase.from('Profiles').select('username').eq('user_id', userId);
 		const treePromise = supabase.from('Tree').select('data').eq('id', 1);
 
@@ -33,7 +30,6 @@ export const POST: RequestHandler = async ({ request, locals: { supabase, supaba
 		if (treeResult?.error) throw { status: 400, message: treeResult.error.message };
 
 		const content = problemResult.data[0].content;
-		const suggestions = problemResult.data[0].suggestions;
 		const username = usernameResult.data[0].username;
 		const tree = createTree();
 
@@ -44,14 +40,9 @@ export const POST: RequestHandler = async ({ request, locals: { supabase, supaba
 			throw { status: 400, message: 'Unauthorized' };
 		}
 
-		const sugI = suggestions.findIndex((s: any) => s.title === content[i - 1].title);
 		content.splice(i - 1, 1);
-		if (sugI >= 0) suggestions.splice(sugI, 1);
 
-		const { error } = await supabaseService
-			.from('Problems')
-			.update({ content, suggestions })
-			.eq('uuid', uuid);
+		const { error } = await supabaseService.from('Problems').update({ content }).eq('uuid', uuid);
 		if (error) throw { status: 400, message: error.message };
 
 		return json({ message: 'Edit successfully pushed!' }, { status: 200 });

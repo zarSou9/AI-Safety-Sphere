@@ -1,8 +1,9 @@
 import type { RequestHandler } from './$types';
 import { json } from '@sveltejs/kit';
-import { delta } from '$lib/server/schemas';
+import { delta, tldrDelta } from '$lib/server/schemas';
 import Joi from 'joi';
 import { createTree } from '$lib/stores/nodes';
+import Delta from 'quill-delta';
 
 export const POST: RequestHandler = async ({ request, locals: { supabase, supabaseService } }) => {
 	try {
@@ -66,9 +67,17 @@ export const POST: RequestHandler = async ({ request, locals: { supabase, supaba
 
 			let baseValid;
 			if (section === 'TL;DR') {
-				baseValid = delta.validate(base);
+				baseValid = tldrDelta.validate(base);
 				if (baseValid.error)
 					throw { status: 400, message: 'Bad request: missing or incorrect fields' };
+
+				const dbase = new Delta(base);
+				let i = 0;
+				dbase.eachLine(() => {
+					i += 1;
+				});
+				if (i > 14) throw { status: 400, message: 'The TL;DR section is limited to 12 lines' };
+
 				treeNode.data.tldr = base;
 				const treePostPromise = supabaseService
 					.from('Tree')
@@ -89,8 +98,7 @@ export const POST: RequestHandler = async ({ request, locals: { supabase, supaba
 			} else {
 				const content = nodeResult.data[0].content;
 				baseValid = delta.validate(base);
-				if (baseValid.error)
-					throw { status: 400, message: 'Bad request: missing or incorrect fields' };
+				if (baseValid.error) throw { status: 400, message: baseValid.error.message };
 
 				const sect = content.find((s: any) => s.title === section);
 				if (sect) {
@@ -98,18 +106,26 @@ export const POST: RequestHandler = async ({ request, locals: { supabase, supaba
 				} else {
 					content.push({ title: section, delta: base });
 				}
-				const { error } = await supabaseService
+				const problemPostPromise = supabaseService
 					.from(location)
 					.update({ content, last_edit })
 					.eq('uuid', uuid);
+				const treePostPromise = supabaseService.from('Tree').update({ changing: 0 }).eq('id', 1);
 
-				if (error) throw { status: 400, message: error.message };
+				const [problemPostResult, treePostResult] = await Promise.all([
+					problemPostPromise,
+					treePostPromise
+				]);
+				if (problemPostResult?.error)
+					throw { status: 400, message: problemPostResult.error.message };
+				if (treePostResult?.error) throw { status: 400, message: treePostResult.error.message };
 			}
 			break;
 		}
 
 		return json({ message: 'Edit successfully pushed!' }, { status: 200 });
 	} catch (error: any) {
+		await supabaseService.from('Tree').update({ changing: 0 }).eq('id', 1);
 		return json(
 			{ error: error?.message || 'An unexpected error occurred' },
 			{ status: error?.status || 500 }

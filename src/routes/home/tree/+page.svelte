@@ -8,13 +8,27 @@
 	import ProblemTitleModal from '$lib/components/ProblemTitleModal.svelte';
 	import ConfirmationModal from '$lib/components/ConfirmationModal.svelte';
 	import InfoModal from '$lib/components/InfoModal.svelte';
-	import Bold from '$lib/icons/Bold.svelte';
-	import Italic from '$lib/icons/Italic.svelte';
-	import Endnote from '$lib/icons/Endnote.svelte';
 	import Cross from '$lib/icons/Cross.svelte';
 	import ThreeDots from '$lib/icons/ThreeDots.svelte';
 	import { fly, fade, slide } from 'svelte/transition';
 	import { quintOut } from 'svelte/easing';
+	import Bold from '$lib/icons/tool-bar/Bold.svelte';
+	import Italic from '$lib/icons/tool-bar/Italic.svelte';
+	import AlignC from '$lib/icons/tool-bar/AlignC.svelte';
+	import AlignJ from '$lib/icons/tool-bar/AlignJ.svelte';
+	import AlignL from '$lib/icons/tool-bar/AlignL.svelte';
+	import AlignR from '$lib/icons/tool-bar/AlignR.svelte';
+	import Dedent from '$lib/icons/tool-bar/Dedent.svelte';
+	import Fx from '$lib/icons/tool-bar/Fx.svelte';
+	import Image from '$lib/icons/tool-bar/Image.svelte';
+	import Indent from '$lib/icons/tool-bar/Indent.svelte';
+	import Link from '$lib/icons/tool-bar/Link.svelte';
+	import Quote from '$lib/icons/tool-bar/Quote.svelte';
+	import Strike from '$lib/icons/tool-bar/Strike.svelte';
+	import Subscript from '$lib/icons/tool-bar/Subscript.svelte';
+	import Superscript from '$lib/icons/tool-bar/Superscript.svelte';
+	import Underline from '$lib/icons/tool-bar/Underline.svelte';
+	import Video from '$lib/icons/tool-bar/Video.svelte';
 
 	export let data;
 
@@ -101,10 +115,6 @@
 	setContext('toolBarShownStore', toolBarShown);
 	const toolBarDotsShown = writable(false);
 	setContext('toolBarDotsShownStore', toolBarDotsShown);
-	const bolded = writable(false);
-	setContext('boldedStore', bolded);
-	const italicized = writable(false);
-	setContext('italicizedStore', italicized);
 	const successPopUp = writable(false);
 	setContext('successPopUpStore', successPopUp);
 	const failurePopUp = writable(false);
@@ -118,6 +128,22 @@
 	const processing = writable(false);
 	setContext('processingStore', processing);
 	setContext('data', data);
+	const bolded = writable(false);
+	setContext('boldedStore', bolded);
+	const italicized = writable(false);
+	setContext('italicizedStore', italicized);
+	const underlined = writable(false);
+	setContext('underlinedStore', underlined);
+	const striked = writable(false);
+	setContext('strikedStore', striked);
+	const scripted: any = writable(false);
+	setContext('scriptedStore', scripted);
+	const quoted = writable(false);
+	setContext('quotedStore', quoted);
+	const aligned: any = writable(false);
+	setContext('alignedStore', aligned);
+	const linkInput: any = writable(false);
+	setContext('linkInputStore', linkInput);
 
 	const tree = createTree();
 	if (data.props?.hier[0]?.data?.problem)
@@ -184,6 +210,18 @@
 			}
 		});
 	});
+
+	let alignBar = false;
+	let linkBar = false;
+	let linkInputElement: HTMLInputElement;
+	function closeAlignBar() {
+		window.removeEventListener('click', closeAlignBar);
+		alignBar = false;
+	}
+	function closeLinkBar() {
+		window.removeEventListener('click', closeLinkBar);
+		linkBar = false;
+	}
 </script>
 
 {#if $titleModal.visible}
@@ -338,17 +376,185 @@
 					on:click={() => {
 						nodeAction.set('italic');
 					}}
-					class="ml-[2px] p-[3px] rounded-[5px] mr-[10px] {$italicized
+					class="ml-[2px] p-[3px] rounded-[5px] {$italicized
 						? 'bg-[#7db1ff25]'
 						: ' hover:bg-[#393939]'}"><Italic color="#9c9c9c" size="16px" /></button
 				>
-				<div class="w-[.6px] h-[18px] bg-[#585a61]" />
 				<button
 					on:click={() => {
-						nodeAction.set('Endnote');
+						nodeAction.set('underline');
 					}}
-					class="ml-[10px] mr-auto hover:bg-[#393939] p-[4px] px-[4.5px] rounded-[5px]"
-					><Endnote color="#9c9c9c" size="14px" /></button
+					class="ml-[2px] p-[2.5px] rounded-[5px] {$underlined
+						? 'bg-[#7db1ff25]'
+						: ' hover:bg-[#393939]'}"><Underline color="#9c9c9c" size="17px" /></button
+				>
+				<button
+					on:click={() => {
+						nodeAction.set('strike');
+					}}
+					class="ml-[2px] p-[2px] rounded-[5px] {$striked
+						? 'bg-[#7db1ff25]'
+						: ' hover:bg-[#393939]'}"><Strike color="#9c9c9c" size="18px" /></button
+				>
+				<button
+					on:click={() => {
+						nodeAction.set('subscript');
+					}}
+					class="ml-[20px] px-[3px] pt-[4px] pb-[2px] rounded-[5px] {$scripted === 'sub'
+						? 'bg-[#7db1ff25]'
+						: ' hover:bg-[#393939]'}"><Subscript color="#9c9c9c" size="16px" /></button
+				>
+				<button
+					on:click={() => {
+						nodeAction.set('superscript');
+					}}
+					class="ml-[2px] px-[3px] pt-[2px] pb-[4px] rounded-[5px] {$scripted === 'super'
+						? 'bg-[#7db1ff25]'
+						: ' hover:bg-[#393939]'}"><Superscript color="#9c9c9c" size="16px" /></button
+				>
+				<button
+					on:click={() => {
+						nodeAction.set('dedent');
+					}}
+					class="ml-[20px] p-[3px] rounded-[5px] hover:bg-[#393939]"
+					><Dedent color="#9c9c9c" size="16px" /></button
+				>
+				<button
+					on:click={() => {
+						nodeAction.set('indent');
+					}}
+					class="p-[3px] rounded-[5px] hover:bg-[#393939]"
+					><Indent color="#9c9c9c" size="16px" /></button
+				>
+				<button
+					on:click={() => {
+						alignBar = !alignBar;
+						if (alignBar) setTimeout(() => window.addEventListener('click', closeAlignBar), 2);
+					}}
+					class="ml-[4px] p-[3px] rounded-[5px] relative {$aligned
+						? 'bg-[#7db1ff25]'
+						: !alignBar
+							? 'hover:bg-[#393939]'
+							: 'bg-[#393939]'}"
+				>
+					{#if $aligned === 'right'}
+						<AlignR color="#9c9c9c" size="16px" />
+					{:else if $aligned === 'center'}
+						<AlignC color="#9c9c9c" size="16px" />
+					{:else if $aligned === 'justify'}
+						<AlignJ color="#9c9c9c" size="16px" />
+					{:else}
+						<AlignL color="#9c9c9c" size="16px" />
+					{/if}
+					{#if alignBar}
+						<div
+							class="z-[10] flex absolute p-[4px] bg-[#303032] rounded-[6px] bottom-[-35px] left-[-10px] border-[.3px] border-[#47494c]"
+						>
+							<button
+								on:click={() => {
+									nodeAction.set('al');
+								}}
+								class="p-[3px] rounded-[5px] {!$aligned ? 'bg-[#7db1ff25]' : ' hover:bg-[#393939]'}"
+								><AlignL color="#9c9c9c" size="16px" />
+							</button>
+							<button
+								on:click={() => {
+									nodeAction.set('ac');
+								}}
+								class="ml-[3px] p-[3px] rounded-[5px] {$aligned === 'center'
+									? 'bg-[#7db1ff25]'
+									: ' hover:bg-[#393939]'}"
+								><AlignC color="#9c9c9c" size="16px" />
+							</button>
+							<button
+								on:click={() => {
+									nodeAction.set('ar');
+								}}
+								class="ml-[3px] p-[3px] rounded-[5px] {$aligned === 'right'
+									? 'bg-[#7db1ff25]'
+									: ' hover:bg-[#393939]'}"
+								><AlignR color="#9c9c9c" size="16px" />
+							</button>
+							<button
+								on:click={() => {
+									nodeAction.set('aj');
+								}}
+								class="ml-[3px] p-[3px] rounded-[5px] {$aligned === 'justify'
+									? 'bg-[#7db1ff25]'
+									: ' hover:bg-[#393939]'}"
+								><AlignJ color="#9c9c9c" size="16px" />
+							</button>
+						</div>
+					{/if}
+				</button>
+				<button
+					on:click={() => {
+						nodeAction.set('quote');
+					}}
+					class="ml-[20px] p-[4.5px] rounded-[5px] {$quoted
+						? 'bg-[#7db1ff25]'
+						: ' hover:bg-[#393939]'}"><Quote color="#9c9c9c" size="13px" /></button
+				>
+				<button
+					on:click={(e) => {
+						if (!linkBar) {
+							$linkInput = '';
+							linkBar = true;
+							nodeAction.set('get-selection');
+							setTimeout(() => {
+								window.addEventListener('click', closeLinkBar);
+								linkInputElement.focus();
+							}, 3);
+						} else e.stopPropagation();
+					}}
+					class="ml-[2px] p-[1.5px] rounded-[5px] relative {linkBar
+						? 'bg-[#393939]'
+						: 'hover:bg-[#393939]'} "
+				>
+					<Link color="#9c9c9c" size="19px" />
+					{#if linkBar}
+						<div
+							class="z-[10] flex absolute p-[6px] bg-[#303032] rounded-[6px] bottom-[-46px] left-[-10px] border-[.3px] border-[#47494c]"
+						>
+							<input
+								bind:this={linkInputElement}
+								bind:value={$linkInput}
+								class="text-[#000000] selection:bg-[#7db1ff] pl-[3px]"
+							/>
+							<button
+								class="ml-[10px] border-[1px] border-[#0e67d3] hover:bg-[#0e67d3] px-[10px]"
+								on:click={(e) => {
+									e.stopPropagation();
+									window.removeEventListener('click', closeLinkBar);
+									linkBar = false;
+									nodeAction.set('link');
+								}}
+							>
+								save
+							</button>
+						</div>
+					{/if}
+				</button>
+				<button
+					on:click={() => {
+						nodeAction.set('fx');
+					}}
+					class="ml-[2px] p-[4.5px] rounded-[5px] hover:bg-[#393939]"
+					><Fx color="#9c9c9c" size="13px" /></button
+				>
+				<button
+					on:click={() => {
+						nodeAction.set('image');
+					}}
+					class="ml-[20px] p-[2.5px] rounded-[5px] hover:bg-[#393939]"
+					><Image color="#9c9c9c" size="17px" /></button
+				>
+				<button
+					on:click={() => {
+						nodeAction.set('video');
+					}}
+					class="ml-[2px] p-[3px] mr-auto rounded-[5px] hover:bg-[#393939]"
+					><Video color="#9c9c9c" size="16px" /></button
 				>
 				{#if $toolBarDotsShown}
 					<button

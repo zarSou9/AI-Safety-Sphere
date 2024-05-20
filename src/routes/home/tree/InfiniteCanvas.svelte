@@ -150,18 +150,6 @@
 						treeAction.set('fade-out-extra');
 						nodeAction.set('expand-node');
 					}, 400);
-				} else if (action === 'return-to-caret') {
-					if (!smoothMoving) {
-						setTimeout(() => {
-							$nodeAction = 'handle-char-back';
-						}, 160);
-						let movePos = charPos.v - viewPort.getBoundingClientRect().top;
-						if (movePos < 0) {
-							moveToPos(x, y - movePos + 100, z, 160, 940);
-						} else if (movePos > viewPortContext.height) {
-							moveToPos(x, y - movePos + viewPortContext.height - 150, z, 160, 940);
-						}
-					}
 				} else if (action === 'move-page-up') {
 					moveToPos(x, y - 110, z, 110);
 				} else if (action === 'zoom-out-from-node') {

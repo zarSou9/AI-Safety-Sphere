@@ -36,14 +36,20 @@
 	const quillsReady: Writable<boolean> = getContext('quillsReadyStore');
 	const toolBarShown: Writable<boolean> = getContext('toolBarShownStore');
 	const toolBarDotsShown: Writable<boolean> = getContext('toolBarDotsShownStore');
-	const bolded: Writable<boolean> = getContext('boldedStore');
-	const italicized: Writable<boolean> = getContext('italicizedStore');
 	const successPopUp: Writable<any> = getContext('successPopUpStore');
 	const failurePopUp: Writable<any> = getContext('failurePopUpStore');
 	const sectionContextE: Writable<any> = getContext('sectionContextEStore');
 	const nodeToRemove: Writable<any> = getContext('nodeToRemoveStore');
 	const processing: Writable<boolean> = getContext('processingStore');
 	const loginNotif: Writable<any> = getContext('loginNotifStore');
+	const bolded: Writable<boolean | null | undefined> = getContext('boldedStore');
+	const italicized: Writable<boolean | null | undefined> = getContext('italicizedStore');
+	const underlined: Writable<boolean | null | undefined> = getContext('underlinedStore');
+	const striked: Writable<boolean | null | undefined> = getContext('strikedStore');
+	const scripted: Writable<string | boolean | null | undefined> = getContext('scriptedStore');
+	const quoted: Writable<boolean | null | undefined> = getContext('quotedStore');
+	const aligned: Writable<string | boolean | null | undefined> = getContext('alignedStore');
+	const linkInput: Writable<any> = getContext('linkInputStore');
 
 	export let treeData: any;
 	export let referenced: any;
@@ -82,6 +88,8 @@
 	let editBtnActive = true;
 	let currentUser = null;
 	let problemChannel: any = undefined;
+	let linkRange: any;
+	let moved = false;
 
 	let sessionTimeout: any;
 	let escBtn = false;
@@ -121,19 +129,16 @@
 		oldQuill: any,
 		source: any
 	) {
-		if (quill.hasFocus() && source === 'user') {
+		if (editable) {
 			const sect = sections.find((s: any) => s.title === title);
 			if (currentQuill !== quill) {
 				switchCurrent(sect);
 			}
 			if (eventName === 'selection-change') {
-				if (source === 'user') {
-					const format = quill.getFormat();
-					if (format?.bold) bolded.set(true);
-					else bolded.set(false);
-					if (format?.italic) italicized.set(true);
-					else italicized.set(false);
+				if (quill.hasFocus()) updateTools(quill?.getFormat());
+				else updateTools(undefined);
 
+				if (source === 'user' && quill.hasFocus()) {
 					const pos =
 						currentEditor.getBoundingClientRect().top +
 						quill.getBounds(range.index + range.length).bottom;
@@ -147,12 +152,46 @@
 					failurePopUp.set('The TL;DR section is limited to 12 lines');
 					setTimeout(() => quill.blur(), 10);
 				} else {
+					if (source !== 'api' && !(range.ops[1]?.delete || range.ops[0]?.delete)) {
+						const delta = range;
+						let length = 0;
+						if (delta.ops[0]?.retain) {
+							const test = new Delta(delta.ops.slice(1));
+							length = test.length();
+						} else {
+							length = delta.length();
+						}
+						const pos =
+							currentEditor.getBoundingClientRect().top +
+							quill.getBounds((delta.ops[0]?.retain ?? 0) + length).bottom;
+						if (pos > viewPort.height + 24) {
+							quill.enable(false);
+							quill.setContents(oldQuill);
+							const quillData = oldQuill.compose(range);
+							setTimeout(() => {
+								quill.setContents(quillData);
+								quill.enable(true);
+								treeAction.set('calibrate-node-height');
+							}, 30);
+						} else if (pos > viewPort.height) {
+							canvasAction.set('move-page-up');
+						}
+					}
 					saved = false;
-					sect.base.ops = quill.getContents().ops;
+					sect.base.ops = oldQuill.compose(range).ops;
 				}
 				treeAction.set('calibrate-node-height');
 			}
 		}
+	}
+	function updateTools(f: any) {
+		$bolded = f?.bold;
+		$italicized = f?.italic;
+		$underlined = f?.underline;
+		$striked = f?.strike;
+		$scripted = f?.script;
+		$quoted = f?.blockquote;
+		$aligned = f?.align;
 	}
 
 	onMount(async () => {
@@ -163,7 +202,7 @@
 
 		const Block = Quill.import('blots/block');
 		const Break = Quill.import('blots/break');
-		const Container = Quill.import('blots/container');
+		const Container: any = Quill.import('blots/container');
 		const Cursor = Quill.import('blots/cursor');
 		const Inline = Quill.import('blots/inline');
 		const Scroll = Quill.import('blots/scroll');
@@ -171,6 +210,7 @@
 
 		const Bold = Quill.import('formats/bold');
 		const Color = Quill.import('formats/color');
+		const Font = Quill.import('formats/font');
 		const Code = Quill.import('formats/code');
 		const Italic = Quill.import('formats/italic');
 		const Link = Quill.import('formats/link');
@@ -178,17 +218,35 @@
 		const Script = Quill.import('formats/script');
 		const Underline = Quill.import('formats/underline');
 
-		const List = Quill.import('formats/list');
+		const Blockquote = Quill.import('formats/blockquote');
+		const Indent = Quill.import('formats/indent');
+		const List: any = Quill.import('formats/list');
+		const Align = Quill.import('formats/align');
+
+		const Image = Quill.import('formats/image');
+		const Video = Quill.import('formats/video');
+		const Formula = Quill.import('formats/formula');
+
+		class ListItem extends List {}
+		ListItem.blotName = 'list';
+		ListItem.tagName = 'LI';
+
+		class ListContainer extends Container {}
+		ListContainer.tagName = 'OL';
+		ListContainer.blotName = 'list-container';
+		ListContainer.allowedChildren = [ListItem];
+
+		ListItem.requiredContainer = ListContainer;
 
 		const Qregistry = new Parchment.Registry();
 		const registry = new Parchment.Registry();
 		registry.register(
-			Scroll,
 			Block,
 			Break,
 			Container,
 			Cursor,
 			Inline,
+			Scroll,
 			Text,
 			Bold,
 			Italic,
@@ -198,15 +256,23 @@
 			Underline,
 			Code,
 			Link,
-			List
+			ListContainer,
+			ListItem,
+			Font,
+			Blockquote,
+			Indent,
+			Align,
+			Image,
+			Video,
+			Formula
 		);
 		Qregistry.register(
-			Scroll,
 			Block,
 			Break,
 			Container,
 			Cursor,
 			Inline,
+			Scroll,
 			Text,
 			Bold,
 			Italic,
@@ -216,7 +282,12 @@
 			Underline,
 			Code,
 			Link,
-			List
+			ListContainer,
+			ListItem,
+			Font,
+			Blockquote,
+			Indent,
+			Formula
 		);
 		TldrQuillOptions.registry = Qregistry;
 		quillOptions.registry = registry;
@@ -274,6 +345,7 @@
 		canvasAction.set('zoom-out-from-node');
 	}
 	function handleKeyDown(e: KeyboardEvent) {
+		if ((e.ctrlKey || e.metaKey) && currentQuill.hasFocus()) updateTools(currentQuill.getFormat());
 		if (e.key === 'Escape') {
 			e.preventDefault();
 			escapeNode();
@@ -281,53 +353,33 @@
 			e.preventDefault();
 			save();
 		}
-		if (out) {
-			if (e.key.length === 1 && /[0-9a-zA-Z!@#$%^&*() ]/.test(e.key)) {
-				outChar = e.shiftKey ? e.key.toUpperCase() : e.key;
-			} else {
-				outChar = '';
-			}
-			const charTemp = currentEditor.getBoundingClientRect().top + outPos;
-			charPos.v = charTemp;
-			canvasAction.set('return-to-caret');
-		}
 	}
 	function startListening() {
 		nodeActionUnsubscribe = nodeAction.subscribe((action) => {
 			if (action) {
 				if (action === 'handle-caret-out-of-view') {
 					if (editable && currentQuill) {
-						if (!out && currentQuill.hasFocus()) {
+						moved = true;
+						if (currentQuill.hasFocus()) {
 							pos =
 								currentEditor.getBoundingClientRect().top +
 								currentQuill.getBounds(
 									currentQuill.getSelection().index + currentQuill.getSelection().length
-								).top;
-						} else {
+								).bottom;
+							if (pos > viewPort.height || pos < viewPort.top) {
+								outPos = currentQuill.getBounds(
+									currentQuill.getSelection().index + currentQuill.getSelection().length
+								).bottom;
+								currentQuill.blur();
+								out = true;
+							}
+						} else if (out) {
 							pos = currentEditor.getBoundingClientRect().top + outPos;
+							if (pos < viewPort.height && pos > viewPort.top) {
+								currentQuill.focus({ preventScroll: true });
+								out = false;
+							}
 						}
-						if ((pos > viewPort.height || pos < viewPort.top) && !out && currentQuill.hasFocus()) {
-							outPos = currentQuill.getBounds(
-								currentQuill.getSelection().index + currentQuill.getSelection().length
-							).top;
-							currentQuill.blur();
-							out = true;
-						} else if (pos < viewPort.height && pos > viewPort.top && out) {
-							currentQuill.focus({ preventScroll: true });
-							out = false;
-						}
-					}
-				} else if (action === 'handle-char-back') {
-					if (
-						editable &&
-						currentEditor.getBoundingClientRect().top + outPos < viewPort.height &&
-						currentEditor.getBoundingClientRect().top + outPos > viewPort.top &&
-						out
-					) {
-						currentQuill.focus({ preventScroll: true });
-						currentQuill.insertText(currentQuill.getSelection().index, outChar, 'user');
-						currentQuill.setSelection(currentQuill.getSelection().index + 1);
-						out = false;
 					}
 				} else if (action === 'save-title') {
 					title = get(titleModal).title;
@@ -341,10 +393,6 @@
 					$viewingNode = false;
 					emptyQuills();
 					$shortCutsEnabled = true;
-				} else if (action === 'bold') {
-					handleBold();
-				} else if (action === 'italic') {
-					handleItalic();
 				} else if (action === 'save-new-section') {
 					newSection($sectionModal.title, $sectionModal.after);
 				} else if (action === 'start-new-section') {
@@ -379,7 +427,25 @@
 							treeAction.set('remove-node');
 						}, 300);
 					}
-				}
+				} else if (action === 'get-selection') {
+					moved = false;
+					linkRange = currentQuill.getSelection();
+				} else if (action === 'bold') bold();
+				else if (action === 'italic') italic();
+				else if (action === 'underline') underline();
+				else if (action === 'strike') strike();
+				else if (action === 'subscript') subscript();
+				else if (action === 'superscript') superscript();
+				else if (action === 'quote') quote();
+				else if (action === 'link') link($linkInput);
+				else if (action === 'fx') fx();
+				else if (action === 'al') al();
+				else if (action === 'ar') ar();
+				else if (action === 'ac') ac();
+				else if (action === 'aj') aj();
+				else if (action === 'indent') indent();
+				else if (action === 'dedent') dedent();
+
 				nodeAction.set(null);
 			}
 		});
@@ -393,14 +459,19 @@
 
 	async function fillQuills() {
 		await tick();
+		let i = 0;
 		for (let section of sections) {
-			section.quill = new Quill(section.editor, quillOptions);
+			if (i) {
+				section.quill = new Quill(section.editor, quillOptions);
+			}
 			section.quill.enable(false);
 			section.eventFunction = (eventName: any, range: any, oR: any, source: any) => {
 				quillEvent(section.title, section.quill, section.editor, eventName, range, oR, source);
 			};
 			section.quill.setContents(section.base);
 			section.quill.on('editor-change', section.eventFunction);
+			section.quill.history.clear();
+			i = 1;
 		}
 		switchCurrent(sections[0]);
 		window.addEventListener('keydown', handleKeyDown);
@@ -524,11 +595,11 @@
 				}
 			});
 	}
-
 	function emptyQuills() {
 		sections = [sections[0]];
 	}
-	function handleBold() {
+
+	function bold() {
 		if (currentQuill.getFormat()?.bold) {
 			currentQuill.format('bold', null, 'user');
 			bolded.set(false);
@@ -537,46 +608,153 @@
 			bolded.set(true);
 		}
 	}
-	function handleItalic() {
+	function italic() {
 		if (currentQuill.getFormat()?.italic) {
-			currentQuill.format('italic', null, 'user');
+			currentQuill.format('italic', null);
 			italicized.set(false);
 		} else {
-			currentQuill.format('italic', true, 'user');
+			currentQuill.format('italic', true);
 			italicized.set(true);
 		}
 	}
-	function endNote() {
-		const i = currentQuill.getSelection().index;
-		if (i) {
-			currentQuill.updateContents(
-				{
+	function underline() {
+		if (currentQuill.getFormat()?.underline) {
+			currentQuill.format('underline', null);
+			$underlined = false;
+		} else {
+			currentQuill.format('underline', true);
+			$underlined = true;
+		}
+	}
+	function strike() {
+		if (currentQuill.getFormat()?.strike) {
+			currentQuill.format('strike', null);
+			$striked = false;
+		} else {
+			currentQuill.format('strike', true);
+			$striked = true;
+		}
+	}
+	function subscript() {
+		if (currentQuill.getFormat()?.script === 'sub') {
+			currentQuill.format('script', null);
+			$scripted = false;
+		} else {
+			currentQuill.format('script', 'sub');
+			$scripted = 'sub';
+		}
+	}
+	function superscript() {
+		if (currentQuill.getFormat()?.script === 'super') {
+			currentQuill.format('script', null);
+			$scripted = false;
+		} else {
+			currentQuill.format('script', 'super');
+			$scripted = 'super';
+		}
+	}
+	function quote() {
+		if (currentQuill.getFormat()?.blockquote) {
+			currentQuill.format('blockquote', null);
+			$quoted = false;
+		} else {
+			currentQuill.format('blockquote', true);
+			$quoted = true;
+		}
+	}
+	function link(link: string) {
+		const i = linkRange?.index;
+		const l = linkRange?.length;
+		if (l) {
+			if (i) {
+				currentQuill.updateContents({
 					ops: [
 						{ retain: i },
 						{
-							insert: '[3]',
+							retain: l,
 							attributes: {
-								script: 'super'
+								link,
+								color: '#48abe8'
 							}
 						}
 					]
-				},
-				'user'
-			);
-		} else {
-			currentQuill.updateContents(
-				{
+				});
+			} else {
+				currentQuill.updateContents({
 					ops: [
 						{
-							insert: '[3]',
+							retain: l,
 							attributes: {
-								script: 'super'
+								link,
+								color: '#48abe8'
 							}
 						}
 					]
-				},
-				'user'
-			);
+				});
+			}
+			if (!moved) currentQuill.setSelection(l + i);
+		}
+	}
+	function fx() {
+		const i = currentQuill.getSelection().index;
+		if (i) {
+			currentQuill.updateContents({
+				ops: [
+					{ retain: i },
+					{
+						insert: {
+							formula: 'e=mc^2'
+						}
+					},
+					{ insert: ' ' }
+				]
+			});
+		} else {
+			currentQuill.updateContents({
+				ops: [
+					{
+						insert: {
+							formula: 'e=mc^2'
+						}
+					},
+					{ insert: ' ' }
+				]
+			});
+		}
+		currentQuill.setSelection(i + 2);
+	}
+	function al() {
+		if (currentQuill.getFormat()?.align) {
+			currentQuill.format('align', null);
+			$aligned = false;
+		}
+	}
+	function ar() {
+		currentQuill.format('align', 'right');
+		$aligned = 'right';
+	}
+	function ac() {
+		currentQuill.format('align', 'center');
+		$aligned = 'center';
+	}
+	function aj() {
+		currentQuill.format('align', 'justify');
+		$aligned = 'justify';
+	}
+	function indent() {
+		const i = currentQuill.getFormat()?.indent;
+		if (i >= 1) {
+			currentQuill.format('indent', i + 1);
+		} else {
+			currentQuill.format('indent', 1);
+		}
+	}
+	function dedent() {
+		const i = currentQuill.getFormat()?.indent;
+		if (i > 1) {
+			currentQuill.format('indent', i - 1);
+		} else {
+			currentQuill.format('indent', null);
 		}
 	}
 
