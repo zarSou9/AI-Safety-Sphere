@@ -65,6 +65,7 @@ export const POST: RequestHandler = async ({
 		}
 		return json({ message: 'Edit successfully pushed!' }, { status: 200 });
 	} catch (error: any) {
+		await supabaseService.from('Tree').update({ changing: 0 }).eq('id', 1);
 		return json(
 			{ error: error?.message || 'An unexpected error occurred' },
 			{ status: error?.status || 500 }
