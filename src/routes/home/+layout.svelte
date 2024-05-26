@@ -107,7 +107,9 @@
 
 <div class="flex w-full h-full text-white text-[14px]">
 	{#if open}
-		<div class="flex flex-col pt-[40px] w-[62px] bg-[#272727] border-r-[.3px] border-gray-500">
+		<div
+			class="flex flex-col pt-[40px] w-[57px] bg-[#272727] border-r-[.3px] border-gray-500 flex-shrink-0"
+		>
 			<div class="h-0 w-[42px] ml-auto mr-auto border-b-[.3px] border-gray-500 mb-[4px]" />
 			<a
 				href="/home/docs"
@@ -141,7 +143,7 @@
 	.button-div {
 		position: fixed;
 		top: 7px;
-		left: 15px;
+		left: 16px;
 		z-index: 200;
 	}
 
