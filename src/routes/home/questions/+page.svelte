@@ -3,10 +3,12 @@
 	import type { Writable } from 'svelte/store';
 	import Vote from '$lib/icons/Vote.svelte';
 	import Cross from '$lib/icons/Cross.svelte';
-	import { fly, slide } from 'svelte/transition';
+	import { fly, slide, fade } from 'svelte/transition';
 	import { quintOut } from 'svelte/easing';
 	import Search from '$lib/icons/Search.svelte';
 	import Arrow from '$lib/icons/FolderArrow.svelte';
+	import Plus from '$lib/icons/Plus.svelte';
+	import ToolTip from '$lib/components/ToolTip.svelte';
 
 	export let data;
 
@@ -197,9 +199,9 @@
 		</button>
 	</div>
 	<div class="flex flex-col items-center flex-grow">
-		<h1 class="text-[50px] mt-[60px] text-[#e9e9e9] text-wrap">Research Questions</h1>
+		<h1 class="text-[50px] mt-[50px] text-[#e9e9e9] text-wrap">Research Questions</h1>
 		<div
-			class="flex selection:bg-[#bacaffb0] mt-[55px] space-y-4 flex-col sm:flex-row sm:space-y-0 items-center"
+			class="flex selection:bg-[#bacaffb0] mt-[35px] space-y-4 flex-col sm:flex-row sm:space-y-0 items-center"
 		>
 			<div class="relative">
 				<div
@@ -223,66 +225,75 @@
 					class="border-none outline-none w-[350px] bg-[#e9e9e9] py-[6px] rounded-full text-[#000000] pl-[40px]"
 				/>
 			</div>
-			<div
-				role="presentation"
-				on:click={(e) => e.stopPropagation()}
-				class="relative ml-[20px] text-[#000000]"
-			>
-				<button
-					bind:this={arrow}
-					on:click={() => {
-						if (tagOpen) {
-							handleTagClose();
-						} else {
+			<div class="flex items-center">
+				<div
+					role="presentation"
+					on:click={(e) => e.stopPropagation()}
+					class="relative ml-[20px] text-[#000000]"
+				>
+					<button
+						bind:this={arrow}
+						on:click={() => {
+							if (tagOpen) {
+								handleTagClose();
+							} else {
+								tagOpen = true;
+								tagPlaceHolder = false;
+								arrow.style.transform = 'rotate(-90deg)';
+								tagOpenForCorners = true;
+								clearTimeout(cornersTimeout);
+								window.addEventListener('click', handleTagClose);
+							}
+						}}
+						class="transition-transform duration-150 ease-out absolute top-0 bottom-0 left-[12px] flex items-center justify-center rotate-[90deg]"
+					>
+						<Arrow color="#000000" size="20px" />
+					</button>
+					{#if tagPlaceHolder}
+						<div
+							class="absolute left-[38px] top-0 bottom-0 flex items-center justify-center pointer-events-none text-[#6b6b6b] text-[13px] italic"
+						>
+							Tags
+						</div>
+					{/if}
+					{#if tagOpen}
+						<div
+							transition:slide={{ duration: 150, easing: quintOut }}
+							class="z-[4] absolute left-0 right-0 h-[200px] top-[100%] rounded-b-[20px] overflow-auto flex flex-col items-start py-[5px] bg-[#e9e9e9] border-t-[.3px] border-[#525252]"
+						>
+							{#each tags as tag}
+								<button class="hover:bg-[#a1a1a1] w-full flex items-start pl-[20px]">{tag}</button>
+							{/each}
+						</div>
+					{/if}
+					<input
+						on:focus={() => {
 							tagOpen = true;
 							tagPlaceHolder = false;
 							arrow.style.transform = 'rotate(-90deg)';
 							tagOpenForCorners = true;
 							clearTimeout(cornersTimeout);
 							window.addEventListener('click', handleTagClose);
-						}
-					}}
-					class="transition-transform duration-150 ease-out absolute top-0 bottom-0 left-[12px] flex items-center justify-center rotate-[90deg]"
-				>
-					<Arrow color="#000000" size="20px" />
-				</button>
-				{#if tagPlaceHolder}
-					<div
-						class="absolute left-[38px] top-0 bottom-0 flex items-center justify-center pointer-events-none text-[#6b6b6b] text-[13px] italic"
-					>
-						Tags
-					</div>
-				{/if}
-				{#if tagOpen}
-					<div
-						transition:slide={{ duration: 150, easing: quintOut }}
-						class="z-[4] absolute left-0 right-0 h-[200px] top-[100%] rounded-b-[20px] overflow-auto flex flex-col items-start py-[5px] bg-[#e9e9e9] border-t-[.3px] border-[#525252]"
-					>
-						{#each tags as tag}
-							<button class="hover:bg-[#a1a1a1] w-full flex items-start pl-[20px]">{tag}</button>
-						{/each}
-					</div>
-				{/if}
-				<input
-					on:focus={() => {
-						tagOpen = true;
-						tagPlaceHolder = false;
-						arrow.style.transform = 'rotate(-90deg)';
-						tagOpenForCorners = true;
-						clearTimeout(cornersTimeout);
-						window.addEventListener('click', handleTagClose);
-					}}
-					bind:value={tagInput}
-					class="border-none outline-none w-[200px] bg-[#e9e9e9] py-[6px] pl-[40px] {tagOpenForCorners
-						? 'rounded-t-[18px]'
-						: 'rounded-full'} "
-				/>
+						}}
+						bind:value={tagInput}
+						class="border-none outline-none w-[200px] bg-[#e9e9e9] py-[6px] pl-[40px] {tagOpenForCorners
+							? 'rounded-t-[18px]'
+							: 'rounded-full'} "
+					/>
+				</div>
+				<a
+					class="ml-[20px] relative group"
+					target="_blank"
+					href="https://docs.google.com/forms/d/e/1FAIpQLSd6t6YCF2Mqpgl2-F1BblNMMD4LXz7uT3RUwXI-Ufk2PsiSQQ/viewform"
+					><Plus color="#e9e9e9" size="33px" />
+					<ToolTip tip="Add research question" />
+				</a>
 			</div>
 		</div>
-		<div class="flex flex-col mt-[30px]">
+		<div class="flex flex-col mt-[55px]">
 			{#each questions as question (question.id)}
 				<div
-					class="rounded-[10px] mx-[70px] max-w-[800px] bg-[#232323] relative p-[10px] text-[#ebebeb]"
+					class="rounded-[10px] mx-[70px] max-w-[800px] bg-[#232323] relative py-[13px] px-[16px] text-[#ebebeb]"
 				>
 					<div
 						role="presentation"
@@ -296,10 +307,11 @@
 						<div class="relative flex flex-col justify-center">
 							{#if importanceContext}
 								<div
-									class="absolute top-[45px] right-[-70px] bg-[#464646cf] rounded-[4px] w-[160px] px-[6px] pb-[6px]"
+									transition:fade={{ duration: 100 }}
+									class="absolute top-[45px] right-[-70px] bg-[#464646cf] rounded-[4px] w-[160px] pt-[2px] px-[6px] pb-[6px]"
 								>
 									<p class="text-[12px] text-[#e7e7e7]">Importance</p>
-									<p class="text-[10px] text-[#acacac] leading-[16px]">
+									<p class="text-[10px] text-[#acacac] leading-[15px] mt-[1px]">
 										Do you think this question is more or less important to AI Safety than it's
 										currently ranked?
 									</p>
@@ -323,7 +335,9 @@
 							>
 						</div>
 					</div>
-					<a href={question.google_doc} target="_blank">{question.question}</a>
+					<a class="group" href={question.google_doc} target="_blank"
+						>{question.question}<ToolTip tip="Google Doc" /></a
+					>
 				</div>
 			{/each}
 		</div>
