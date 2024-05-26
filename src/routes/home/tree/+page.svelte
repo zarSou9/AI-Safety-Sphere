@@ -574,19 +574,21 @@
 							<div
 								in:slide={{ duration: 100, easing: quintOut }}
 								out:slide={{ delay: 100, duration: 100, easing: quintOut }}
-								class="absolute z-[20] w-[150px] bg-[#474747] rounded-[6px] top-[25px] right-[0px] flex flex-col text-[12px] py-[8px]"
+								class="absolute z-[20] w-[150px] bg-[#474747] rounded-[5px] top-[25px] right-[0px] flex flex-col text-[12px] py-[5px]"
 							>
 								<button
 									on:click={() => {
 										nodeAction.set('start-new-section');
 									}}
-									class="hover:bg-[#626262] pl-[10px] flex justify-start">New Section</button
+									class="hover:bg-[#626262] pl-[10px] py-[3px] flex justify-start"
+									>New Section</button
 								>
 								<button
 									on:click={() => {
 										confirmationModalVisible = true;
 									}}
-									class="hover:bg-[#934a4a] pl-[10px] flex justify-start">Delete Node</button
+									class="hover:bg-[#934a4a] pl-[10px] mt-[3px] py-[3px] flex justify-start"
+									>Delete Node</button
 								>
 							</div>
 						{/if}

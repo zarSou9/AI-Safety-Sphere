@@ -58,7 +58,7 @@
 
 <div on:keydown={handleKeyDown} class="modal-background" on:click={close} role="presentation">
 	<div
-		class="modal-content flex flex-col bg-[#383c51] rounded-md p-[17px] px-4 pt-[6px]"
+		class="modal-content flex flex-col bg-[#383c51] rounded-md p-[17px] px-4 pt-[10px]"
 		on:click={(e) => {
 			e.stopPropagation();
 			sectionsOpen = false;
@@ -80,11 +80,11 @@
 				on:focus={() => {
 					linkedProblem = undefined;
 				}}
-				class="input mt-[6px] pl-2 pr-1 rounded-sm py-1 border-[.1px] outline-[0px] selection:bg-[#80808080] selection:text-[#f5f5f5]"
+				class="w-full text-[#000000] mt-[6px] pl-2 pr-1 rounded-sm py-1 border-[.1px] outline-[0px] selection:bg-[#80808080] selection:text-[#f5f5f5]"
 			/>
 			{#if linkedProblem}
 				<p
-					class="absolute italic text-[#86a8e9] top-[35px] left-[8px] text-[13.5px] pointer-events-none"
+					class="absolute italic text-[#86a8e9] top-[29px] left-[9px] text-[13.5px] pointer-events-none"
 				>
 					{linkedProblem.title}
 				</p>
@@ -101,11 +101,11 @@
 		>
 			<input
 				bind:value={$searchInput}
-				class="z-[1] relative w-full border-none outline-none rounded-full bg-[#ffffff] border-[#a1a1a1] border-[.5px] pl-[25px] text-[#000000] mb-[3px] selection:bg-[#9bb0e269]"
+				class="z-[1] relative py-[2px] pl-[27px] w-full border-none outline-none rounded-full bg-[#ffffff] border-[#a1a1a1] border-[.5px] text-[#000000] mb-[3px] selection:bg-[#9bb0e269]"
 			/>
 			{#if placeholder && !$searchInput}
 				<p
-					class="z-[1] absolute top-[0px] left-[25px] text-[#494949] text-[12px] pointer-events-none"
+					class="z-[1] absolute top-[3px] flex left-[27px] text-[#494949] text-[12px] pointer-events-none"
 				>
 					Link to Existing!
 				</p>
@@ -120,7 +120,7 @@
 				/>
 				<div
 					transition:slide={{ duration: 170, easing: quintOut }}
-					class="absolute bg-[#ffffff] rounded-b-[10px] h-[110px] left-0 right-0 top-[26px] z-[0] overflow-auto"
+					class="absolute bg-[#ffffff] rounded-b-[10px] h-[110px] left-0 right-0 top-[26px] pt-[3px] z-[0] overflow-auto"
 				>
 					{#each problemsSearch as p (p.uuid)}
 						<button
@@ -137,7 +137,7 @@
 				</div>
 			{/if}
 		</div>
-		<div class="flex mt-2">
+		<div class="flex mt-[12px]">
 			<button
 				on:click={save}
 				class="btn-sm rounded-sm w-full py-[7px] border-[#56a2ff] border-[1px] hover:bg-[#56a2ff] hover:text-black"

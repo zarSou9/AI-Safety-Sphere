@@ -197,8 +197,10 @@
 		</button>
 	</div>
 	<div class="flex flex-col items-center flex-grow">
-		<h1 class="text-[50px] mt-[60px] text-[#e9e9e9]">Research Questions</h1>
-		<div class="flex selection:bg-[#bacaffb0] mt-[55px]">
+		<h1 class="text-[50px] mt-[60px] text-[#e9e9e9] text-wrap">Research Questions</h1>
+		<div
+			class="flex selection:bg-[#bacaffb0] mt-[55px] space-y-4 flex-col sm:flex-row sm:space-y-0 items-center"
+		>
 			<div class="relative">
 				<div
 					class="absolute top-0 bottom-0 left-[13px] pointer-events-none flex items-center justify-center"
@@ -240,7 +242,7 @@
 							window.addEventListener('click', handleTagClose);
 						}
 					}}
-					class="tab-arrow absolute top-0 bottom-0 left-[12px] flex items-center justify-center rotate-[90deg]"
+					class="transition-transform duration-150 ease-out absolute top-0 bottom-0 left-[12px] flex items-center justify-center rotate-[90deg]"
 				>
 					<Arrow color="#000000" size="20px" />
 				</button>
@@ -254,7 +256,7 @@
 				{#if tagOpen}
 					<div
 						transition:slide={{ duration: 150, easing: quintOut }}
-						class="z-[4] absolute left-0 right-0 h-[200px] top-[35px] rounded-b-[20px] overflow-auto flex flex-col items-start pt-[5px] bg-[#e9e9e9] border-t-[.3px] border-[#525252]"
+						class="z-[4] absolute left-0 right-0 h-[200px] top-[100%] rounded-b-[20px] overflow-auto flex flex-col items-start py-[5px] bg-[#e9e9e9] border-t-[.3px] border-[#525252]"
 					>
 						{#each tags as tag}
 							<button class="hover:bg-[#a1a1a1] w-full flex items-start pl-[20px]">{tag}</button>
@@ -327,9 +329,3 @@
 		</div>
 	</div>
 </div>
-
-<style>
-	.tab-arrow {
-		transition: transform 150ms ease-out;
-	}
-</style>

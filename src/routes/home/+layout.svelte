@@ -16,12 +16,7 @@
 	setContext('profDropdownStore', profDropdown);
 
 	let profileDropE: HTMLDivElement;
-	let initials = false;
 
-	function noImage(e: any) {
-		e.target.src = '';
-		initials = true;
-	}
 	profDropdown.subscribe((v) => {
 		if (v) {
 			setTimeout(() => {
@@ -105,13 +100,9 @@
 {/if}
 
 {#if open}
-	<button class="btn-icon button-div" on:click={closeRail}
-		><Cross size="26px" color="#9c9c9c" /></button
-	>
+	<button class="button-div" on:click={closeRail}><Cross size="26px" color="#9c9c9c" /></button>
 {:else}
-	<button class="btn-icon button-div" on:click={openRail}
-		><Menu size="26px" color="#9c9c9c" /></button
-	>
+	<button class="button-div" on:click={openRail}><Menu size="26px" color="#9c9c9c" /></button>
 {/if}
 
 <div class="flex w-full h-full text-white text-[14px]">
@@ -149,8 +140,8 @@
 <style>
 	.button-div {
 		position: fixed;
-		top: -1px;
-		left: 9px;
+		top: 7px;
+		left: 15px;
 		z-index: 200;
 	}
 

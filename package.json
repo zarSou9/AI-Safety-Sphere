@@ -1,5 +1,5 @@
 {
-  "name": "my-skeleton-app",
+  "name": "ai-safety-sphere",
   "version": "0.0.1",
   "private": true,
   "scripts": {
@@ -16,8 +16,6 @@
   },
   "devDependencies": {
     "@playwright/test": "^1.28.1",
-    "@skeletonlabs/skeleton": "2.8.0",
-    "@skeletonlabs/tw-plugin": "0.3.1",
     "@sveltejs/adapter-auto": "^3.0.0",
     "@sveltejs/kit": "^2.0.0",
     "@sveltejs/vite-plugin-svelte": "^3.0.0",

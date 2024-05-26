@@ -37,7 +37,7 @@
 
 <div on:keydown={handleKeyDown} class="modal-background" on:click={close} role="presentation">
 	<div
-		class="modal-content flex-col bg-[#383c51] rounded-md p-[17px] px-4 pt-[6px]"
+		class="modal-content flex-col bg-[#383c51] rounded-md p-[17px] px-4 pt-[9px]"
 		on:click={(e) => e.stopPropagation()}
 		role="presentation"
 	>
@@ -52,7 +52,7 @@
 			<input
 				bind:this={titleResult.div}
 				bind:value={titleResult.title}
-				class="input mt-[6px] pl-2 pr-1 rounded-sm py-1 border-[.1px] outline-[0px] selection:bg-[#80808080] selection:text-[#f5f5f5]"
+				class="mt-[6px] pl-2 pr-1 text-[#000000] rounded-sm py-1 border-[.1px] outline-[0px] selection:bg-[#80808080] selection:text-[#f5f5f5]"
 			/>
 		</label>
 		<div class="flex mt-2">

@@ -10,7 +10,6 @@
 	import { v4 as uuidv4 } from 'uuid';
 
 	const tree: TreeInterface = getContext('tree');
-	const charPos: { v: number } = getContext('charPos');
 	const titleModal: Writable<{
 		visible: boolean;
 		title: string;
@@ -78,7 +77,6 @@
 	let out = false;
 	let pos = 0;
 	let outPos = 0;
-	let outChar = '';
 	let editIconActive = false;
 	let editable = false;
 	let title: string;
@@ -152,9 +150,13 @@
 					}
 				}
 			} else if (eventName === 'text-change') {
-				if (title === 'TL;DR' && quill.getText().split('\n').length > 14) {
+				if (title === 'TL;DR' && quill.getText().split('\n').length > 9) {
 					quill.setContents(oldQuill);
-					failurePopUp.set('The TL;DR section is limited to 12 lines');
+					failurePopUp.set('The TL;DR section is limited to 8 new lines');
+					setTimeout(() => quill.blur(), 10);
+				} else if (title === 'TL;DR' && oldQuill.compose(range).length() > 875) {
+					quill.setContents(oldQuill);
+					failurePopUp.set('The TL;DR section is limited to 875 characters');
 					setTimeout(() => quill.blur(), 10);
 				} else {
 					if (source !== 'api' && !(range.ops[1]?.delete || range.ops[0]?.delete)) {
@@ -1168,15 +1170,15 @@
 </script>
 
 <div
-	class="grid bg-[#1f1f1f] rounded-[20px] w-[800px] p-[60px] relative selection:bg-[#6a87b389]"
+	class="grid bg-[#1f1f1f] rounded-[20px] w-[800px] px-[56px] py-[47px] relative selection:bg-[#6a87b389]"
 	style="box-shadow: -2px 2px #3b753c;"
 >
 	{#if escBtn}
 		<button
 			on:click={escapeNode}
-			class="absolute top-[14px] left-[15px] h-[17px] w-[40px] rounded-full border-[#595959] border-[1px] hover:bg-[#292929]"
+			class="absolute flex items-center justify-center top-[14px] left-[15px] h-[17px] w-[40px] rounded-full border-[#595959] border-[1px] hover:bg-[#292929]"
 		>
-			<code class="absolute top-[-5px] left-[10px] text-[10px] text-[#595959]">esc</code>
+			<code class="text-[10px] text-[#595959]">esc</code>
 		</button>
 	{/if}
 	<button
@@ -1192,7 +1194,7 @@
 			<View color={editBtnActive ? '#9c9c9c' : '#595959'} size="36px" />
 		{/if}
 	</button>
-	<p class="ml-[14px] mr-[50px] title mb-[25px] relative" on:dblclick={editTitle}>
+	<p class="ml-[14px] mr-[50px] title mb-[5px] relative" on:dblclick={editTitle}>
 		{title || 'untitled'}
 		{#if referenced.uuid}
 			<div class="absolute left-[-9px] top-[-11px]" title="This is a linked strategy">

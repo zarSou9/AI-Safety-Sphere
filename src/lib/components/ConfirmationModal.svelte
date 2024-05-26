@@ -32,12 +32,12 @@
 		>
 			<Cross size="16px" color="#c3c3c3" />
 		</button>
-		<p class="mt-[6px] mx-auto text-[23px] px-[18px]">Delete this node?</p>
-		<p class="text-[12px] mt-[3px] text-[#9c9c9c]">You won't be able to recover it</p>
+		<p class="mt-[5px] mx-auto text-[23px] px-[18px]">Delete this node?</p>
+		<p class="text-[12px] mt-[1px] text-[#9c9c9c]">You won't be able to recover it</p>
 		<div class="flex mt-2">
 			<button
 				on:click={save}
-				class="btn-sm rounded-sm w-full py-[7px] border-[#ff5656] border-[1px] hover:bg-[#ff5656] hover:text-black"
+				class="rounded-sm mt-[6px] w-full p-[7px] border-[#ff5656] border-[1px] hover:bg-[#ff5656] hover:text-black"
 				>Delete Node</button
 			>
 		</div>

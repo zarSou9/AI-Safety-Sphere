@@ -120,5 +120,6 @@
 	"editor.foldingStrategy": "indentation",
 	"svelte.plugin.svelte.compilerWarnings": {
 		"css-unused-selector": "ignore"
-	}
+	},
+	"github.copilot.editor.enableAutoCompletions": false
 }

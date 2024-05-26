@@ -47,7 +47,7 @@
 
 <div on:keydown={handleKeyDown} class="modal-background" on:click={close} role="presentation">
 	<div
-		class="modal-content flex-col bg-[#383c51] rounded-md p-[17px] px-4 pt-[6px]"
+		class="modal-content flex-col bg-[#383c51] rounded-md p-[17px] px-4 pt-[8px]"
 		on:click={(e) => e.stopPropagation()}
 		role="presentation"
 	>
@@ -63,7 +63,7 @@
 			<input
 				bind:this={toolbarResult.div}
 				bind:value={toolbarResult.title}
-				class="input mt-[6px] pl-2 pr-1 rounded-sm py-1 border-[.1px] outline-[0px] selection:bg-[#80808080] selection:text-[#f5f5f5]"
+				class="text-[#000000] mt-[6px] pl-2 pr-1 rounded-sm py-1 border-[.1px] outline-[0px] selection:bg-[#80808080] selection:text-[#f5f5f5]"
 			/>
 		</label>
 		<button
@@ -74,8 +74,8 @@
 				if (suggestionsOpen) suggestedArrow.style.transform = `rotate(270deg)`;
 				else suggestedArrow.style.transform = `rotate(90deg)`;
 			}}
-			class="mt-[13px] w-full text-[12px] mr-auto bg-[#e4e4e4] text-[#484848] rounded-[5px] flex items-center justify-center relative"
-			><p class="p-0">Suggested...</p>
+			class="mt-[13px] w-full text-[12px] mr-auto bg-[#e4e4e4] text-[#484848] rounded-[5px] flex items-center justify-center relative py-[3px]"
+			>Suggested...
 			<div bind:this={suggestedArrow} class="absolute top-[3.4px] right-[3px] arrow">
 				<FolderArrow color="#484848" size="18px" />
 			</div>
@@ -95,7 +95,7 @@
 				</div>
 			{/if}
 		</button>
-		<p class="text-gray-300 text-[12px] mt-[3px]">Place after...</p>
+		<p class="text-gray-300 text-[12px] mt-[6px] mb-[1px]">Place after...</p>
 		<button
 			on:click={() => {
 				sectionsOpen = !sectionsOpen;
@@ -103,8 +103,8 @@
 				if (sectionsOpen) sectionsArrow.style.transform = `rotate(270deg)`;
 				else sectionsArrow.style.transform = `rotate(90deg)`;
 			}}
-			class="w-full text-[12px] mr-auto bg-[#e4e4e4] text-[#484848] rounded-[5px] flex items-center justify-center relative"
-			><p class="p-0">{sections[toolbarResult.after]}</p>
+			class="w-full text-[12px] mr-auto bg-[#e4e4e4] text-[#484848] rounded-[5px] flex items-center justify-center relative py-[3px]"
+			>{sections[toolbarResult.after]}
 			<div bind:this={sectionsArrow} class="absolute top-[3.4px] right-[3px] arrow">
 				<FolderArrow color="#484848" size="18px" />
 			</div>
