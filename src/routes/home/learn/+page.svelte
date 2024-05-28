@@ -7,7 +7,7 @@
 
 <div class="h-full w-full bg-[#151515] flex flex-col items-center overflow-y-auto">
 	<div
-		class="relative flex items-center w-full h-[40px] bg-[#272727] border-b-[.3px] border-b-[#70747c]"
+		class="relative flex items-center w-full h-[40px] bg-[#272727] border-b-[.3px] border-b-[#70747c] flex-shrink-0"
 	>
 		<div class="w-[.6px] h-[26px] bg-[#70747c] mr-[15px] ml-auto" />
 		<button

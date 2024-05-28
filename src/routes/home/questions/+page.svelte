@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { getContext } from 'svelte';
+	import { getContext, onMount } from 'svelte';
 	import type { Writable } from 'svelte/store';
 	import Vote from '$lib/icons/Vote.svelte';
 	import Cross from '$lib/icons/Cross.svelte';
@@ -14,12 +14,12 @@
 
 	let questions = data.props.questions;
 
+	let mounted = false;
 	let posting = false;
 	let loginNotif = false;
 	let loginNotifTime: any;
 	let failurePopUp: any = false;
 	let failurePopUpTime: any;
-	let importanceContext = false;
 	let searchPlaceHolder = true;
 	let searchInput = '';
 	let tagInput = '';
@@ -155,6 +155,7 @@
 		cornersTimeout = setTimeout(handleCorners, 70);
 		window.removeEventListener('click', handleTagClose);
 	}
+	onMount(() => (mounted = true));
 </script>
 
 {#if loginNotif}
@@ -186,9 +187,9 @@
 	</div>
 {/if}
 
-<div class="h-full w-full bg-[#151515] flex flex-col items-center overflow-y-auto">
+<div class="h-full w-full bg-[#151515] flex flex-col items-center">
 	<div
-		class="relative flex items-center w-full h-[40px] bg-[#272727] border-b-[.3px] border-b-[#70747c]"
+		class="relative flex items-center w-full h-[40px] bg-[#272727] border-b-[.3px] border-b-[#70747c] flex-shrink-0"
 	>
 		<div class="w-[.6px] h-[26px] bg-[#70747c] mr-[15px] ml-auto" />
 		<button
@@ -198,7 +199,7 @@
 			<img src="/images/profile_pic.png" alt="profile" />
 		</button>
 	</div>
-	<div class="flex flex-col items-center flex-grow">
+	<div class="flex flex-col items-center flex-grow size-full overflow-auto">
 		<h1 class="text-[50px] mt-[50px] text-[#e9e9e9] text-wrap">Research Questions</h1>
 		<div
 			class="flex selection:bg-[#bacaffb0] mt-[35px] space-y-4 flex-col sm:flex-row sm:space-y-0 items-center"
@@ -304,12 +305,14 @@
 						</p>
 						<div class="relative flex flex-col justify-center group">
 							<ToolTip top={false} className="translate-y-[calc(100%-4px)]">
-								<p class="text-[12px] text-[#e7e7e7]">Importance</p>
-								<p class="text-[10px] text-[#acacac] leading-[15px] my-[1px] w-[130px] text-wrap">
-									Do you think this question is more or less important to AI Safety than it's
-									currently ranked?
-								</p></ToolTip
-							>
+								{#if mounted}
+									<p class="text-[12px] text-[#e7e7e7]">Importance</p>
+									<p class="text-[10px] text-[#acacac] leading-[15px] my-[1px] w-[130px] text-wrap">
+										Do you think this question is more or less important to AI Safety than it's
+										currently ranked?
+									</p>
+								{/if}
+							</ToolTip>
 							<button
 								on:click={() => {
 									if (data.props.loggedIn) handleVote(1, question.id, question);
@@ -336,3 +339,9 @@
 		</div>
 	</div>
 </div>
+
+<style>
+	* {
+		scrollbar-color: #888 #f1f1f1;
+	}
+</style>
