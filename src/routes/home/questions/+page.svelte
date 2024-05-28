@@ -290,33 +290,26 @@
 				</a>
 			</div>
 		</div>
-		<div class="flex flex-col mt-[55px]">
+		<div class="flex flex-col mt-[55px] space-y-[30px]">
 			{#each questions as question (question.id)}
 				<div
 					class="rounded-[10px] mx-[70px] max-w-[800px] bg-[#232323] relative py-[13px] px-[16px] text-[#ebebeb]"
 				>
 					<div
 						role="presentation"
-						on:mouseenter={() => (importanceContext = true)}
-						on:mouseleave={() => (importanceContext = false)}
 						class="absolute left-[-30px] top-0 bottom-0 flex justify-center items-center"
 					>
 						<p class="mr-[3px] text-[12px] pointer-events-none absolute right-[25px]">
 							{question.importance}
 						</p>
-						<div class="relative flex flex-col justify-center">
-							{#if importanceContext}
-								<div
-									transition:fade={{ duration: 100 }}
-									class="absolute top-[45px] right-[-70px] bg-[#464646cf] rounded-[4px] w-[160px] pt-[2px] px-[6px] pb-[6px]"
-								>
-									<p class="text-[12px] text-[#e7e7e7]">Importance</p>
-									<p class="text-[10px] text-[#acacac] leading-[15px] mt-[1px]">
-										Do you think this question is more or less important to AI Safety than it's
-										currently ranked?
-									</p>
-								</div>
-							{/if}
+						<div class="relative flex flex-col justify-center group">
+							<ToolTip top={false} className="translate-y-[calc(100%-4px)]">
+								<p class="text-[12px] text-[#e7e7e7]">Importance</p>
+								<p class="text-[10px] text-[#acacac] leading-[15px] my-[1px] w-[130px] text-wrap">
+									Do you think this question is more or less important to AI Safety than it's
+									currently ranked?
+								</p></ToolTip
+							>
 							<button
 								on:click={() => {
 									if (data.props.loggedIn) handleVote(1, question.id, question);
