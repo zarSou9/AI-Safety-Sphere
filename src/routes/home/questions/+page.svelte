@@ -93,7 +93,7 @@
 			userVote.vote = vote;
 		}
 		question.importance += vote;
-		questions = [...questions];
+		questionsShown = [...questionsShown];
 		if (posting) {
 			try {
 				await waitForServer();
