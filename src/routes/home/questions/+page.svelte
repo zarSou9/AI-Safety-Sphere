@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { getContext, onMount } from 'svelte';
-	import type { Writable } from 'svelte/store';
+	import { writable, type Writable } from 'svelte/store';
 	import Vote from '$lib/icons/Vote.svelte';
 	import Cross from '$lib/icons/Cross.svelte';
 	import { fly, slide, fade } from 'svelte/transition';
@@ -21,7 +21,7 @@
 	let failurePopUp: any = false;
 	let failurePopUpTime: any;
 	let searchPlaceHolder = true;
-	let searchInput = '';
+	let searchInput = writable('');
 	let tagInput = '';
 	let tagPlaceHolder = true;
 	let tagOpen = false;
@@ -155,6 +155,37 @@
 		cornersTimeout = setTimeout(handleCorners, 70);
 		window.removeEventListener('click', handleTagClose);
 	}
+	function organizeQuestions(array: any): any {
+		if (array.length < 2) {
+			return array;
+		}
+
+		const pivot = array[array.length - 1];
+		const left = [];
+		const right = [];
+
+		for (let i = 0; i < array.length - 1; i++) {
+			if (array[i].importance >= pivot.importance) {
+				left.push(array[i]);
+			} else {
+				right.push(array[i]);
+			}
+		}
+
+		return [...organizeQuestions(left), pivot, ...organizeQuestions(right)];
+	}
+
+	questions = organizeQuestions(questions);
+	let questionsShown = JSON.parse(JSON.stringify(questions));
+
+	searchInput.subscribe((si) => {
+		questionsShown = [];
+		for (let q of questions) {
+			if (q.question.toLowerCase().includes(si.toLowerCase())) {
+				questionsShown.push(q);
+			}
+		}
+	});
 	onMount(() => (mounted = true));
 </script>
 
@@ -187,7 +218,13 @@
 	</div>
 {/if}
 
-<div class="h-full w-full bg-[#151515] flex flex-col items-center">
+<div class="h-full w-full bg-[#151515] flex flex-col items-center relative">
+	<a
+		href="https://arxiv.org/abs/2404.09932"
+		target="_blank"
+		class="citation absolute top-[80px] right-[50px] text-[15px] text-[#565656] hover:text-[#8e8e8e]"
+		>{'>'} Anwar et al. (2024)</a
+	>
 	<div
 		class="relative flex items-center w-full h-[40px] bg-[#272727] border-b-[.3px] border-b-[#70747c] flex-shrink-0"
 	>
@@ -200,7 +237,7 @@
 		</button>
 	</div>
 	<div class="flex flex-col items-center flex-grow size-full overflow-auto">
-		<h1 class="text-[50px] mt-[50px] text-[#e9e9e9] text-wrap">Research Questions</h1>
+		<h1 class="text-[40px] mt-[50px] text-[#e9e9e9] text-wrap title">Research Questions</h1>
 		<div
 			class="flex selection:bg-[#bacaffb0] mt-[35px] space-y-4 flex-col sm:flex-row sm:space-y-0 items-center"
 		>
@@ -220,9 +257,9 @@
 				<input
 					on:focus={() => (searchPlaceHolder = false)}
 					on:blur={() => {
-						if (!searchInput) searchPlaceHolder = true;
+						if (!$searchInput) searchPlaceHolder = true;
 					}}
-					bind:value={searchInput}
+					bind:value={$searchInput}
 					class="border-none outline-none w-[350px] bg-[#e9e9e9] py-[6px] rounded-full text-[#000000] pl-[40px]"
 				/>
 			</div>
@@ -263,7 +300,9 @@
 							class="z-[4] absolute left-0 right-0 h-[200px] top-[100%] rounded-b-[20px] overflow-auto flex flex-col items-start py-[5px] bg-[#e9e9e9] border-t-[.3px] border-[#525252]"
 						>
 							{#each tags as tag}
-								<button class="hover:bg-[#a1a1a1] w-full flex items-start pl-[20px]">{tag}</button>
+								<button class="hover:bg-[#cbcbcb] w-full flex items-start pl-[20px] py-[1px]"
+									>{tag}</button
+								>
 							{/each}
 						</div>
 					{/if}
@@ -292,7 +331,7 @@
 			</div>
 		</div>
 		<div class="flex flex-col mt-[55px] space-y-[30px]">
-			{#each questions as question (question.id)}
+			{#each questionsShown as question (question.id)}
 				<div
 					class="rounded-[10px] mx-[70px] max-w-[800px] bg-[#232323] relative py-[13px] px-[16px] text-[#ebebeb]"
 				>
@@ -336,6 +375,16 @@
 					>
 				</div>
 			{/each}
+			<div class="h-[.3px] bg-[#6b6b6b] w-full mx-auto my-[20px]" />
+			<p class="text-wrap w-[70%] pb-[80px] mx-auto">
+				The vast majority of the research questions posed on this page were directly taken from this
+				paper - <br /> "<a
+					target="_blank"
+					href="https://arxiv.org/abs/2404.09932"
+					class="link text-[#7cb6ea]"
+					>Foundational Challenges in Assuring Alignment and Safety of Large Language Models</a
+				>"
+			</p>
 		</div>
 	</div>
 </div>
@@ -343,5 +392,18 @@
 <style>
 	* {
 		scrollbar-color: #888 #f1f1f1;
+	}
+	.citation {
+		visibility: hidden;
+	}
+	@media (min-width: 1000px) {
+		.citation {
+			visibility: visible;
+		}
+	}
+	@media (min-width: 500px) {
+		.title {
+			font-size: 50px;
+		}
 	}
 </style>
