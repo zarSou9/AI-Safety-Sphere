@@ -19,36 +19,26 @@
 	</div>
 	<div class="h-full w-full overflow-y-auto flex flex-col items-center">
 		<div class="w-[80%] max-w-[717px] flex flex-col items-start mt-[80px] mb-[120px]">
-			<p class="c29"><span class="c13">Welcome to </span></p>
-			<p class="c8"><span class="c12 c16">AI Safety Sphere!</span></p>
-			<p class="c8">
-				<span class="c0"
-					>or AISS (pronounced: ice). If you are an alignment researcher or someone interested in
-					the topic, this is a collaborative tool designed to help frame your thinking while
-					tackling this large issue.
-				</span>
+			<p class="c18">
+				<span class="c9">Welcome </span><span class="c9">to </span><span class="c24 c9"
+					>AI Safety</span
+				><span class="c6">&nbsp;Sphere</span>
 			</p>
-			<h2 class="c7" id="h.meeyn6ng8eou"><span class="c2">TO DO:</span></h2>
-			<ol class="c10 lst-kix_5n9jywy0rmvt-0 start" start="1">
-				<li class="c5 li-bullet-0">
-					<span>Read: &ldquo;Problem Solving Ideology&rdquo;, &ldquo;Ho</span><span
-						>w to Use&rdquo;, and &ldquo;Guidelines&rdquo;</span
-					>
-				</li>
-				<li class="c5 li-bullet-0"><span class="c0">Play around: &ldquo;Tree&rdquo; page</span></li>
-				<li class="c3 li-bullet-0">
-					<span>Give feedback: </span><span class="c17"
-						><a
-							target="_blank"
-							class="c9"
-							href="https://www.google.com/url?q=https://forms.gle/PPUF31AoGTTURx5D8&amp;sa=D&amp;source=editors&amp;ust=1714604364373155&amp;usg=AOvVaw0ua79NUZlon0w32LoBlPfx"
-							>https://forms.gle/PPUF31AoGTTURx5D8</a
-						></span
-					>
-				</li>
-			</ol>
-			<h2 class="c7" id="h.m3wjjv9s9oi7"><span class="c2">Background:</span></h2>
-			<p class="c8">
+			<p class="c23">
+				<span>AI Safety Sphere</span><span class="c0"
+					>&nbsp;(AISS, pronounced &quot;ice&quot;) aims to make AI Safety research more open,
+					collaborative, and connected. The main features of this site are the tree page - a
+					collaborative problem-solving mind map of AI Safety, and the questions page - a dynamic
+					list of active research questions that the community can vote on and collaboratively
+					explore through linked Google Docs.</span
+				>
+			</p>
+			<p class="c23 c27"><span class="c0"></span></p>
+			<h2 class="c15 c32" id="h.ikf1uj1fvcu7"><span class="c16">Tree:</span></h2>
+			<h3 class="c13 c15" id="h.m3wjjv9s9oi7">
+				<span class="c19">Background:</span>
+			</h3>
+			<p class="c13">
 				<span
 					>Research in AI Safety is typically shared through two main channels: blog posts and
 					academic publications. Academic publications are reliable, in that they present
@@ -62,12 +52,12 @@
 					to be extremely knowledgeable to be able to easily understand how new information or
 					research is relevant to the overarching field. Academia has tried to solve this issue by
 					encouraging writers to explain more broadly how their research is relevant and what gap it
-					is trying to fill.</span
-				><span class="c18"
+					is trying to fill</span
+				><span>.</span><span class="c5"
 					><a
 						target="_blank"
-						class="c9"
-						href="https://www.google.com/url?q=https://www.sjsu.edu/writingcenter/docs/handouts/Introduction%2520of%2520Research%2520Papers.pdf&amp;sa=D&amp;source=editors&amp;ust=1714604364373706&amp;usg=AOvVaw2NkaPFlkv276COqPr3E7By"
+						class="c7"
+						href="https://www.google.com/url?q=https://www.sjsu.edu/writingcenter/docs/handouts/Introduction%2520of%2520Research%2520Papers.pdf&amp;sa=D&amp;source=editors&amp;ust=1716997115476689&amp;usg=AOvVaw2LKO7raE7Bn1F5_gdlbmLg"
 						>[1]</a
 					></span
 				><span
@@ -77,7 +67,7 @@
 					>As Eliezer Yudkowsky writes in &ldquo;Expecting Short Inferential Distances&rdquo;:</span
 				>
 			</p>
-			<p class="c6">
+			<p class="c13 c33">
 				<span
 					>Oh, and you&rsquo;d better not drop any hints that you think you&rsquo;re working a dozen
 					inferential steps away from what the audience knows, or that you think you have special
@@ -85,26 +75,26 @@
 					an evolutionary-psychological argument for a cognitive bias to underestimate inferential
 					distances leading to traffic jams in communication. They&rsquo;ll just think you&rsquo;re
 					condescending.</span
-				><span class="c18"
+				><span class="c5"
 					><a
 						target="_blank"
-						class="c9"
-						href="https://www.google.com/url?q=https://www.lesswrong.com/s/zpCiuR4T343j9WkcK/p/HLqWn5LASfhhArZ7w&amp;sa=D&amp;source=editors&amp;ust=1714604364373942&amp;usg=AOvVaw3-Xv-h7-ggpwo6d1PnQt-p"
+						class="c7"
+						href="https://www.google.com/url?q=https://www.lesswrong.com/s/zpCiuR4T343j9WkcK/p/HLqWn5LASfhhArZ7w&amp;sa=D&amp;source=editors&amp;ust=1716997115477124&amp;usg=AOvVaw17hp9_sgaE0L2Y0d2hFU3o"
 						>[2]</a
 					></span
 				>
 			</p>
-			<p class="c8">
+			<p class="c13">
 				<span
 					>Because the system lacks a compelling way of connecting ideas, the work is offloaded to
 					people willing to distill the information for a broader audience. One notable and
 					impressive attempt at this is the future of life&rsquo;s landscape map of AI safety
 					research.</span
-				><span class="c18"
+				><span class="c5"
 					><a
 						target="_blank"
-						class="c9"
-						href="https://www.google.com/url?q=https://futureoflife.org/landscape/&amp;sa=D&amp;source=editors&amp;ust=1714604364374159&amp;usg=AOvVaw2mWmM70euNcEEtPrIVujuE"
+						class="c7"
+						href="https://www.google.com/url?q=https://futureoflife.org/landscape/&amp;sa=D&amp;source=editors&amp;ust=1716997115477485&amp;usg=AOvVaw3y4pLg9PP96eSjHCHEPxrT"
 						>[3]</a
 					></span
 				><span class="c0"
@@ -116,7 +106,7 @@
 					landscape before they can make sense of the information.</span
 				>
 			</p>
-			<p class="c8">
+			<p class="c13">
 				<span
 					>My solution is a collaborative website which puts the connecting of ideas to at the core
 					of how research is shared and developed. Instead of a long list of blog posts, why not
@@ -124,8 +114,10 @@
 					steps needed to understand any author&rsquo;s perspective/priors.
 				</span>
 			</p>
-			<h2 class="c7" id="h.9pnylvk5r70h"><span class="c2">Problem Solving Ideology:</span></h2>
-			<p class="c8">
+			<h3 class="c21 c15" id="h.9pnylvk5r70h">
+				<span class="c19">Problem Solving Ideology:</span>
+			</h3>
+			<p class="c13">
 				<span
 					>One way to frame research is through the lens of problem solving (e.g. the alignment
 					problem, or the problem of interpretability). And one helpful way to frame problems is
@@ -136,15 +128,15 @@
 					problem solved. Here is an example:</span
 				>
 			</p>
-			<ul class="c10 lst-kix_xbgds6zcul8s-0 start">
-				<li class="c5 li-bullet-0">
+			<ul class="c4 lst-kix_xbgds6zcul8s-0 start">
+				<li class="c2 li-bullet-0">
 					<span class="c0">Problem: I need milk but don&#39;t have it (Goal: acquire milk)</span>
 				</li>
-				<li class="c3 li-bullet-0">
+				<li class="c10 li-bullet-0">
 					<span class="c0">Proposed solution: Go to the grocery store and get milk</span>
 				</li>
 			</ul>
-			<p class="c8">
+			<p class="c13">
 				<span class="c0"
 					>Even though I haven&#39;t necessarily gone out to get milk, I consider this problem to be
 					solved. As in, I don&#39;t need to think too much more about how to achieve my goal, I
@@ -152,7 +144,7 @@
 					which is preferably measurable, it helps people ideate solutions and frame their thinking.
 				</span>
 			</p>
-			<p class="c8">
+			<p class="c13">
 				<span>However, when </span><span>big</span><span class="c0"
 					>&nbsp;problems need solving, it is often easier to break the problem down into smaller,
 					more manageable subproblems. How one decides to break down a big problem and why, could be
@@ -160,36 +152,52 @@
 				>
 			</p>
 			<div class="mx-auto">
-				<p class="c24">
+				<p class="c31">
 					<span
-						style="overflow: hidden; display: inline-block; margin: 0.00px 0.00px; border: 0.00px solid #000000; transform: rotate(0.00rad) translateZ(0px); -webkit-transform: rotate(0.00rad) translateZ(0px); width: 538.50px; height: 460.00px;"
+						style="
+					overflow: hidden;
+					display: inline-block;
+					margin: 0px 0px;
+					border: 0px solid #ebebeb;
+					transform: rotate(0rad) translateZ(0px);
+					-webkit-transform: rotate(0rad) translateZ(0px);
+					width: 538.5px;
+					height: 460px;
+				  "
 						><img
 							alt=""
 							src="/images/image1.png"
-							style="width: 538.50px; height: 460.00px; margin-left: 0.00px; margin-top: 0.00px; transform: rotate(0.00rad) translateZ(0px); -webkit-transform: rotate(0.00rad) translateZ(0px);"
+							style="
+					  width: 538.5px;
+					  height: 460px;
+					  margin-left: 0px;
+					  margin-top: 0px;
+					  transform: rotate(0rad) translateZ(0px);
+					  -webkit-transform: rotate(0rad) translateZ(0px);
+					"
 							title=""
 						/></span
 					>
 				</p>
-				<p class="c26">
-					<span class="c15">Problem broken down into subproblems through a tree</span>
+				<p class="c1">
+					<span class="c14 c25">Problem broken down into subproblems through a tree</span>
 				</p>
 			</div>
-			<p class="c8">
+			<p class="c13">
 				<span class="c0"
 					>A strategy breaks down a problem in a way where if all of its sub-problems are solved,
 					then the parent problem gets solved. For a developed strategy to have been considered
 					successful, it must:</span
 				>
 			</p>
-			<ol class="c10 lst-kix_k39ns5nc81d5-0 start" start="1">
-				<li class="c5 li-bullet-0">
+			<ol class="c4 lst-kix_k39ns5nc81d5-0 start" start="1">
+				<li class="c2 li-bullet-0">
 					<span class="c0"
 						>Break down the parent problem into a definitive set of subproblems, which if solved,
 						would in turn solve the parent problem. (As defined by some logic)</span
 					>
 				</li>
-				<li class="c3 li-bullet-0">
+				<li class="c10 li-bullet-0">
 					<span class="c0"
 						>Define subproblems which are all simpler or very likely easier to solve/think about
 						than the parent problem. They don&rsquo;t have to be collectively easier, just
@@ -197,7 +205,7 @@
 					>
 				</li>
 			</ol>
-			<p class="c8">
+			<p class="c13">
 				<span class="c0"
 					>You can imagine how, as the tree gets deeper, problems become easier and easier to solve.
 					Hopefully to a point where they don&rsquo;t need to be broken down further and can simply
@@ -205,7 +213,7 @@
 					of problems cascades up the tree solving the big problem.</span
 				>
 			</p>
-			<p class="c8">
+			<p class="c13">
 				<span class="c0"
 					>As this is a collaborative tool, people are likely to disagree on how a problem should be
 					broken down. After all, a problem can be broken down in any number of ways. The solution
@@ -217,7 +225,7 @@
 					the tree, if it fits within their strategy.</span
 				>
 			</p>
-			<p class="c8">
+			<p class="c13">
 				<span class="c0"
 					>The fact that one can easily see all of the existing strategies being used to solve any
 					given problem is a particular strength of this system. The author of a paper doesn&rsquo;t
@@ -225,7 +233,7 @@
 					the problem they are trying to solve.
 				</span>
 			</p>
-			<p class="c8">
+			<p class="c13">
 				<span class="c0"
 					>Another key feature of the website is the ability for other people to make inline
 					suggestions to a document. On a similar note, although it is not developed yet, is the
@@ -234,80 +242,72 @@
 					particular will be necessary for ranking what order strategies will be shown.</span
 				>
 			</p>
-			<h2 class="c7" id="h.5j5iu4rp5ic8"><span class="c2">Pages:</span></h2>
-			<ul class="c10 lst-kix_eymv275zzudt-0 start">
-				<li class="c5 li-bullet-0">
-					<span class="c12">Tree</span><span class="c0"
-						>: See &ldquo;Problem Solving Ideology&rdquo;</span
-					>
-				</li>
-				<li class="c5 li-bullet-0">
-					<span class="c12">Team</span><span
-						>: This page links you to our discord which is where we currently communicate</span
-					>
-				</li>
-				<li class="c3 li-bullet-0">
-					<span class="c12">Learn</span><span class="c0"
-						>: List of helpful resources to get you familiar with AI Safety</span
-					>
-				</li>
-			</ul>
-			<h2 class="c7" id="h.j1p1wh286gua"><span class="c2">How to Use:</span></h2>
-			<ul class="c10 lst-kix_4mdn3jwye9e0-0 start">
-				<li class="c5 li-bullet-0">
+			<h3 class="c21 c15" id="h.j1p1wh286gua">
+				<span class="c19">How to Use:</span>
+			</h3>
+			<ul class="c4 lst-kix_4mdn3jwye9e0-0 start">
+				<li class="c2 li-bullet-0">
 					<span class="c0"
 						>To pan and zoom in the tree, use two fingers and a trackpad (If you don&rsquo;t see
 						anything initially, you might be zoomed in. Type &lsquo;f&rsquo; to go to full view)</span
 					>
 				</li>
-				<li class="c5 li-bullet-0">
+				<li class="c2 li-bullet-0">
 					<span class="c0">To read a node, click the book button at the top right of the node</span>
 				</li>
-				<li class="c5 li-bullet-0">
+				<li class="c2 li-bullet-0">
 					<span class="c0">Click the edit button in the same place to begin editing</span>
 				</li>
-				<li class="c5 li-bullet-0">
+				<li class="c2 li-bullet-0">
 					<span class="c0"
 						>Only one person can edit a node at a time (so the edit button might be grayed out)</span
 					>
 				</li>
-				<li class="c5 li-bullet-0">
+				<li class="c2 li-bullet-0">
 					<span class="c0">If don&rsquo;t own a node, you are put in suggesting mode</span>
 				</li>
-				<li class="c5 li-bullet-0">
+				<li class="c2 li-bullet-0">
 					<span class="c0">Navigate between nodes with the arrow keys</span>
 				</li>
-				<li class="c5 li-bullet-0"><span class="c0">Shortcuts</span></li>
+				<li class="c2 li-bullet-0"><span class="c0">Shortcuts</span></li>
 			</ul>
-			<ul class="c10 lst-kix_4mdn3jwye9e0-1 start">
-				<li class="c1 li-bullet-0">
-					<span class="c12">IMPORTANT</span><span>:</span><span class="c0"
+			<ul class="c4 lst-kix_4mdn3jwye9e0-1 start">
+				<li class="c3 li-bullet-0">
+					<span class="c24">IMPORTANT</span><span>:</span><span class="c0"
 						>&nbsp;Leave/Escape node: esc</span
 					>
 				</li>
-				<li class="c1 li-bullet-0"><span class="c0">Set home position: ctrl/cmd h</span></li>
-				<li class="c1 li-bullet-0"><span class="c0">Go to home position: h</span></li>
-				<li class="c1 li-bullet-0"><span class="c0">Full view: f</span></li>
+				<li class="c3 li-bullet-0">
+					<span class="c0">Set home position: ctrl/cmd h</span>
+				</li>
+				<li class="c3 li-bullet-0">
+					<span class="c0">Go to home position: h</span>
+				</li>
+				<li class="c3 li-bullet-0"><span class="c0">Full view: f</span></li>
 			</ul>
-			<ul class="c10 lst-kix_4mdn3jwye9e0-0">
-				<li class="c5 li-bullet-0">
+			<ul class="c4 lst-kix_4mdn3jwye9e0-0">
+				<li class="c2 li-bullet-0">
 					<span class="c0">Double click title/subsections to edit</span>
 				</li>
-				<li class="c5 li-bullet-0"><span class="c0">Right click subsections to delete</span></li>
-				<li class="c3 li-bullet-0">
+				<li class="c2 li-bullet-0">
+					<span class="c0">Right click subsections to delete</span>
+				</li>
+				<li class="c10 li-bullet-0">
 					<span class="c0">Use the three dots in navbar to add a section</span>
 				</li>
 			</ul>
-			<h2 class="c7" id="h.nzxdye6a3kae"><span class="c2">Guidelines:</span></h2>
-			<ul class="c10 lst-kix_i6w2c4xfzijj-0 start">
-				<li class="c3 li-bullet-0">
+			<h3 class="c21 c15" id="h.nzxdye6a3kae">
+				<span class="c19">Guidelines:</span>
+			</h3>
+			<ul class="c4 lst-kix_i6w2c4xfzijj-0 start">
+				<li class="c10 li-bullet-0">
 					<span class="c0"
 						>Don&#39;t use strategies to critique the problem they are supposed to be solving. I am
 						going to develop a commenting feature within nodes which is where you would post these
 						thoughts and more.</span
 					>
 				</li>
-				<li class="c3 li-bullet-0">
+				<li class="c10 li-bullet-0">
 					<span
 						>It is generally recommended to try and edit existing strategies rather than create a
 						new one. If you have an idea for a direction or strategy, FIRST propose it to the
@@ -315,19 +315,23 @@
 					>
 				</li>
 			</ul>
-			<h2 class="c22" id="h.9e4jitb20k78"><span class="c21 c2 c25">Undeveloped Features:</span></h2>
-			<ul class="c10 lst-kix_sebrnowlksdr-0 start">
-				<li class="c5 li-bullet-0"><span class="c0">Commenting feed for nodes</span></li>
-				<li class="c5 li-bullet-0">
+			<h3 class="c21" id="h.9e4jitb20k78">
+				<span class="c19">Undeveloped Features:</span>
+			</h3>
+			<ul class="c4 lst-kix_sebrnowlksdr-0 start">
+				<li class="c2 li-bullet-0">
+					<span class="c0">Commenting feed for nodes</span>
+				</li>
+				<li class="c2 li-bullet-0">
 					<span class="c0">Rating and ranking system for strategies</span>
 				</li>
-				<li class="c5 li-bullet-0"><span class="c0">Ideas Page</span></li>
+				<li class="c2 li-bullet-0"><span class="c0">Ideas Page</span></li>
 			</ul>
-			<ul class="c10 lst-kix_sebrnowlksdr-1 start">
-				<li class="c1 li-bullet-0">
+			<ul class="c4 lst-kix_sebrnowlksdr-1 start">
+				<li class="c3 li-bullet-0">
 					<span class="c0">Here people could post feature requests, bugs, thoughts, questions</span>
 				</li>
-				<li class="c1 li-bullet-0">
+				<li class="c3 li-bullet-0">
 					<span class="c0"
 						>One thought I had for this page was a system for facilitating scientific inquiries. So
 						people could post their initial observation which sparked some confusion. Then people
@@ -337,28 +341,91 @@
 					>
 				</li>
 			</ul>
-			<ul class="c10 lst-kix_sebrnowlksdr-0">
-				<li class="c5 li-bullet-0"><span class="c0">Search functionality</span></li>
-				<li class="c5 li-bullet-0">
+			<ul class="c4 lst-kix_sebrnowlksdr-0">
+				<li class="c2 li-bullet-0">
+					<span class="c0">Search functionality</span>
+				</li>
+				<li class="c2 li-bullet-0">
 					<span class="c0">Different levels of permissions (karma system)</span>
 				</li>
-				<li class="c3 li-bullet-0"><span>...</span></li>
+				<li class="c10 li-bullet-0"><span>&hellip;</span></li>
 			</ul>
-			<h2 class="c7" id="h.vm86jdrio76"><span class="c2">FAQs:</span></h2>
-			<p class="c8"><span class="c25 c12 c28">How can I help?</span></p>
-			<ul class="c10 lst-kix_s8ga7gzevg2y-0 start">
-				<li class="c3 li-bullet-0">
-					<span
-						>Testing out the site is a big help, so thank you! If you are interested to help out
-						further. Feel free to email me at
-					</span><span class="c17"
-						><a target="_blank" class="c9" href="mailto:aisafetysphere@gmail.com"
-							>aisafetysphere@gmail.com</a
+			<h2 class="c15 c28" id="h.mdtduk4lraf4">
+				<span class="c16">Questions:</span>
+			</h2>
+			<p class="c13">
+				<span class="c0"
+					>Fortunately, this page is far more self explanatory. The quick pitch is that having a
+					dynamic list of active research questions sorted by value, and the work being done on each
+					is extremely useful. For those who are new to the field, this tool allows them to quickly
+					get a full understanding of what is actively being worked on, why, and what questions need
+					the most attention. Experienced researchers can also use this tool to take a step back,
+					and make informed decisions on where to focus their efforts.</span
+				>
+			</p>
+			<p class="c13">
+				<span
+					>Anyone can propose additions to the list of questions. However, to initially populate the
+					site, I&#39;ve used an extensive and thoughtfully curated list of active research
+					questions from the paper &quot;</span
+				><span class="c11"
+					><a
+						target="_blank"
+						class="c7"
+						href="https://www.google.com/url?q=https://llm-safety-challenges.github.io/&amp;sa=D&amp;source=editors&amp;ust=1716997115481048&amp;usg=AOvVaw18YpKSuenoonwz1RMzJ-0z"
+						>Foundational Challenges in Assuring Alignment and Safety of Large Language Models</a
+					></span
+				><span class="c0"
+					>.&quot; Most of the questions on this page are directly copied from this paper. As a
+					result, the questions may seem focused primarily on technical challenges in aligning LLMs.
+					Of course, this is only one aspect of AI safety, and thus note that all questions framed
+					as instrumental goals in pursuit of making the world a better place in the face of AI are
+					welcome.
+				</span>
+			</p>
+			<p class="c13">
+				<span class="c0"
+					>The broader vision for this tool is that people could use the google doc linked to each
+					question as a collaborative hub in pursuit of answering the question. A google doc can
+					take many forms, and be structured to the needs of the research question. The
+					possibilities are endless&mdash;track progress, share insights and data, link to Discord
+					channels, compile literature, etc. This is of course up to the community to make a
+					reality, but I believe would prove invaluable to the field if pursued.</span
+				>
+			</p>
+			<h2 class="c28 c15" id="h.ear5k94gt8q"><span class="c16">FAQs:</span></h2>
+			<h4 class="c13 c15" id="h.50c4cas7tuuz">
+				<span class="c17">How can I help?</span>
+			</h4>
+			<ul class="c4 lst-kix_s8ga7gzevg2y-0 start">
+				<li class="c10 li-bullet-0">
+					<span>Testing out the site is a big help, so thank you for being here! </span><span
+						class="c11"
+						><a
+							target="_blank"
+							class="c7"
+							href="https://www.google.com/url?q=https://forms.gle/PPUF31AoGTTURx5D8&amp;sa=D&amp;source=editors&amp;ust=1716997115481607&amp;usg=AOvVaw3J5Hkq0pu3NmNJd8T0ABqw"
+							>Feedback</a
 						></span
-					><span>. I am in need of people to help further develop the site. </span>
+					><span
+						>&nbsp;is more than welcome. If you are interested in helping out further, feel free to
+						email me at
+					</span><span class="c11"
+						><a class="c7" href="mailto:aisafetysphere@gmail.com">aisafetysphere@gmail.com</a></span
+					>
 				</li>
 			</ul>
-			<p class="mt-[10px]">
+			<h4 class="c13 c15" id="h.8tn9xx8sgr5i">
+				<span class="c17">Who built this?</span>
+			</h4>
+			<ul class="c4 lst-kix_jne9ofnvmlwe-0 start">
+				<li class="c2 li-bullet-0">
+					<span>Myles, you can DM me on discord - </span><span class="c14">mxls</span><span
+						class="c14">.</span
+					>
+				</li>
+			</ul>
+			<p class="pt-[30px]">
 				This is the link to our discord server: <a
 					class="hover:underline text-[#1155cc]"
 					href="https://discord.gg/QCaQFKxu"
@@ -378,7 +445,6 @@
 	::selection {
 		background: #3f7bb06a;
 	}
-
 	::-moz-selection {
 		background: #3f7bb06a;
 	}
@@ -817,8 +883,17 @@
 	ol.lst-kix_k39ns5nc81d5-1.start {
 		counter-reset: lst-ctn-kix_k39ns5nc81d5-1 0;
 	}
+	.lst-kix_jne9ofnvmlwe-5 > li:before {
+		content: '-  ';
+	}
 	.lst-kix_eymv275zzudt-5 > li:before {
 		content: '\0025a0   ';
+	}
+	.lst-kix_jne9ofnvmlwe-3 > li:before {
+		content: '-  ';
+	}
+	.lst-kix_jne9ofnvmlwe-7 > li:before {
+		content: '-  ';
 	}
 	.lst-kix_4mdn3jwye9e0-0 > li:before {
 		content: '\0025cf   ';
@@ -831,6 +906,9 @@
 	}
 	.lst-kix_4mdn3jwye9e0-4 > li:before {
 		content: '\0025cb   ';
+	}
+	.lst-kix_jne9ofnvmlwe-1 > li:before {
+		content: '-  ';
 	}
 	.lst-kix_4mdn3jwye9e0-2 > li:before {
 		content: '\0025a0   ';
@@ -925,6 +1003,9 @@
 	ol.lst-kix_9e4jxz58ijhi-4.start {
 		counter-reset: lst-ctn-kix_9e4jxz58ijhi-4 0;
 	}
+	ul.lst-kix_jblnsty3vtnd-8 {
+		list-style-type: none;
+	}
 	.lst-kix_sebrnowlksdr-1 > li:before {
 		content: '\0025cb   ';
 	}
@@ -943,11 +1024,35 @@
 	ol.lst-kix_k39ns5nc81d5-3.start {
 		counter-reset: lst-ctn-kix_k39ns5nc81d5-3 0;
 	}
+	ul.lst-kix_jblnsty3vtnd-3 {
+		list-style-type: none;
+	}
+	ul.lst-kix_jblnsty3vtnd-2 {
+		list-style-type: none;
+	}
 	.lst-kix_k39ns5nc81d5-5 > li:before {
 		content: '' counter(lst-ctn-kix_k39ns5nc81d5-5, lower-roman) '. ';
 	}
 	.lst-kix_k39ns5nc81d5-6 > li:before {
 		content: '' counter(lst-ctn-kix_k39ns5nc81d5-6, decimal) '. ';
+	}
+	ul.lst-kix_jblnsty3vtnd-1 {
+		list-style-type: none;
+	}
+	ul.lst-kix_jblnsty3vtnd-0 {
+		list-style-type: none;
+	}
+	ul.lst-kix_jblnsty3vtnd-7 {
+		list-style-type: none;
+	}
+	ul.lst-kix_jblnsty3vtnd-6 {
+		list-style-type: none;
+	}
+	ul.lst-kix_jblnsty3vtnd-5 {
+		list-style-type: none;
+	}
+	ul.lst-kix_jblnsty3vtnd-4 {
+		list-style-type: none;
 	}
 	ol.lst-kix_5n9jywy0rmvt-3.start {
 		counter-reset: lst-ctn-kix_5n9jywy0rmvt-3 0;
@@ -988,14 +1093,41 @@
 	.lst-kix_9e4jxz58ijhi-5 > li:before {
 		content: '' counter(lst-ctn-kix_9e4jxz58ijhi-5, lower-roman) '. ';
 	}
+	ul.lst-kix_jne9ofnvmlwe-8 {
+		list-style-type: none;
+	}
+	ul.lst-kix_jne9ofnvmlwe-7 {
+		list-style-type: none;
+	}
+	ul.lst-kix_jne9ofnvmlwe-6 {
+		list-style-type: none;
+	}
+	ul.lst-kix_jne9ofnvmlwe-5 {
+		list-style-type: none;
+	}
 	.lst-kix_9e4jxz58ijhi-2 > li {
 		counter-increment: lst-ctn-kix_9e4jxz58ijhi-2;
+	}
+	ul.lst-kix_jne9ofnvmlwe-0 {
+		list-style-type: none;
 	}
 	.lst-kix_9e4jxz58ijhi-2 > li:before {
 		content: '' counter(lst-ctn-kix_9e4jxz58ijhi-2, lower-roman) '. ';
 	}
+	ul.lst-kix_jne9ofnvmlwe-4 {
+		list-style-type: none;
+	}
+	ul.lst-kix_jne9ofnvmlwe-3 {
+		list-style-type: none;
+	}
 	.lst-kix_9e4jxz58ijhi-1 > li:before {
 		content: '' counter(lst-ctn-kix_9e4jxz58ijhi-1, lower-latin) '. ';
+	}
+	ul.lst-kix_jne9ofnvmlwe-2 {
+		list-style-type: none;
+	}
+	ul.lst-kix_jne9ofnvmlwe-1 {
+		list-style-type: none;
 	}
 	.lst-kix_k39ns5nc81d5-2 > li {
 		counter-increment: lst-ctn-kix_k39ns5nc81d5-2;
@@ -1063,11 +1195,17 @@
 	.lst-kix_nznj7f2h3dvk-1 > li:before {
 		content: '\0025cb   ';
 	}
+	.lst-kix_jblnsty3vtnd-0 > li:before {
+		content: '-  ';
+	}
 	.lst-kix_5n9jywy0rmvt-3 > li {
 		counter-increment: lst-ctn-kix_5n9jywy0rmvt-3;
 	}
 	.lst-kix_nznj7f2h3dvk-5 > li:before {
 		content: '\0025a0   ';
+	}
+	.lst-kix_jblnsty3vtnd-8 > li:before {
+		content: '-  ';
 	}
 	.lst-kix_eymv275zzudt-2 > li:before {
 		content: '\0025a0   ';
@@ -1080,6 +1218,12 @@
 	}
 	.lst-kix_sebrnowlksdr-5 > li:before {
 		content: '\0025a0   ';
+	}
+	.lst-kix_jne9ofnvmlwe-2 > li:before {
+		content: '-  ';
+	}
+	.lst-kix_jne9ofnvmlwe-6 > li:before {
+		content: '-  ';
 	}
 	ol.lst-kix_k39ns5nc81d5-8.start {
 		counter-reset: lst-ctn-kix_k39ns5nc81d5-8 0;
@@ -1095,6 +1239,9 @@
 	}
 	ol.lst-kix_9e4jxz58ijhi-2.start {
 		counter-reset: lst-ctn-kix_9e4jxz58ijhi-2 0;
+	}
+	.lst-kix_jblnsty3vtnd-4 > li:before {
+		content: '-  ';
 	}
 	ol.lst-kix_k39ns5nc81d5-0.start {
 		counter-reset: lst-ctn-kix_k39ns5nc81d5-0 0;
@@ -1225,8 +1372,14 @@
 	.lst-kix_5a9hdng83p25-2 > li {
 		counter-increment: lst-ctn-kix_5a9hdng83p25-2;
 	}
+	.lst-kix_jblnsty3vtnd-1 > li:before {
+		content: '-  ';
+	}
 	.lst-kix_9e4jxz58ijhi-3 > li {
 		counter-increment: lst-ctn-kix_9e4jxz58ijhi-3;
+	}
+	.lst-kix_jblnsty3vtnd-7 > li:before {
+		content: '-  ';
 	}
 	.lst-kix_k39ns5nc81d5-6 > li {
 		counter-increment: lst-ctn-kix_k39ns5nc81d5-6;
@@ -1282,8 +1435,14 @@
 	ol.lst-kix_5a9hdng83p25-0 {
 		list-style-type: none;
 	}
+	.lst-kix_jblnsty3vtnd-5 > li:before {
+		content: '-  ';
+	}
 	.lst-kix_sebrnowlksdr-8 > li:before {
 		content: '\0025a0   ';
+	}
+	.lst-kix_jblnsty3vtnd-3 > li:before {
+		content: '-  ';
 	}
 	ul.lst-kix_sebrnowlksdr-1 {
 		list-style-type: none;
@@ -1549,6 +1708,9 @@
 	.lst-kix_eymv275zzudt-0 > li:before {
 		content: '\0025cf   ';
 	}
+	.lst-kix_jne9ofnvmlwe-8 > li:before {
+		content: '-  ';
+	}
 	.lst-kix_sebrnowlksdr-3 > li:before {
 		content: '\0025cf   ';
 	}
@@ -1573,8 +1735,20 @@
 		display: inline-block;
 		min-width: 18pt;
 	}
+	.lst-kix_jne9ofnvmlwe-4 > li:before {
+		content: '-  ';
+	}
+	.lst-kix_jblnsty3vtnd-6 > li:before {
+		content: '-  ';
+	}
+	.lst-kix_jblnsty3vtnd-2 > li:before {
+		content: '-  ';
+	}
 	.lst-kix_4mdn3jwye9e0-3 > li:before {
 		content: '\0025cf   ';
+	}
+	.lst-kix_jne9ofnvmlwe-0 > li:before {
+		content: '-  ';
 	}
 	ol {
 		margin: 0;
@@ -1584,17 +1758,17 @@
 	table th {
 		padding: 0;
 	}
-	.c3 {
-		margin-left: 36pt;
-		padding-top: 0pt;
-		padding-left: 0pt;
-		padding-bottom: 10pt;
-		line-height: 1.4;
-		orphans: 2;
-		widows: 2;
-		text-align: left;
+	.c26 {
+		-webkit-text-decoration-skip: none;
+		color: #ebebeb;
+		font-weight: 400;
+		text-decoration: underline;
+		vertical-align: baseline;
+		text-decoration-skip-ink: none;
+		font-size: 11pt;
+		font-family: 'Arial';
 	}
-	.c1 {
+	.c3 {
 		margin-left: 72pt;
 		padding-top: 0pt;
 		padding-left: 0pt;
@@ -1604,17 +1778,7 @@
 		widows: 2;
 		text-align: left;
 	}
-	.c27 {
-		-webkit-text-decoration-skip: none;
-		font-weight: 400;
-		text-decoration: underline;
-		vertical-align: baseline;
-		text-decoration-skip-ink: none;
-		font-size: 11pt;
-		font-family: 'Arial';
-		font-style: italic;
-	}
-	.c5 {
+	.c2 {
 		margin-left: 36pt;
 		padding-top: 0pt;
 		padding-left: 0pt;
@@ -1624,21 +1788,40 @@
 		widows: 2;
 		text-align: left;
 	}
-	.c14 {
+	.c10 {
+		margin-left: 36pt;
+		padding-top: 0pt;
+		padding-left: 0pt;
+		padding-bottom: 10pt;
+		line-height: 1.4;
+		orphans: 2;
+		widows: 2;
+		text-align: left;
+	}
+	.c6 {
 		color: #ebebeb;
-		font-weight: 400;
+		font-weight: 700;
 		text-decoration: none;
 		vertical-align: baseline;
-		font-size: 20pt;
+		font-size: 23pt;
 		font-family: 'Arial';
 		font-style: normal;
 	}
-	.c4 {
+	.c30 {
 		color: #ebebeb;
 		font-weight: 400;
 		text-decoration: none;
 		vertical-align: baseline;
-		font-size: 16pt;
+		font-size: 15pt;
+		font-family: 'Arial';
+		font-style: normal;
+	}
+	.c19 {
+		color: #d3d3d3;
+		font-weight: 400;
+		text-decoration: none;
+		vertical-align: baseline;
+		font-size: 14pt;
 		font-family: 'Arial';
 		font-style: normal;
 	}
@@ -1651,34 +1834,7 @@
 		font-family: 'Arial';
 		font-style: normal;
 	}
-	.c13 {
-		color: #ebebeb;
-		font-weight: 400;
-		text-decoration: none;
-		vertical-align: baseline;
-		font-size: 22pt;
-		font-family: 'Arial';
-		font-style: normal;
-	}
-	.c7 {
-		padding-top: 18pt;
-		padding-bottom: 10pt;
-		line-height: 1.4;
-		page-break-after: avoid;
-		orphans: 2;
-		widows: 2;
-		text-align: left;
-	}
-	.c6 {
-		margin-left: 36pt;
-		padding-top: 0pt;
-		padding-bottom: 10pt;
-		line-height: 1.4;
-		orphans: 2;
-		widows: 2;
-		text-align: left;
-	}
-	.c20 {
+	.c34 {
 		color: #ebebeb;
 		font-weight: 400;
 		text-decoration: none;
@@ -1687,31 +1843,90 @@
 		font-family: 'Arial';
 		font-style: normal;
 	}
+	.c17 {
+		color: #ebebeb;
+		font-weight: 700;
+		text-decoration: none;
+		vertical-align: baseline;
+		font-size: 11pt;
+		font-family: 'Arial';
+		font-style: normal;
+	}
+	.c20 {
+		color: #666666;
+		font-weight: 400;
+		text-decoration: none;
+		vertical-align: baseline;
+		font-size: 10pt;
+		font-family: 'Arial';
+		font-style: normal;
+	}
+	.c16 {
+		color: #ebebeb;
+		font-weight: 400;
+		text-decoration: none;
+		vertical-align: baseline;
+		font-size: 16pt;
+		font-family: 'Arial';
+		font-style: normal;
+	}
+	.c31 {
+		padding-top: 0pt;
+		padding-bottom: 0pt;
+		line-height: 1.4;
+		orphans: 2;
+		widows: 2;
+		text-align: center;
+	}
 	.c8 {
 		padding-top: 0pt;
+		padding-bottom: 20pt;
+		line-height: 1.4;
+		orphans: 2;
+		widows: 2;
+		text-align: left;
+	}
+	.c13 {
+		padding-top: 0pt;
 		padding-bottom: 10pt;
 		line-height: 1.4;
 		orphans: 2;
 		widows: 2;
 		text-align: left;
 	}
-	.c24 {
+	.c18 {
 		padding-top: 0pt;
 		padding-bottom: 0pt;
 		line-height: 1.4;
 		orphans: 2;
 		widows: 2;
-		text-align: center;
+		text-align: left;
 	}
 	.c29 {
-		padding-top: 0pt;
+		color: #ebebeb;
+		font-weight: 400;
+		text-decoration: none;
+		vertical-align: baseline;
+		font-size: 11pt;
+		font-family: 'Arial';
+	}
+	.c32 {
+		padding-top: 10pt;
+		padding-bottom: 10pt;
+		line-height: 1.4;
+		orphans: 2;
+		widows: 2;
+		text-align: left;
+	}
+	.c23 {
+		padding-top: 10pt;
 		padding-bottom: 0pt;
 		line-height: 1.4;
 		orphans: 2;
 		widows: 2;
 		text-align: left;
 	}
-	.c26 {
+	.c1 {
 		padding-top: 0pt;
 		padding-bottom: 10pt;
 		line-height: 1.4;
@@ -1719,7 +1934,15 @@
 		widows: 2;
 		text-align: center;
 	}
-	.c22 {
+	.c21 {
+		padding-top: 16pt;
+		padding-bottom: 10pt;
+		line-height: 1.4;
+		orphans: 2;
+		widows: 2;
+		text-align: left;
+	}
+	.c28 {
 		padding-top: 18pt;
 		padding-bottom: 10pt;
 		line-height: 1.4;
@@ -1728,71 +1951,55 @@
 		text-align: left;
 	}
 	.c11 {
-		padding-top: 0pt;
-		padding-bottom: 20pt;
-		line-height: 1.4;
-		orphans: 2;
-		widows: 2;
-		text-align: left;
-	}
-	.c21 {
-		font-weight: 400;
-		text-decoration: none;
-		vertical-align: baseline;
-		font-family: 'Arial';
-		font-style: normal;
-	}
-	.c28 {
-		text-decoration: none;
-		vertical-align: baseline;
-		font-size: 11pt;
-		font-family: 'Arial';
-		font-style: normal;
-	}
-	.c17 {
 		text-decoration-skip-ink: none;
 		-webkit-text-decoration-skip: none;
 		color: #1155cc;
 		text-decoration: underline;
 	}
-	.c15 {
-		font-size: 9pt;
-		font-style: italic;
-		color: #666666;
-	}
-	.c23 {
+	.c12 {
 		background-color: #ffffff;
 		max-width: 468pt;
 		padding: 72pt 72pt 72pt 72pt;
 	}
-	.c18 {
+	.c5 {
 		color: #1155cc;
+		line-height: 0.7;
+		font-size: 12px;
 		vertical-align: super;
-		font-size: 8pt;
 	}
-	.c10 {
+	.c4 {
 		padding: 0;
 		margin: 0;
 	}
-	.c19 {
-		color: #666666;
-		font-size: 10pt;
-	}
-	.c9 {
+	.c7 {
 		color: inherit;
 		text-decoration: inherit;
 	}
-	.c2 {
-		font-size: 15pt;
-	}
 	.c25 {
-		color: #ebebeb;
+		font-size: 9pt;
+		color: #666666;
 	}
-	.c12 {
+	.c22 {
+		color: #666666;
+		font-size: 10pt;
+	}
+	.c24 {
 		font-weight: 700;
 	}
-	.c16 {
-		font-size: 22pt;
+	.c14 {
+		font-style: italic;
+	}
+	.c27 {
+		height: 11pt;
+	}
+	.c9 {
+		font-size: 23pt;
+	}
+	.c33 {
+		margin-left: 36pt;
+	}
+	.c15 {
+		page-break-after: avoid;
 	}
 	.title {
 		padding-top: 0pt;
@@ -1866,10 +2073,11 @@
 		text-align: left;
 	}
 	h4 {
-		padding-top: 14pt;
-		color: #666666;
-		font-size: 12pt;
-		padding-bottom: 4pt;
+		padding-top: 0pt;
+		color: #ebebeb;
+		font-weight: 700;
+		font-size: 11pt;
+		padding-bottom: 10pt;
 		font-family: 'Arial';
 		line-height: 1.4;
 		page-break-after: avoid;
