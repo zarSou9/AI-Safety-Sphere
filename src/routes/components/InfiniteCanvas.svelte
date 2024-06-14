@@ -5,9 +5,7 @@
 	import userCoords from '$lib/stores/local_storage/userCoordinates';
 	import { getContext } from 'svelte';
 	import type { Writable } from 'svelte/store';
-	import type { TreeInterface } from '$lib/types/nodes';
 	import Tree from './Tree.svelte';
-	import type { PageData } from '../$types';
 
 	const viewingNodeRect: { l: number; t: number; w: number; h: number } =
 		getContext('viewingNodeRect');

@@ -1,7 +1,6 @@
 <script lang="ts">
 	import { getContext, onMount, tick } from 'svelte';
-	import Problem from './Problem.svelte';
-	import Strategy from './Strategy.svelte';
+	import Node from './Node.svelte';
 	import Left from '$lib/icons/Left.svelte';
 	import Right from '$lib/icons/Right.svelte';
 	import Curve from '$lib/components/Curve.svelte';
@@ -74,7 +73,7 @@
 	let titleSpacingReady = false;
 	let moving = false;
 	let lastNavigatedNode = 'r';
-	let newStrategyProblem: any;
+	let newStrategyNode: any;
 	let sectionFunction: any;
 
 	viewingNode.set(undefined);
@@ -150,11 +149,7 @@
 					extraShown = false;
 					$quillsReady = false;
 				} else if (action === 'create-new-strategy') {
-					publishStrategy(
-						newStrategyProblem.id,
-						newStrategyProblem.uuid,
-						$newStrategyTitleModal.title
-					);
+					publishStrategy(newStrategyNode.id, newStrategyNode.uuid, $newStrategyTitleModal.title);
 					setTimeout(() => {
 						$quillsReady = true;
 					}, 40);
@@ -163,14 +158,14 @@
 					if (tree.getNodeType($nodeToRemove.id) === 's') {
 						deleteStrategy($nodeToRemove.id, $nodeToRemove.uuid);
 					} else {
-						deleteProblem($nodeToRemove.id, $nodeToRemove.uuid);
+						deleteNode($nodeToRemove.id, $nodeToRemove.uuid);
 					}
 					nodeToRemove.set(undefined);
 				} else if (action === 'remove-linked-node') {
 					if ($nodeToRemove.uuid === true) {
 						failurePopUp.set('Error: Cannot delete child of referenced node');
 					} else {
-						deleteLinkedProblem($nodeToRemove.uuid);
+						deleteLinkedNode($nodeToRemove.uuid);
 					}
 					nodeToRemove.set(undefined);
 				}
@@ -332,7 +327,7 @@
 			$processing = false;
 		}
 	}
-	async function deleteProblem(id: string, uuid: string): Promise<void> {
+	async function deleteNode(id: string, uuid: string): Promise<void> {
 		$processing = true;
 		try {
 			const response = await fetch('/actions/delete_problem', {
@@ -357,7 +352,7 @@
 				updateTreeArrays();
 				setTimeout(() => {
 					quillsReady.set(true);
-					successPopUp.set('Problem successfully deleted');
+					successPopUp.set('Node successfully deleted');
 				}, 20);
 			});
 			$processing = false;
@@ -366,7 +361,7 @@
 			$processing = false;
 		}
 	}
-	async function deleteLinkedProblem(uuid: string): Promise<void> {
+	async function deleteLinkedNode(uuid: string): Promise<void> {
 		$processing = true;
 		try {
 			const response = await fetch('/actions/delete_linked_problem', {
@@ -391,7 +386,7 @@
 				updateTreeArrays();
 				setTimeout(() => {
 					quillsReady.set(true);
-					successPopUp.set('Problem successfully deleted');
+					successPopUp.set('Node successfully deleted');
 				}, 20);
 			});
 			$processing = false;
@@ -637,7 +632,7 @@
 								if (!data.props?.loggedIn) {
 									if (!$loginNotif) $loginNotif = true;
 								} else {
-									newStrategyProblem = { id: problem.id, uuid: problem.uuid };
+									newStrategyNode = { id: problem.id, uuid: problem.uuid };
 									$newStrategyTitleModal.visible = true;
 								}
 							}}
@@ -645,10 +640,10 @@
 							>New Strategy</button
 						>
 					{/if}
-					<Problem
+					<Node
 						treeData={tree.getObjFromId(problem.id, problem.uuid)}
 						referenced={{ id: problem?.id, uuid: problem?.referenced }}
-					></Problem>
+					></Node>
 				</div>
 				{#if $quillsReady && !problem.last}
 					<Curve

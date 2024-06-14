@@ -1,10 +1,9 @@
-import type { Problem, Tree, SelectedStrategy } from '../types/nodes';
+import type { Node, Tree, TreeNode } from '../types/nodes';
 import { v4 as uuidv4 } from 'uuid';
 
 export function createTree() {
-	let tree: Tree = {};
+	let tree: Tree;
 	let ySpace = 560;
-	let selectedStrategies: SelectedStrategy[] = [];
 
 	function endNodes(
 		obj: any,
@@ -79,401 +78,89 @@ export function createTree() {
 			}
 		}
 	}
-	function updateTreeStrategySelections(obj: any) {
-		if (obj?.strategies) {
-			obj.selectedStrategy = selectedStrategies.find((s) => s.id === obj.id)?.selection;
-			if (obj?.selectedStrategy === undefined) {
-				obj.selectedStrategy = 0;
-				selectedStrategies.push({ id: obj.id, selection: 0 });
-			}
-			obj.strategies.forEach((s: any) => {
-				updateTreeStrategySelections(s);
-			});
-		} else if (obj?.problems) {
-			obj.problems.forEach((p: any) => {
-				updateTreeStrategySelections(p);
-			});
-		}
-	}
-	function findObjFromUUID(obj: any, UUID: any) {
-		if (obj.uuid === UUID) return obj;
-		if (obj?.referenced) {
-		} else if (obj?.strategies !== undefined) {
-			for (let strat of obj.strategies) {
-				if (strat?.uuid === UUID) {
-					return strat;
-				}
-				const objFound: any = findObjFromUUID(strat, UUID);
-				if (objFound) return objFound;
-			}
-		} else {
-			for (let prob of obj.problems) {
-				if (prob?.uuid === UUID) {
-					return prob;
-				}
-				const objFound: any = findObjFromUUID(prob, UUID);
-				if (objFound) return objFound;
-			}
-		}
-	}
-	function fillReferenced(obj: any) {
-		if (obj?.referenced) {
-			const refProb = JSON.parse(JSON.stringify(findObjFromUUID(tree.problem, obj.referenced)));
-			replaceWithReferenced(refProb, obj.id);
-			obj.strategies = refProb?.strategies || [];
-		} else if (obj?.strategies !== undefined) {
-			for (let strat of obj.strategies) {
-				fillReferenced(strat);
-			}
-		} else {
-			for (let prob of obj.problems) {
-				fillReferenced(prob);
-			}
-		}
-	}
-	function replaceWithReferenced(obj: any, pID: string) {
-		if (obj?.referenced) {
-			const refProb = JSON.parse(JSON.stringify(findObjFromUUID(tree.problem, obj.referenced)));
-			replaceWithReferenced(refProb, obj.id);
-			obj.strategies = refProb?.strategies || [];
-		} else if (obj?.strategies !== undefined) {
-			let i = 0;
-			for (let strat of obj.strategies) {
-				replaceWithReferenced(strat, pID + 's' + i);
-				i += 1;
-			}
-			const uuid = obj.uuid;
-			Object.keys(obj).forEach((key) => {
-				if (key !== 'strategies') delete obj[key];
-			});
-			obj.id = pID;
-			obj.referenced = uuid;
-		} else {
-			let i = 0;
-			for (let prob of obj.problems) {
-				replaceWithReferenced(prob, pID + 'p' + i);
-				i += 1;
-			}
-			const uuid = obj.uuid;
-			Object.keys(obj).forEach((key) => {
-				if (key !== 'problems') delete obj[key];
-			});
-			obj.id = pID;
-			obj.referenced = uuid;
-		}
-	}
-	function appendAllProblems(obj: any, problems: any, sId: string) {
-		if (obj?.referenced) {
-		} else if (obj?.strategies !== undefined) {
-			if (nDepth(obj.id) > nDepth(sId)) {
-				problems.push({ title: obj.data.title, uuid: obj.uuid, id: obj.id });
-			}
-			for (let strat of obj.strategies) {
-				appendAllProblems(strat, problems, sId);
-			}
-		} else {
-			for (let prob of obj.problems) {
-				appendAllProblems(prob, problems, sId);
-			}
-		}
-	}
-	function nDepth(id: string) {
-		let d = 0;
-		for (let c of id) {
-			if (c === 's' || c === 'p') {
-				d += 1;
-			}
-		}
-		return d;
-	}
-	function updateChildIDS(obj: any, id: string) {
-		if (obj?.strategies) {
-			for (let strat of obj.strategies) {
-				updateChildIDS(strat, id);
-			}
-			obj.id = id + obj.id.substring(id.length);
-		} else if (obj?.problems) {
-			for (let prob of obj.problems) {
-				updateChildIDS(prob, id);
-			}
-			obj.id = id + obj.id.substring(id.length);
+
+	function findNodeFromUUID(
+		uuid: string | undefined,
+		obj: TreeNode = tree.node
+	): TreeNode | undefined {
+		if (obj.uuid === uuid) return obj;
+		for (let node of obj.children) {
+			if (node?.uuid === uuid) return node;
+			const objFound: TreeNode | undefined = findNodeFromUUID(uuid, node);
+			if (objFound) return objFound;
 		}
 	}
 
 	return {
-		setTree(t: Tree, sS: SelectedStrategy[] | undefined = undefined) {
-			tree.problem = JSON.parse(JSON.stringify(t.problem));
-			if (sS) {
-				selectedStrategies = sS;
-				updateTreeStrategySelections(tree.problem);
-			}
-		},
-		setClientTree(t: Tree, sS: SelectedStrategy[] | undefined = undefined) {
-			tree.problem = JSON.parse(JSON.stringify(t.problem));
-			fillReferenced(tree.problem);
-			if (sS) {
-				selectedStrategies = sS;
-				updateTreeStrategySelections(tree.problem);
-			}
+		setTree(t: Tree) {
+			tree = JSON.parse(JSON.stringify(t));
 		},
 		getTree() {
 			return tree;
 		},
-		getParent(id: string | undefined) {
-			if (!id) return undefined;
-			if (id === 'r') return 'r';
-			let j = id.length - 1;
-			let c = '0';
-
-			while (c !== 's' && c !== 'p' && c !== 'f' && j >= 0) {
-				c = id.charAt(j);
-				j--;
-			}
-
-			return id.substring(0, j + 1);
-		},
-		getNodeType(id: string | undefined) {
-			if (!id) return undefined;
-			if (id === 'r') return 'r';
-			let j = id.length - 1;
-			let c = '0';
-
-			while (c !== 's' && c !== 'p' && j >= 0) {
-				c = id.charAt(j);
-				j--;
-			}
-			return c;
-		},
-		getObjFromId(id: string | undefined, UUID: string | undefined = undefined) {
-			if (!id && !UUID) return false;
-			if (id) {
-				const prevId = id;
-				let obj: any = tree.problem;
-				if (id === 'r') return tree.problem;
-				if (id.charAt(0) !== 'r') return false;
-				id = id.substring(1);
-				let running = true;
-				while (running) {
-					if (id.charAt(0) === 's') {
-						obj = obj?.strategies;
-						id = id.substring(1);
-					} else if (id.charAt(0) === 'p') {
-						obj = obj?.problems;
-						id = id.substring(1);
-					} else if (!isNaN(Number(id.charAt(0))) && id.length > 0) {
-						let index = 0;
-						while (!isNaN(Number(id.charAt(index))) && index < id.length) {
-							index++;
-						}
-						if (!obj?.length) {
-							break;
-						}
-						const i = Number(id.substring(0, index));
-						if (i >= obj.length) break;
-						obj = obj[i];
-						id = id.substring(index);
-					} else {
-						running = false;
-					}
+		getParent(
+			uuid: string | undefined,
+			obj: any = tree.node
+		): { i: number; node: TreeNode } | undefined {
+			let i = 0;
+			for (let node of obj.children) {
+				if (node.uuid === uuid) {
+					return { i, node: obj };
 				}
-				if (UUID) {
-					if (obj?.uuid === UUID) return obj;
-					else {
-						const objFound = findObjFromUUID(tree.problem, UUID);
-						if (objFound) return objFound;
-						else return false;
-					}
-				} else {
-					if (obj?.id === prevId) return obj;
-					else return false;
-				}
-			} else {
-				const objFound = findObjFromUUID(tree.problem, UUID);
-				if (objFound) return objFound;
-				else return false;
+				const parentFound: { i: number; node: TreeNode } | undefined = this.getParent(uuid, node);
+				if (parentFound) return parentFound;
+				i++;
 			}
+		},
+		getObjFromId(uuid?: string | undefined) {
+			return findNodeFromUUID(uuid);
 		},
 		calculateSpacing() {
 			let container = { left: 0, height: 0 };
 
-			endNodes(tree.problem, container);
-			if (tree.problem?.strategies.length) while (!bodyNodes(tree.problem));
+			endNodes(tree.node, container);
+			if (tree.node?.children.length) while (!bodyNodes(tree.node));
 
 			return { width: container.left, height: container.height * ySpace };
 		},
 		createRootProblem(title: string = 'untitled') {
-			let prob: Problem = {
-				id: 'r',
+			const uuid = uuidv4();
+			let prob: Node = {
+				uuid,
 				title: title
 			};
-			const uuid = uuidv4();
-
-			tree.problem = {
-				id: prob.id as string,
+			tree.node = {
 				uuid,
 				data: { title: title },
-				strategies: [],
-				selectedStrategy: 0
+				children: []
 			};
 
-			return [
-				prob,
-				{ problem: { id: prob.id as string, uuid, data: { title: title }, strategies: [] } }
-			];
+			return [prob, { node: { uuid, data: { title: title }, strategies: [] } }];
 		},
-		createProblem(
-			strategyID: string,
-			strategyUUID: string,
+		createNode(
+			parent: TreeNode,
 			title: string = 'untitled',
 			tldr: any = undefined,
 			owners: any = undefined
 		) {
-			let strategyTreeObj = this.getObjFromId(strategyID, strategyUUID);
-			if (!strategyTreeObj) return false;
-
-			const id = strategyID + 'p' + strategyTreeObj.problems.length.toString();
 			const uuid = uuidv4();
 
-			strategyTreeObj.problems.push({
-				id,
+			parent.children.push({
 				uuid,
 				data: { title, tldr },
 				owners,
-				strategies: []
+				children: []
 			});
 
-			return { id, uuid };
+			return uuid;
 		},
-		createLinkedProblem(strategyID: string, strategyUUID: string, pUUID: string, user: string) {
-			let strategyTreeObj = this.getObjFromId(strategyID, strategyUUID);
-			if (!strategyTreeObj) return false;
+		deleteNode(uuid: string) {
+			let parent = this.getParent(uuid);
+			if (!parent) return { error: 'Parent does not exist' };
 
-			const id = strategyID + 'p' + strategyTreeObj.problems.length.toString();
-			const uuid = uuidv4();
+			if (this.getObjFromId(uuid)?.children?.length) return { error: 'Problem has child nodes' };
 
-			strategyTreeObj.problems.push({
-				id,
-				uuid,
-				referenced: pUUID,
-				owners: [user],
-				strategies: []
-			});
-
-			return id;
-		},
-		createStrategy(
-			problemID: string,
-			problemUUID: string,
-			title: string = 'untitled',
-			tldr: any = undefined,
-			owners: any = undefined
-		) {
-			let problemTreeObj = this.getObjFromId(problemID, problemUUID);
-			if (!problemTreeObj) return false;
-
-			const id = problemID + 's' + problemTreeObj.strategies.length.toString();
-			const uuid = uuidv4();
-
-			problemTreeObj.strategies.push({ id, uuid, data: { title, tldr }, owners, problems: [] });
-
-			return { id, uuid };
-		},
-		deleteProblem(probId: string | undefined, probUUID: string) {
-			let strategyTreeObj = this.getObjFromId(this.getParent(probId));
-			if (!strategyTreeObj) return { error: 'Invalid problem ID' };
-
-			if (this.getObjFromId(probId, probUUID)?.strategies?.length)
-				return { error: 'Problem has child strategies' };
-
-			const index = strategyTreeObj.problems.findIndex((prob: any) => prob.uuid === probUUID);
-			const data: any = { newProbIds: [] };
-
-			strategyTreeObj.problems.forEach((prob: any, i: number) => {
-				if (i > index) {
-					let updateProbId: any = { old: prob.uuid };
-					let j = prob.id.length - 1;
-					let c = '0';
-
-					while (c !== 's' && c !== 'p' && j >= 0) {
-						c = prob.id.charAt(j);
-						j--;
-					}
-					const newNum = Number(prob.id.substring(j + 2)) - 1;
-
-					prob.id = prob.id.substring(0, j + 2) + newNum;
-					updateChildIDS(prob, prob.id);
-
-					updateProbId.new = prob.id;
-					data.newProbIds.push(updateProbId);
-				}
-			});
-			strategyTreeObj.problems.splice(index, 1);
-
-			return { success: 'Problem succesfully deleted from tree', data };
-		},
-		deleteStrategy(stratId: string, stratUUID: string) {
-			let problemTreeObj = this.getObjFromId(this.getParent(stratId));
-			if (!problemTreeObj) return { error: 'Invalid strategy ID' };
-
-			if (this.getObjFromId(stratId, stratUUID)?.problems?.length)
-				return { error: 'Strategy has child problems' };
-
-			const index = problemTreeObj.strategies.findIndex((strat: any) => strat.uuid === stratUUID);
-			const data: any = { newStratIds: [] };
-
-			problemTreeObj.strategies.forEach((strat: any, i: number) => {
-				if (i > index) {
-					let updateStratId: any = { old: strat.uuid };
-					let j = strat.id.length - 1;
-					let c = '0';
-
-					while (c !== 's' && c !== 'p' && j >= 0) {
-						c = strat.id.charAt(j);
-						j--;
-					}
-					const newNum = Number(strat.id.substring(j + 2)) - 1;
-
-					strat.id = strat.id.substring(0, j + 2) + newNum;
-					updateChildIDS(strat, strat.id);
-
-					updateStratId.new = strat.id;
-					data.newStratIds.push(updateStratId);
-				}
-			});
-			problemTreeObj.strategies.splice(index, 1);
-			return { success: 'Strategy succesfully deleted from tree', data };
-		},
-		updateSelected(id: string | undefined, selection: number) {
-			const obj = selectedStrategies.find((s) => s.id === id);
-			if (obj) obj.selection = selection;
-			else if (id) {
-				selectedStrategies.push({ id, selection });
-			}
-		},
-		updateSelections() {
-			updateTreeStrategySelections(tree.problem);
-		},
-		getSelections() {
-			return selectedStrategies;
-		},
-		setSelections(newSelects: any) {
-			selectedStrategies = newSelects;
-		},
-		findAllProblems(sID: string, sUUID: string) {
-			let problems: any = [];
-			appendAllProblems(tree.problem, problems, sID);
-			return problems;
-		},
-		checkIfProbAboveStrat(
-			stratID: string | undefined,
-			stratUUID: string | undefined,
-			probID: string | undefined,
-			probUUID: string | undefined
-		) {
-			const stratid = this.getObjFromId(stratID, stratUUID)?.id;
-			const probid = this.getObjFromId(probID, probUUID)?.id;
-			if (!stratID || !probID || nDepth(probid) < nDepth(stratid)) return false;
-			return true;
+			parent.node.children.splice(parent.i, 1);
 		}
 	};
 }
