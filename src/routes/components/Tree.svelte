@@ -1,13 +1,13 @@
 <script lang="ts">
 	import { getContext, onMount, tick } from 'svelte';
-	import Problem from './nodes/Problem.svelte';
-	import Strategy from './nodes/Strategy.svelte';
+	import Problem from './Problem.svelte';
+	import Strategy from './Strategy.svelte';
 	import Left from '$lib/icons/Left.svelte';
 	import Right from '$lib/icons/Right.svelte';
 	import Curve from '$lib/components/Curve.svelte';
 	import type { TreeInterface } from '$lib/types/nodes';
 	import type { Writable } from 'svelte/store';
-	import type { PageData } from './$types';
+	import type { PageData } from '../$types';
 	import { slide } from 'svelte/transition';
 	import FolderArrow from '$lib/icons/FolderArrow.svelte';
 
@@ -302,7 +302,7 @@
 	async function publishStrategy(probId: string, probUUID: string, title: string): Promise<void> {
 		$processing = true;
 		try {
-			const response = await fetch('/home/tree/actions/publish_strategy', {
+			const response = await fetch('/actions/publish_strategy', {
 				method: 'POST',
 				headers: {
 					'Content-Type': 'application/json'
@@ -335,7 +335,7 @@
 	async function deleteProblem(id: string, uuid: string): Promise<void> {
 		$processing = true;
 		try {
-			const response = await fetch('/home/tree/actions/delete_problem', {
+			const response = await fetch('/actions/delete_problem', {
 				method: 'POST',
 				headers: {
 					'Content-Type': 'application/json'
@@ -369,7 +369,7 @@
 	async function deleteLinkedProblem(uuid: string): Promise<void> {
 		$processing = true;
 		try {
-			const response = await fetch('/home/tree/actions/delete_linked_problem', {
+			const response = await fetch('/actions/delete_linked_problem', {
 				method: 'POST',
 				headers: {
 					'Content-Type': 'application/json'
@@ -403,7 +403,7 @@
 	async function deleteStrategy(id: string, uuid: string): Promise<void> {
 		$processing = true;
 		try {
-			const response = await fetch('/home/tree/actions/delete_strategy', {
+			const response = await fetch('/actions/delete_strategy', {
 				method: 'POST',
 				headers: {
 					'Content-Type': 'application/json'

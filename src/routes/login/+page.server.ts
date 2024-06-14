@@ -5,7 +5,7 @@ export const load: PageServerLoad = async (event) => {
 	const session = await event.locals.getSession();
 
 	if (session) {
-		throw redirect(303, '/home/docs');
+		throw redirect(303, '/');
 	}
 
 	return {
@@ -43,6 +43,6 @@ export const actions: Actions = {
 				}
 			});
 		}
-		throw redirect(303, '/home/tree');
+		throw redirect(303, '/');
 	}
 };

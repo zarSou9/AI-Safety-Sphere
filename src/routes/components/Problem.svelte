@@ -790,7 +790,7 @@
 		if (posting) await waitForServer();
 		posting = true;
 		try {
-			const response = await fetch('/home/tree/actions/push_edit', {
+			const response = await fetch('/actions/push_edit', {
 				method: 'POST',
 				headers: {
 					'Content-Type': 'application/json'
@@ -812,7 +812,7 @@
 		if (posting) await waitForServer();
 		posting = true;
 		try {
-			const response = await fetch('/home/tree/actions/change_problem_title', {
+			const response = await fetch('/actions/change_problem_title', {
 				method: 'POST',
 				headers: {
 					'Content-Type': 'application/json'
@@ -862,7 +862,7 @@
 			sections = sections;
 		});
 		try {
-			const response = await fetch('/home/tree/actions/new_section', {
+			const response = await fetch('/actions/new_section', {
 				method: 'POST',
 				headers: {
 					'Content-Type': 'application/json'
@@ -898,7 +898,7 @@
 		const prevTitle = sections[i].title;
 		sections[i].title = sectionTitle;
 		try {
-			const response = await fetch('/home/tree/actions/change_section_title', {
+			const response = await fetch('/actions/change_section_title', {
 				method: 'POST',
 				headers: {
 					'Content-Type': 'application/json'
@@ -929,7 +929,7 @@
 		const prevSect = sections[i];
 		sections = [...sections.slice(0, i), ...sections.slice(i + 1)];
 		try {
-			const response = await fetch('/home/tree/actions/delete_section', {
+			const response = await fetch('/actions/delete_section', {
 				method: 'POST',
 				headers: {
 					'Content-Type': 'application/json'
@@ -958,7 +958,7 @@
 		if (posting) await waitForServer();
 		posting = true;
 		try {
-			const response = await fetch('/home/tree/actions/activate_user', {
+			const response = await fetch('/actions/activate_user', {
 				method: 'POST',
 				headers: {
 					'Content-Type': 'application/json'
@@ -987,7 +987,7 @@
 		if (posting) await waitForServer();
 		posting = true;
 		try {
-			const response = await fetch('/home/tree/actions/unactivate_user', {
+			const response = await fetch('/actions/unactivate_user', {
 				method: 'POST',
 				headers: {
 					'Content-Type': 'application/json'

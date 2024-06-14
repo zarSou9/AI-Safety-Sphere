@@ -7,23 +7,20 @@
 	import type { Writable } from 'svelte/store';
 	import type { TreeInterface } from '$lib/types/nodes';
 	import Tree from './Tree.svelte';
-	import type { PageData } from './$types';
+	import type { PageData } from '../$types';
 
 	const viewingNodeRect: { l: number; t: number; w: number; h: number } =
 		getContext('viewingNodeRect');
 	const navNodeRect: { l: number; t: number; w: number; h: number } = getContext('navNodeRect');
 	const nodeHeight: any = getContext('nodeHeightStore');
-	const charPos: { v: number } = getContext('charPos');
 	const viewingNode: any = getContext('viewingNodeStore');
 	const shortCutsEnabled: any = getContext('shortCutsEnabledStore');
 	const canvasAction: Writable<string | null> = getContext('canvasActionStore');
 	const nodeAction: Writable<string | null> = getContext('nodeActionStore');
 	const treeAction: Writable<string | null> = getContext('treeActionStore');
 	const viewPortContext: { height: number; top: number } = getContext('viewPort');
-	const tree: TreeInterface = getContext('tree');
 	const stratChange: { l: number; t: number; pl: number; pt: number } = getContext('stratChange');
 	const sectionContextE: Writable<any> = getContext('sectionContextEStore');
-	const data: PageData = getContext('data');
 
 	const zoomIntensity = 0.016;
 
