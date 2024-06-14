@@ -123,7 +123,7 @@ export function createTree() {
 
 			return { width: container.left, height: container.height * ySpace };
 		},
-		createRootProblem(title: string = 'untitled') {
+		createRootNode(title: string = 'untitled') {
 			const uuid = uuidv4();
 			let prob: Node = {
 				uuid,
@@ -144,15 +144,16 @@ export function createTree() {
 			owners: any = undefined
 		) {
 			const uuid = uuidv4();
-
-			parent.children.push({
+			const newNode = {
 				uuid,
 				data: { title, tldr },
 				owners,
 				children: []
-			});
+			};
 
-			return uuid;
+			parent.children.push(newNode);
+
+			return newNode;
 		},
 		deleteNode(uuid: string) {
 			let parent = this.getParent(uuid);

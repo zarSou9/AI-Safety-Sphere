@@ -23,12 +23,12 @@ interface TreeNode {
 
 interface TreeInterface {
 	setTree(t: Tree): void;
-	getTree(): Tree;
+	getTree(): Tree | undefined;
 	getParent(uuid: string | undefined, obj?: TreeNode): { i: number; node: TreeNode } | undefined;
-	getObjFromId(uuid?: string | undefined): Node | undefined;
+	getObjFromId(uuid?: string | undefined): TreeNode | undefined;
 	calculateSpacing(): { width: number; height: number };
 	createRootProblem(title?: string): [Node, { node: TreeNode }];
-	createNode(parent: TreeNode, title?: string, tldr?: any, owners?: any): string;
+	createNode(parent: TreeNode, title?: string, tldr?: any, owners?: any): TreeNode;
 	deleteNode(uuid: string): { error?: string };
 }
 

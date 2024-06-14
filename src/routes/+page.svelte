@@ -1,9 +1,9 @@
 <script lang="ts">
 	import InfiniteCanvas from './components/InfiniteCanvas.svelte';
 	import { createTree } from '$lib/stores/nodes.ts';
-	import { setContext, getContext, tick, onMount } from 'svelte';
+	import { setContext, tick, onMount } from 'svelte';
 	import { page } from '$app/stores';
-	import { writable, type Writable } from 'svelte/store';
+	import { writable } from 'svelte/store';
 	import TitleModal from '$lib/components/TitleModal.svelte';
 	import NewSection from '$lib/components/NewSection.svelte';
 	import ProblemTitleModal from '$lib/components/ProblemTitleModal.svelte';
@@ -147,12 +147,7 @@
 	setContext('linkInputStore', linkInput);
 
 	const tree = createTree();
-	if (data.props?.hier[0]?.data?.problem)
-		if (data.props?.profile?.selected_strategies) {
-			tree.setClientTree(data.props.hier[0].data, data.props.profile.selected_strategies);
-		} else {
-			tree.setClientTree(data.props.hier[0].data, []);
-		}
+	if (data.props?.hier[0]?.data?.problem) tree.setTree(data.props.hier[0].data);
 
 	setContext('tree', tree);
 
@@ -352,7 +347,6 @@
 	<ProblemTitleModal
 		{titleResult}
 		titleMessage="New Problem Title"
-		problems={tree.findAllProblems($newProblemTitleModal.s.id, $newProblemTitleModal.s.uuid)}
 		on:close={() => {
 			$newProblemTitleModal.visible = false;
 		}}

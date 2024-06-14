@@ -5,14 +5,13 @@ import Joi from 'joi';
 
 export const POST: RequestHandler = async ({ request, locals: { supabase, supabaseService } }) => {
 	try {
-		const { id, uuid, userId } = await request.json();
+		const { uuid, userId } = await request.json();
 
 		let tree;
 		const userIdValid = Joi.string().validate(userId);
-		const idValid = Joi.string().validate(id);
 		const uuidValid = Joi.string().validate(uuid);
 
-		if (userIdValid.error || idValid.error || uuidValid.error)
+		if (userIdValid.error || uuidValid.error)
 			throw { status: 400, message: 'Bad request: missing or incorrect fields' };
 
 		while (true) {
@@ -38,27 +37,24 @@ export const POST: RequestHandler = async ({ request, locals: { supabase, supaba
 			tree = createTree();
 
 			tree.setTree(treeData.data[0].data);
-			const treeNode = tree.getObjFromId(id, uuid);
+			const treeNode = tree.getObjFromId(uuid);
 			const owners = treeNode?.owners;
 			if (!owners?.includes(username)) {
 				throw { status: 400, message: 'Unauthorized' };
 			}
 
-			const deleteResult = tree.deleteProblem(id, uuid);
+			const deleteResult = tree.deleteNode(uuid);
 			if (deleteResult?.error) throw { status: 400, message: deleteResult.error };
 
-			const problemsPromise = supabaseService.from('Problems').delete().eq('uuid', uuid);
+			const nodesPromise = supabaseService.from('Nodes').delete().eq('uuid', uuid);
 			const treePostPromise = supabaseService
 				.from('Tree')
 				.update({ data: tree.getTree(), changing: 0 })
 				.eq('id', 1);
 
-			const [problemsResult, treePostResult] = await Promise.all([
-				problemsPromise,
-				treePostPromise
-			]);
+			const [nodesResult, treePostResult] = await Promise.all([nodesPromise, treePostPromise]);
 
-			if (problemsResult?.error) throw { status: 400, message: problemsResult.error.message };
+			if (nodesResult?.error) throw { status: 400, message: nodesResult.error.message };
 			if (treePostResult?.error) throw { status: 400, message: treePostResult.error.message };
 
 			break;

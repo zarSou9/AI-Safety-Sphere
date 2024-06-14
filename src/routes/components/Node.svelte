@@ -2,10 +2,9 @@
 	import { onMount, onDestroy, tick, getContext } from 'svelte';
 	import Edit from '$lib/icons/Edit.svelte';
 	import View from '$lib/icons/View.svelte';
-	import type { TreeInterface } from '$lib/types/nodes';
+	import type { TreeInterface, TreeNode } from '$lib/types/nodes';
 	import { get, type Writable } from 'svelte/store';
 	import type { PageData } from '../$types';
-	import Linked from '$lib/icons/Linked.svelte';
 	import { v4 as uuidv4 } from 'uuid';
 
 	const tree: TreeInterface = getContext('tree');
@@ -50,8 +49,7 @@
 	const aligned: Writable<string | boolean | null | undefined> = getContext('alignedStore');
 	const linkInput: Writable<any> = getContext('linkInputStore');
 
-	export let treeData: any;
-	export let referenced: any;
+	export let treeData: TreeNode | undefined;
 
 	let sections: any = [
 		{
@@ -74,7 +72,7 @@
 	let outPos = 0;
 	let editIconActive = false;
 	let editable = false;
-	let title: string;
+	let title: string | undefined;
 	let isSaving = false;
 	let posting = false;
 	let saved = true;
@@ -85,7 +83,7 @@
 	let nodeActionUnsubscribe: any;
 	let editBtnActive = true;
 	let currentUser = null;
-	let problemChannel: any = undefined;
+	let nodeChannel: any = undefined;
 	let linkRange: any;
 	let moved = false;
 
@@ -94,7 +92,7 @@
 
 	let userColor: string;
 	let username = data.props?.profile?.username;
-	if (treeData.owners.includes(username)) {
+	if (treeData?.owners?.includes(username)) {
 		userColor = 'owner';
 	}
 
@@ -296,14 +294,14 @@
 
 		sections[0].quill = new Quill(sections[0].editor, TldrQuillOptions);
 
-		title = treeData.data.title;
-		base = new Delta(treeData.data.tldr);
+		title = treeData?.data.title;
+		base = new Delta(treeData?.data.tldr);
 		currentQuill = sections[0].quill;
 		currentQuill.setContents(base);
 
 		enableQuills(false);
 
-		if (treeData.id === 'r') {
+		if (tree.getTree()?.node.uuid === treeData?.uuid) {
 			setTimeout(() => {
 				quillsReady.set(true);
 			}, 100);
@@ -311,8 +309,8 @@
 	});
 	onDestroy(() => {
 		window.removeEventListener('keydown', handleKeyDown);
-		if (problemChannel) data.supabase.removeChannel(problemChannel);
-		problemChannel = undefined;
+		if (nodeChannel) data.supabase.removeChannel(nodeChannel);
+		nodeChannel = undefined;
 
 		for (let section of sections) {
 			section.quill.off('editor-change', section.eventFunction);
@@ -330,8 +328,8 @@
 		escBtn = false;
 		editBtnActive = true;
 		clearTimeout(sessionTimeout);
-		if (problemChannel) data.supabase.removeChannel(problemChannel);
-		problemChannel = undefined;
+		if (nodeChannel) data.supabase.removeChannel(nodeChannel);
+		nodeChannel = undefined;
 		window.removeEventListener('keydown', handleKeyDown);
 		out = false;
 		save(true);
@@ -418,17 +416,10 @@
 					deleteSection(deleteI);
 				} else if (action === 'delete') {
 					escapeNode();
-					if (referenced.uuid) {
-						setTimeout(() => {
-							nodeToRemove.set({ uuid: referenced.uuid });
-							treeAction.set('remove-linked-node');
-						}, 300);
-					} else {
-						setTimeout(() => {
-							nodeToRemove.set({ id: treeData.id, uuid: treeData.uuid });
-							treeAction.set('remove-node');
-						}, 300);
-					}
+					setTimeout(() => {
+						nodeToRemove.set(treeData?.uuid);
+						treeAction.set('remove-node');
+					}, 300);
 				} else if (action === 'get-selection') {
 					moved = false;
 					linkRange = currentQuill.getSelection();
@@ -495,15 +486,15 @@
 	}
 	function loadData() {
 		if (userColor === 'owner') {
-			problemChannel = data.supabase
+			nodeChannel = data.supabase
 				.channel('schema-db-changes')
 				.on(
 					'postgres_changes',
 					{
 						event: 'UPDATE',
 						schema: 'public',
-						table: 'Problems',
-						filter: `uuid=eq.${treeData.uuid}`
+						table: 'Nodes',
+						filter: `uuid=eq.${treeData?.uuid}`
 					},
 					(payload) => {
 						currentUser = payload.new.active_user;
@@ -564,17 +555,17 @@
 				.subscribe();
 		}
 		data.supabase
-			.from('Problems')
+			.from('Nodes')
 			.select('*')
-			.eq('uuid', treeData.uuid)
-			.then(({ data: problemData }) => {
-				if (problemData) {
+			.eq('uuid', treeData?.uuid)
+			.then(({ data: nodeData }) => {
+				if (nodeData) {
 					if (userColor === 'owner') {
-						currentUser = problemData[0].active_user;
+						currentUser = nodeData[0].active_user;
 						if (currentUser === username || !currentUser) editBtnActive = true;
 						else {
 							const now = Date.now();
-							if (now - problemData[0].last_edit >= 100000) editBtnActive = true;
+							if (now - nodeData[0].last_edit >= 100000) editBtnActive = true;
 							else {
 								editBtnActive = false;
 								clearTimeout(sessionTimeout);
@@ -582,14 +573,12 @@
 									() => {
 										editBtnActive = true;
 									},
-									100000 - (now - problemData[0].last_edit)
+									100000 - (now - nodeData[0].last_edit)
 								);
 							}
 						}
 					}
-					const bases = JSON.parse(
-						JSON.stringify([problemData[0].tldr, ...problemData[0].content])
-					);
+					const bases = JSON.parse(JSON.stringify([nodeData[0].tldr, ...nodeData[0].content]));
 					updateQuillData(bases);
 					if (nodeReady) {
 						fillQuills();
@@ -769,24 +758,24 @@
 	}
 	function save(closing = false) {
 		if (!saved && !posting && userColor === 'owner') {
-			pushToProblemEdit({
-				id: treeData.id,
-				uuid: treeData.uuid,
+			pushEdit({
+				uuid: treeData?.uuid,
 				base,
 				section: currentSection,
-				userId: data.session?.user.id,
-				location: 'Problems'
+				userId: data.session?.user.id
 			});
 			saved = true;
 		}
 
 		if (closing) {
-			const treeDataTemp = tree.getObjFromId(treeData.id, treeData.uuid).data;
-			treeDataTemp.title = title;
-			treeDataTemp.tldr = sections[0].quill.getContents();
+			const treeDataTemp = tree.getObjFromId(treeData?.uuid)?.data;
+			if (treeDataTemp) {
+				treeDataTemp.title = title || '';
+				treeDataTemp.tldr = sections[0].quill.getContents();
+			}
 		}
 	}
-	async function pushToProblemEdit(d: any): Promise<void> {
+	async function pushEdit(d: any): Promise<void> {
 		if (posting) await waitForServer();
 		posting = true;
 		try {
@@ -812,14 +801,13 @@
 		if (posting) await waitForServer();
 		posting = true;
 		try {
-			const response = await fetch('/actions/change_problem_title', {
+			const response = await fetch('/actions/change_node_title', {
 				method: 'POST',
 				headers: {
 					'Content-Type': 'application/json'
 				},
 				body: JSON.stringify({
-					id: treeData.id,
-					uuid: treeData.uuid,
+					uuid: treeData?.uuid,
 					newTitle,
 					userId: data.session?.user.id
 				})
@@ -868,8 +856,7 @@
 					'Content-Type': 'application/json'
 				},
 				body: JSON.stringify({
-					id: treeData.id,
-					uuid: treeData.uuid,
+					uuid: treeData?.uuid,
 					sectionTitle,
 					after,
 					userId: data.session?.user.id
@@ -904,8 +891,7 @@
 					'Content-Type': 'application/json'
 				},
 				body: JSON.stringify({
-					id: treeData.id,
-					uuid: treeData.uuid,
+					uuid: treeData?.uuid,
 					i,
 					sectionTitle,
 					userId: data.session?.user.id
@@ -935,8 +921,7 @@
 					'Content-Type': 'application/json'
 				},
 				body: JSON.stringify({
-					id: treeData.id,
-					uuid: treeData.uuid,
+					uuid: treeData?.uuid,
 					i,
 					userId: data.session?.user.id
 				})
@@ -964,10 +949,8 @@
 					'Content-Type': 'application/json'
 				},
 				body: JSON.stringify({
-					id: treeData.id,
 					userId: data.session?.user.id,
-					uuid: treeData.uuid,
-					nodeType: true
+					uuid: treeData?.uuid
 				})
 			});
 
@@ -993,10 +976,8 @@
 					'Content-Type': 'application/json'
 				},
 				body: JSON.stringify({
-					id: treeData.id,
 					userId: data.session?.user.id,
-					uuid: treeData.uuid,
-					nodeType: true
+					uuid: treeData?.uuid
 				})
 			});
 
@@ -1032,8 +1013,7 @@
 			loadData();
 			$shortCutsEnabled = false;
 			if (userColor === 'owner') editIconActive = true;
-			if (referenced.uuid) $viewingNode = referenced.id;
-			else $viewingNode = treeData.id;
+			$viewingNode = treeData?.uuid;
 			startListening();
 			escBtn = true;
 			treeAction.set('find-node-position');
@@ -1055,14 +1035,12 @@
 				editBtnActive = false;
 				$processing = true;
 				data.supabase
-					.from('Problems')
+					.from('Nodes')
 					.select('*')
-					.eq('uuid', treeData.uuid)
-					.then(({ data: problemData }) => {
-						if (problemData) {
-							const bases = JSON.parse(
-								JSON.stringify([problemData[0].tldr, ...problemData[0].content])
-							);
+					.eq('uuid', treeData?.uuid)
+					.then(({ data: nodeData }) => {
+						if (nodeData) {
+							const bases = JSON.parse(JSON.stringify([nodeData[0].tldr, ...nodeData[0].content]));
 							updateQuillData(bases);
 							fillQuills().then(() => {
 								activateUser().then(
@@ -1092,7 +1070,7 @@
 	}
 	function editTitle() {
 		if (editable && userColor === 'owner') {
-			$titleModal.title = title;
+			$titleModal.title = title || '';
 			$titleModal.visible = true;
 		}
 	}
@@ -1138,13 +1116,8 @@
 			<View color={editBtnActive ? '#9c9c9c' : '#595959'} size="36px" />
 		{/if}
 	</button>
-	<p class="ml-[14px] mr-[50px] title mb-[5px] relative" on:dblclick={editTitle}>
+	<p class="ml-[14px] mr-[50px] title mb-[5px]" on:dblclick={editTitle}>
 		{title || 'untitled'}
-		{#if referenced.uuid}
-			<div class="absolute left-[-9px] top-[-11px]" title="This is a linked problem">
-				<Linked color="#9c9c9c" size="12px" />
-			</div>
-		{/if}
 	</p>
 	{#each sections as section, i (section.id)}
 		<div class="relative">

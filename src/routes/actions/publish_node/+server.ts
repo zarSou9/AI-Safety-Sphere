@@ -5,19 +5,14 @@ import Joi from 'joi';
 
 export const POST: RequestHandler = async ({ request, locals: { supabase, supabaseService } }) => {
 	try {
-		const { stratId, stratUUID, p, userId } = await request.json();
+		const { parentUUID, title, userId } = await request.json();
 
 		const userIdValid = Joi.string().validate(userId);
-		const stratIdValid = Joi.string().validate(stratId);
-		const pValid = Joi.object({
-			title: Joi.string(),
-			id: Joi.string(),
-			uuid: Joi.string()
-		}).validate(p);
-
+		const parentUUIDValid = Joi.string().validate(parentUUID);
+		const titleValid = Joi.string().max(32).validate(title);
 		let tree;
 
-		if (userIdValid.error || stratIdValid.error || pValid.error)
+		if (userIdValid.error || parentUUIDValid.error || titleValid.error)
 			throw { status: 400, message: 'Bad request: missing or incorrect fields' };
 
 		while (true) {
@@ -43,32 +38,33 @@ export const POST: RequestHandler = async ({ request, locals: { supabase, supaba
 			tree = createTree();
 
 			tree.setTree(treeData.data[0].data);
-			const treeNode = tree.getObjFromId(stratId, stratUUID);
+			const treeNode = tree.getObjFromId(parentUUID);
 			const owners = treeNode?.owners;
 			if (!owners?.includes(username)) {
 				throw { status: 400, message: 'Unauthorized' };
 			}
 
-			if (!treeNode?.id)
-				throw { status: 400, message: 'Parent strategy of problem node could not be found' };
+			const parent = tree.getObjFromId(parentUUID);
 
-			if (!tree.checkIfProbAboveStrat(stratId, stratUUID, p.id, p.uuid))
-				throw { status: 400, message: 'Cannot link parent node due to recursion' };
+			if (!parent) throw { status: 400, message: 'Parent node could not be found' };
 
-			tree.createLinkedProblem(stratId, stratUUID, p.uuid, username);
+			const node = tree.createNode(parent, title, undefined, [username]);
+			if (!node) throw { status: 400, message: 'error occured while creating node' };
 
-			if (treeNode.problems.length > 8)
-				throw { status: 400, message: 'Strategies have a maximum of 8 subproblems' };
-
-			const treeResult = await supabaseService
+			const nodesPromise = supabaseService
+				.from('Nodes')
+				.insert({ uuid: node.uuid, title, tldr: { ops: [] } });
+			const treePromise = supabaseService
 				.from('Tree')
 				.update({ data: tree.getTree(), changing: 0 })
-				.eq('changing', now)
-				.select('id');
+				.eq('id', 1);
 
+			const [nodesResult, treeResult] = await Promise.all([nodesPromise, treePromise]);
+
+			if (nodesResult?.error) throw { status: 400, message: nodesResult.error.message };
 			if (treeResult?.error) throw { status: 400, message: treeResult.error.message };
 
-			if (treeResult.data.length) break;
+			break;
 		}
 
 		return json(
