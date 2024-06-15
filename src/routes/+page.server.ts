@@ -18,7 +18,7 @@ export const load: LayoutServerLoad = async ({ depends, locals: { supabase, getS
 	if (user) {
 		const profilePromise = supabase
 			.from('Profiles')
-			.select('username, full_name, changes, selected_strategies, created_at')
+			.select('username, full_name, created_at')
 			.eq('user_id', user?.id)
 			.single();
 

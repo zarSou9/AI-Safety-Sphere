@@ -1,4 +1,4 @@
-import type { Node, Tree, TreeNode } from '../types/nodes';
+import type { Tree, TreeNode } from '../types/nodes';
 import { v4 as uuidv4 } from 'uuid';
 
 export function createTree() {
@@ -6,76 +6,47 @@ export function createTree() {
 	let ySpace = 560;
 
 	function endNodes(
-		obj: any,
+		obj: TreeNode,
 		pos: { left: number; height: number },
 		currentDepth = 0,
-		firstProblem = false,
-		problemsLength = 2
+		firstNode = false,
+		childrenLength = 2
 	) {
 		currentDepth++;
-		if (obj?.strategies) {
-			if (obj.strategies.length === 0) {
-				if (currentDepth > pos.height) pos.height = currentDepth;
-				obj.top = (currentDepth - 1) * ySpace;
-				if (problemsLength === 1 && pos.left !== 0) {
-					obj.left = pos.left + 60;
-					pos.left += 940;
-				} else if (firstProblem && pos.left !== 0) {
-					obj.left = pos.left + 60;
-					pos.left += 880;
-				} else {
-					obj.left = pos.left;
-					pos.left += 820;
-				}
+		if (obj.children.length === 0) {
+			if (currentDepth > pos.height) pos.height = currentDepth;
+			obj.top = (currentDepth - 1) * ySpace;
+			if (childrenLength === 1 && pos.left !== 0) {
+				obj.left = pos.left + 60;
+				pos.left += 940;
+			} else if (firstNode && pos.left !== 0) {
+				obj.left = pos.left + 60;
+				pos.left += 880;
 			} else {
-				obj.top = undefined;
-				obj.left = undefined;
-				endNodes(obj.strategies[obj.selectedStrategy], pos, currentDepth, firstProblem);
+				obj.left = pos.left;
+				pos.left += 820;
 			}
-		} else if (obj?.problems) {
-			if (obj.problems.length === 0) {
-				if (currentDepth > pos.height) pos.height = currentDepth;
-				obj.top = (currentDepth - 1) * ySpace;
-				if (firstProblem) {
-					obj.left = pos.left + 20;
-					pos.left += 940;
-				} else {
-					obj.left = pos.left;
-					pos.left += 900;
-				}
-			} else {
-				for (let i = 0; i < obj.problems.length; i++) {
-					obj.top = undefined;
-					obj.left = undefined;
-					if (i === 0) endNodes(obj.problems[i], pos, currentDepth, true, obj.problems.length);
-					else endNodes(obj.problems[i], pos, currentDepth);
-				}
+		} else {
+			for (let i = 0; i < obj.children.length; i++) {
+				if (i === 0) endNodes(obj.children[i], pos, currentDepth, true, obj.children.length);
+				else endNodes(obj.children[i], pos, currentDepth);
 			}
 		}
 	}
-	function bodyNodes(obj: any) {
-		if (obj?.strategies) {
-			if (obj.strategies[obj.selectedStrategy]?.top !== undefined) {
-				obj.top = obj.strategies[obj.selectedStrategy].top - ySpace;
-				obj.left = obj.strategies[obj.selectedStrategy].left + 40;
-				if (obj.id === 'r') return true;
-			} else {
-				bodyNodes(obj.strategies[obj.selectedStrategy]);
+	function bodyNodes(obj: TreeNode) {
+		if (obj.uuid === '742b77a5-b4ed-4f16-afe1-630686362d10') return true;
+		let c = true;
+		for (let child of obj.children) {
+			if (child?.top === undefined) {
+				c = false;
+				bodyNodes(child);
 			}
-		} else if (obj?.problems) {
-			let c = true;
-			for (let i = 0; i < obj.problems.length; i++) {
-				if (obj.problems[i]?.top === undefined) {
-					c = false;
-					bodyNodes(obj.problems[i]);
-				}
-			}
-			if (c) {
-				obj.top = obj.problems[0].top - ySpace;
-				let totalChildWidth =
-					obj.problems[obj.problems.length - 1].left + 800 - obj.problems[0].left;
-				obj.left = totalChildWidth / 2 + obj.problems[0].left - 440;
-			}
+		}
+		if (c) {
+			obj.top = (obj?.children[0]?.top || 0) - ySpace;
+			let totalChildWidth =
+				(obj?.children[obj.children.length - 1]?.left || 0) + 800 - (obj?.children[0]?.left || 0);
+			obj.left = totalChildWidth / 2 + (obj?.children[0]?.left || 0) - 440;
 		}
 	}
 
@@ -123,36 +94,30 @@ export function createTree() {
 
 			return { width: container.left, height: container.height * ySpace };
 		},
-		createRootNode(title: string = 'untitled') {
-			const uuid = uuidv4();
-			let prob: Node = {
-				uuid,
-				title: title
-			};
-			tree.node = {
-				uuid,
-				data: { title: title },
-				children: []
-			};
-
-			return [prob, { node: { uuid, data: { title: title }, strategies: [] } }];
-		},
 		createNode(
 			parent: TreeNode,
+			parent_category: string,
 			title: string = 'untitled',
 			tldr: any = undefined,
 			owners: any = undefined
 		) {
-			const uuid = uuidv4();
-			const newNode = {
-				uuid,
+			const newNode: TreeNode = {
+				uuid: uuidv4(),
 				data: { title, tldr },
 				owners,
+				parent_category,
+				linking_categories: [
+					{
+						id: uuidv4(),
+						title: 'Other',
+						description:
+							'For ideas which relate to this node in a way which is not defined by other categories',
+						color: '#3f3f3f'
+					}
+				],
 				children: []
 			};
-
 			parent.children.push(newNode);
-
 			return newNode;
 		},
 		deleteNode(uuid: string) {

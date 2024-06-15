@@ -147,7 +147,7 @@
 	setContext('linkInputStore', linkInput);
 
 	const tree = createTree();
-	if (data.props?.hier[0]?.data?.problem) tree.setTree(data.props.hier[0].data);
+	if (data.props?.hier[0]?.data?.node) tree.setTree(data.props.hier[0].data);
 
 	setContext('tree', tree);
 

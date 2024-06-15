@@ -1,16 +1,12 @@
 <script lang="ts">
 	import { getContext, onMount, tick } from 'svelte';
 	import Node from './Node.svelte';
-	import Left from '$lib/icons/Left.svelte';
-	import Right from '$lib/icons/Right.svelte';
 	import Curve from '$lib/components/Curve.svelte';
-	import type { TreeInterface, TreeNode } from '$lib/types/nodes';
+	import type { TreeInterface, linking_category } from '$lib/types/nodes';
 	import type { Writable } from 'svelte/store';
 	import type { PageData } from '../$types';
-	import { slide } from 'svelte/transition';
-	import FolderArrow from '$lib/icons/FolderArrow.svelte';
-
-	import { quintOut } from 'svelte/easing';
+	import ToolTip from '$lib/components/ToolTip.svelte';
+	import FadeElement from '$lib/components/FadeElement.svelte';
 
 	const tree: TreeInterface = getContext('tree');
 	const viewingNodeRect: { l: number; t: number; w: number; h: number } =
@@ -22,10 +18,6 @@
 	const data: PageData = getContext('data');
 	const viewingNode: Writable<any> = getContext('viewingNodeStore');
 	const quillsReady: Writable<boolean> = getContext('quillsReadyStore');
-	const newStrategyTitleModal: Writable<{
-		visible: boolean;
-		title: string;
-	}> = getContext('newStrategyTitleModalStore');
 	const failurePopUp: Writable<any> = getContext('failurePopUpStore');
 	const nodeToRemove: Writable<string | undefined> = getContext('nodeToRemoveStore');
 	const successPopUp: Writable<any> = getContext('successPopUpStore');
@@ -33,7 +25,6 @@
 	const processing: Writable<boolean> = getContext('processingStore');
 	const loginNotif: Writable<any> = getContext('loginNotifStore');
 
-	let sectionsOpen: any;
 	let viewingNodeDiv: HTMLDivElement | undefined;
 	let treeContainer: {
 		width: number;
@@ -52,14 +43,13 @@
 		last?: boolean;
 		owners?: Array<string>;
 		children?: Array<any>;
-		referenced?: string;
+		linking_categories: linking_category[];
 	}[] = [];
 	let openTree = false;
 	let extraShown = true;
 	let titleSpacingReady = false;
 	let moving = false;
 	let lastNavigatedNode = 'r';
-	let sectionFunction: any;
 
 	viewingNode.set(undefined);
 	$quillsReady = false;
@@ -76,7 +66,7 @@
 	onMount(() => {
 		if (tree.getTree()?.node) {
 			treeContainer = tree.calculateSpacing();
-			updateTreeArrays();
+			updateTreeArray();
 			openTree = true;
 		}
 		viewingNodeUnsubscribe = viewingNode.subscribe((v) => {
@@ -86,7 +76,7 @@
 				if ($redoTree) {
 					nodes = [];
 					treeContainer = tree.calculateSpacing();
-					updateTreeArrays();
+					updateTreeArray();
 					redoTree.set(false);
 				}
 				extraShown = true;
@@ -139,21 +129,8 @@
 		};
 	});
 
-	function updateTreeArrays(
-		obj = tree.getTree()?.node,
-		parent = { data: { title: '' }, uuid: '' }
-	) {
+	function updateTreeArray(obj = tree.getTree()?.node, parent: any = undefined) {
 		if (!obj) return;
-
-		const children: any[] = [];
-		for (let node of obj.children) {
-			updateTreeArrays(node, { data: obj.data, uuid: obj.uuid });
-			children.push({
-				uuid: node.uuid,
-				data: node.data,
-				pos: { top: node.top, left: node.left }
-			});
-		}
 		nodes.push({
 			uuid: obj.uuid,
 			data: obj.data,
@@ -161,8 +138,15 @@
 			top: obj.top,
 			left: obj.left,
 			parent,
-			children
+			linking_categories: obj.linking_categories
 		});
+		for (let node of obj.children) {
+			updateTreeArray(node, {
+				data: obj.data,
+				uuid: obj.uuid,
+				category: obj.linking_categories.find((cat) => cat.id === node.parent_category)
+			});
+		}
 	}
 
 	async function deleteNode(uuid: string | undefined): Promise<void> {
@@ -186,7 +170,7 @@
 			tree.setTree(result.data.tree);
 			tick().then(() => {
 				treeContainer = tree.calculateSpacing();
-				updateTreeArrays();
+				updateTreeArray();
 				setTimeout(() => {
 					quillsReady.set(true);
 					successPopUp.set('Node successfully deleted');
@@ -258,38 +242,56 @@
 				>
 					<Node treeData={tree.getObjFromId(node.uuid)} />
 					{#if extraShown}
-						<div class="absolute top-[-30px] flex w-[800px] justify-center">
-							<button
-								on:click={() => {
-									navigateToNode(node.parent.uuid);
-								}}
-								class="underline underline-offset-[-14px] text-[13px] text-[#9a9a9a] hover:text-[#ffffff]"
-								>{node.parent.data.title}
-							</button>
-						</div>
-						<div
-							class="absolute flex w-[800px] justify-center"
-							style="top: {node.div.clientHeight + 6}px;"
-						>
-							{#each node?.children || [] as child (child.uuid)}
+						{#if node.parent}
+							<div class="absolute top-[-30px] flex w-[800px] justify-center">
 								<button
-									bind:this={child.div}
 									on:click={() => {
-										navigateToNode(child.uuid);
+										navigateToNode(node.parent.uuid);
 									}}
-									class="absolute underline underline-offset-[3px] text-[13px] text-[#9a9a9a] hover:text-[#ffffff]"
-									style="left: {titleSpacingReady ? child.space : '380'}px;"
-									>{child.data.title}
+									class="underline underline-offset-[-14px] text-[13px] text-[#9a9a9a] hover:text-[#ffffff]"
+									>{node.parent.data.title}
 								</button>
+							</div>
+						{/if}
+						<div class="absolute flex w-[800px] justify-evenly top-[calc(100%+12px)]">
+							{#each node.linking_categories as category}
+								<div
+									role="button"
+									bind:this={category.div}
+									class="relative group text-[13px] px-[12px] py-[1px] rounded-[6px] cursor-pointer"
+									style="background-color: {category.color};"
+								>
+									<p class="selection:bg-none">{category.title}</p>
+									<FadeElement className="cursor-auto" side="bottom">
+										<div
+											class="flex flex-col items-center w-[180px] bg-[#282828] rounded-[6px] px-[10px] pb-[10px] text-[11.5px] text-[#e4e4e4]"
+										>
+											{#if category.description}
+												<p class="mt-[7px]">{category.description}</p>
+												<div class="bg-[#7c7c7c] h-[.3px] w-full mt-[8px]"></div>
+											{/if}
+											<button
+												class="border-[#33517b] border-[1px] hover:bg-[#33517b] transition-colors rounded-[6px] w-full py-[1px] mt-[10px]"
+												>Add Node</button
+											>
+											{#if node.owners?.includes(data.props?.profile?.username)}
+												<button
+													class="border-[#2d7356] border-[1px] hover:bg-[#2d7356] transition-colors rounded-[6px] w-full py-[1px] mt-[6px]"
+													>Edit Categories</button
+												>
+											{/if}
+										</div>
+									</FadeElement>
+								</div>
 							{/each}
 						</div>
 					{/if}
 					{#if $quillsReady && !node.last}
-						{#each node?.children || [] as child}
+						{#each node?.children || [] as child (child.uuid)}
 							<Curve
 								pointA={{
-									x: node.left + child.space + child.div.clientWidth / 2 + 40,
-									y: node.top || 0 + node.div.clientHeight + 27
+									x: node.left || 0,
+									y: (node.top || 0) + node.div.clientHeight
 								}}
 								pointB={{
 									x: child.pos.left + 400,
@@ -305,10 +307,3 @@
 	</div>
 {/if}
 <div class="h-[20px]" />
-
-<style>
-	.arrow {
-		transform: rotate(90deg);
-		transition: transform 150ms ease-out;
-	}
-</style>
