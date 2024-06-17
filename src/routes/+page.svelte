@@ -1,18 +1,22 @@
 <script lang="ts">
-	import InfiniteCanvas from './components/InfiniteCanvas.svelte';
 	import { createTree } from '$lib/stores/nodes.ts';
 	import { setContext, tick, onMount } from 'svelte';
 	import { page } from '$app/stores';
 	import { writable } from 'svelte/store';
-	import TitleModal from '$lib/components/TitleModal.svelte';
-	import NewSection from '$lib/components/NewSection.svelte';
-	import ProblemTitleModal from '$lib/components/ProblemTitleModal.svelte';
-	import ConfirmationModal from '$lib/components/ConfirmationModal.svelte';
-	import InfoModal from '$lib/components/InfoModal.svelte';
-	import Cross from '$lib/icons/Cross.svelte';
-	import ThreeDots from '$lib/icons/ThreeDots.svelte';
 	import { fly, fade, slide } from 'svelte/transition';
 	import { quintOut } from 'svelte/easing';
+	import type { CategoriesModal } from '$lib/types';
+
+	import InfiniteCanvas from './components/InfiniteCanvas.svelte';
+	import TitleModal from '$lib/components/TitleModal.svelte';
+	import NewSection from '$lib/components/NewSection.svelte';
+	import NewNodeModal from '$lib/components/NewNodeModal.svelte';
+	import ConfirmationModal from '$lib/components/ConfirmationModal.svelte';
+	import InfoModal from '$lib/components/InfoModal.svelte';
+	import CategoriesPopup from '$lib/components/CategoriesPopup.svelte';
+
+	import Cross from '$lib/icons/Cross.svelte';
+	import ThreeDots from '$lib/icons/ThreeDots.svelte';
 	import Bold from '$lib/icons/tool-bar/Bold.svelte';
 	import Italic from '$lib/icons/tool-bar/Italic.svelte';
 	import AlignC from '$lib/icons/tool-bar/AlignC.svelte';
@@ -90,11 +94,11 @@
 		title: ''
 	});
 	setContext('newStrategyTitleModalStore', newStrategyTitleModal);
-	const newProblemTitleModal: any = writable({
+	const newNodeModal: any = writable({
 		visible: false,
 		title: ''
 	});
-	setContext('newProblemTitleModalStore', newProblemTitleModal);
+	setContext('newNodeModalStore', newNodeModal);
 	const sectionModal: any = writable({
 		visible: false,
 		title: '',
@@ -145,6 +149,8 @@
 	setContext('alignedStore', aligned);
 	const linkInput: any = writable(false);
 	setContext('linkInputStore', linkInput);
+	const categoriesModal = writable(undefined as CategoriesModal | undefined);
+	setContext('categoriesModalStore', categoriesModal);
 
 	const tree = createTree();
 	if (data.props?.hier[0]?.data?.node) tree.setTree(data.props.hier[0].data);
@@ -159,8 +165,8 @@
 		titleResult.title = $newStrategyTitleModal.title;
 		tick().then(() => titleResult.div?.focus());
 	}
-	$: if ($newProblemTitleModal.visible) {
-		titleResult.title = $newProblemTitleModal.title;
+	$: if ($newNodeModal.visible) {
+		titleResult.title = $newNodeModal.title;
 		tick().then(() => titleResult.div?.focus());
 	}
 	$: if ($sectionModal.visible) {
@@ -330,30 +336,24 @@
 			$sectionTitleModal.visible = false;
 		}}
 	/>
-{:else if $newStrategyTitleModal.visible}
-	<TitleModal
+{:else if $newNodeModal.visible}
+	<NewNodeModal
 		{titleResult}
-		titleMessage="New Strategy Title"
+		titleMessage="New Node Title"
 		on:close={() => {
-			$newStrategyTitleModal.visible = false;
+			$newNodeModal.visible = false;
 		}}
 		on:save={() => {
-			$newStrategyTitleModal.title = titleResult.title;
-			treeAction.set('create-new-strategy');
-			$newStrategyTitleModal.visible = false;
+			$newNodeModal.title = titleResult.title;
+			treeAction.set('create-new-node');
+			$newNodeModal.visible = false;
 		}}
 	/>
-{:else if $newProblemTitleModal.visible}
-	<ProblemTitleModal
-		{titleResult}
-		titleMessage="New Problem Title"
-		on:close={() => {
-			$newProblemTitleModal.visible = false;
-		}}
+{:else if $categoriesModal?.visible}
+	<CategoriesPopup
+		{categoriesModal}
 		on:save={() => {
-			$newProblemTitleModal.title = titleResult.title;
-			nodeAction.set('create-new-problem');
-			$newProblemTitleModal.visible = false;
+			treeAction.set('save-new-categories');
 		}}
 	/>
 {:else if confirmationModalVisible}
@@ -682,7 +682,7 @@
 			</button>
 		</div>
 	</div>
-	<div class="flex-1 overflow-hidden text-[#f0f0f0]">
+	<div class="flex-1 overflow-hidden">
 		<InfiniteCanvas />
 	</div>
 </div>

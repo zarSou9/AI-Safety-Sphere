@@ -1,4 +1,4 @@
-import type { Tree, TreeNode } from '../types/nodes';
+import type { Tree, TreeNode } from '../types';
 import { v4 as uuidv4 } from 'uuid';
 
 export function createTree() {
@@ -9,17 +9,13 @@ export function createTree() {
 		obj: TreeNode,
 		pos: { left: number; height: number },
 		currentDepth = 0,
-		firstNode = false,
-		childrenLength = 2
+		firstNode = false
 	) {
 		currentDepth++;
 		if (obj.children.length === 0) {
 			if (currentDepth > pos.height) pos.height = currentDepth;
 			obj.top = (currentDepth - 1) * ySpace;
-			if (childrenLength === 1 && pos.left !== 0) {
-				obj.left = pos.left + 60;
-				pos.left += 940;
-			} else if (firstNode && pos.left !== 0) {
+			if (firstNode && pos.left !== 0) {
 				obj.left = pos.left + 60;
 				pos.left += 880;
 			} else {
@@ -28,13 +24,12 @@ export function createTree() {
 			}
 		} else {
 			for (let i = 0; i < obj.children.length; i++) {
-				if (i === 0) endNodes(obj.children[i], pos, currentDepth, true, obj.children.length);
+				if (i === 0) endNodes(obj.children[i], pos, currentDepth, true);
 				else endNodes(obj.children[i], pos, currentDepth);
 			}
 		}
 	}
 	function bodyNodes(obj: TreeNode) {
-		if (obj.uuid === '742b77a5-b4ed-4f16-afe1-630686362d10') return true;
 		let c = true;
 		for (let child of obj.children) {
 			if (child?.top === undefined) {
@@ -46,7 +41,8 @@ export function createTree() {
 			obj.top = (obj?.children[0]?.top || 0) - ySpace;
 			let totalChildWidth =
 				(obj?.children[obj.children.length - 1]?.left || 0) + 800 - (obj?.children[0]?.left || 0);
-			obj.left = totalChildWidth / 2 + (obj?.children[0]?.left || 0) - 440;
+			obj.left = totalChildWidth / 2 + (obj?.children[0]?.left || 0) - 400;
+			if (obj.uuid === '742b77a5-b4ed-4f16-afe1-630686362d10') return true;
 		}
 	}
 
@@ -101,6 +97,7 @@ export function createTree() {
 			tldr: any = undefined,
 			owners: any = undefined
 		) {
+			if (!parent.linking_categories.find((lc) => lc.id === parent_category)) return;
 			const newNode: TreeNode = {
 				uuid: uuidv4(),
 				data: { title, tldr },

@@ -18,16 +18,17 @@ interface TreeNode {
 	owners?: string[];
 	children: TreeNode[];
 	parent_category: string;
-	linking_categories: linking_category[];
+	linking_categories: LinkingCategory[];
 	top?: number | undefined;
 	left?: number | undefined;
 }
 
-interface linking_category {
+interface LinkingCategory {
 	id: string;
 	title: string;
 	description: string;
 	color: string;
+	left?: number;
 	div?: HTMLDivElement;
 }
 
@@ -41,13 +42,12 @@ interface TreeInterface {
 	deleteNode(uuid: string): { error?: string };
 }
 
-interface NodeChange {
-	id: string;
-	sections: any;
+interface CategoriesModal {
+	uuid: string;
+	visible: boolean;
+	categories: linking_category[];
+	uneditableCats: Set<string>;
+	waiting: boolean;
 }
 
-interface TrackChanges {
-	nodes: NodeChange[];
-}
-
-export { Node, Tree, TreeInterface, TreeNode, TrackChanges, linking_category };
+export { Node, Tree, TreeInterface, TreeNode, LinkingCategory, CategoriesModal };

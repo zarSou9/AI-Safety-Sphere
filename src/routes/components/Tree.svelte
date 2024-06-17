@@ -2,10 +2,9 @@
 	import { getContext, onMount, tick } from 'svelte';
 	import Node from './Node.svelte';
 	import Curve from '$lib/components/Curve.svelte';
-	import type { TreeInterface, linking_category } from '$lib/types/nodes';
+	import type { TreeInterface, LinkingCategory, CategoriesModal } from '$lib/types';
 	import type { Writable } from 'svelte/store';
 	import type { PageData } from '../$types';
-	import ToolTip from '$lib/components/ToolTip.svelte';
 	import FadeElement from '$lib/components/FadeElement.svelte';
 
 	const tree: TreeInterface = getContext('tree');
@@ -23,7 +22,9 @@
 	const successPopUp: Writable<any> = getContext('successPopUpStore');
 	const redoTree: Writable<boolean> = getContext('redoTreeStore');
 	const processing: Writable<boolean> = getContext('processingStore');
-	const loginNotif: Writable<any> = getContext('loginNotifStore');
+	const loginNotif: Writable<boolean> = getContext('loginNotifStore');
+	const categoriesModal: Writable<CategoriesModal> = getContext('categoriesModalStore');
+	const newNodeModal: Writable<any> = getContext('newNodeModalStore');
 
 	let viewingNodeDiv: HTMLDivElement | undefined;
 	let treeContainer: {
@@ -42,12 +43,16 @@
 		parent?: any;
 		last?: boolean;
 		owners?: Array<string>;
-		children?: Array<any>;
-		linking_categories: linking_category[];
+		children: Array<{
+			uuid: string;
+			pos: { left: number; top: number };
+			parent_category: LinkingCategory;
+		}>;
+		linking_categories: LinkingCategory[];
 	}[] = [];
 	let openTree = false;
 	let extraShown = true;
-	let titleSpacingReady = false;
+	let categorySpacingReady = false;
 	let moving = false;
 	let lastNavigatedNode = 'r';
 
@@ -89,10 +94,11 @@
 			if (v) {
 				window.addEventListener('keydown', handleKeydown);
 				setTimeout(() => {
-					titleSpacingReady = true;
+					calculateCategorySpacing();
+					categorySpacingReady = true;
 				}, 40);
 			} else {
-				titleSpacingReady = false;
+				categorySpacingReady = false;
 			}
 		});
 		treeActionUnsubscribe = treeAction.subscribe((action) => {
@@ -116,6 +122,16 @@
 				} else if (action === 'remove-node') {
 					deleteNode($nodeToRemove);
 					nodeToRemove.set(undefined);
+				} else if (action === 'save-new-categories') {
+					$categoriesModal.categories.forEach((c) => {
+						if (!c.title) c.title = 'untitled';
+						delete c?.input;
+						delete c?.div;
+					});
+					updateCategories($categoriesModal.uuid, $categoriesModal.categories);
+				} else if (action === 'create-new-node') {
+					publishNode($newNodeModal.uuid, $newNodeModal.category, $newNodeModal.title);
+					$newNodeModal.title = '';
 				}
 				treeAction.set(null);
 			}
@@ -129,6 +145,19 @@
 		};
 	});
 
+	function calculateCategorySpacing() {
+		nodes.forEach((n) => {
+			let catWidths = 0;
+			n.linking_categories.forEach((lc) => (catWidths += lc.div?.offsetWidth || 0));
+			let spacing = (800 - catWidths) / (n.linking_categories.length + 1);
+			let accumulator = 0;
+			n.linking_categories.forEach((lc) => {
+				lc.left = accumulator + spacing;
+				accumulator += spacing + (lc.div?.offsetWidth || 0);
+			});
+		});
+	}
+
 	function updateTreeArray(obj = tree.getTree()?.node, parent: any = undefined) {
 		if (!obj) return;
 		nodes.push({
@@ -137,6 +166,15 @@
 			owners: obj.owners,
 			top: obj.top,
 			left: obj.left,
+			children: obj.children.map((n) => {
+				return {
+					uuid: n.uuid,
+					pos: { left: n.left || 0, top: n.top || 0 },
+					parent_category: obj.linking_categories.find(
+						(lc) => lc.id === n.parent_category
+					) as LinkingCategory
+				};
+			}),
 			parent,
 			linking_categories: obj.linking_categories
 		});
@@ -182,6 +220,80 @@
 			$processing = false;
 		}
 	}
+	async function updateCategories(
+		uuid: string | undefined,
+		newCategories: LinkingCategory[]
+	): Promise<void> {
+		$categoriesModal.waiting = true;
+		try {
+			const response = await fetch('/actions/update_categories', {
+				method: 'POST',
+				headers: {
+					'Content-Type': 'application/json'
+				},
+				body: JSON.stringify({ uuid, newCategories, userId: data.session?.user.id })
+			});
+
+			const result: any = await response.json();
+
+			if (!response.ok) {
+				throw new Error(result.error || 'Failed to submit data');
+			}
+			quillsReady.set(false);
+			nodes = [];
+			tree.setTree(result.data.tree);
+			tick().then(() => {
+				treeContainer = tree.calculateSpacing();
+				updateTreeArray();
+				setTimeout(() => {
+					quillsReady.set(true);
+					successPopUp.set('Categories updated!');
+				}, 20);
+			});
+			$categoriesModal.visible = false;
+		} catch (error: any) {
+			failurePopUp.set('Error: ' + error.message);
+		} finally {
+			$categoriesModal.waiting = false;
+		}
+	}
+	async function publishNode(
+		parentUUID: string,
+		parentCategory: string,
+		title: string
+	): Promise<void> {
+		$processing = true;
+		try {
+			const response = await fetch('/actions/publish_node', {
+				method: 'POST',
+				headers: {
+					'Content-Type': 'application/json'
+				},
+				body: JSON.stringify({ parentUUID, parentCategory, title, userId: data.session?.user.id })
+			});
+
+			const result: any = await response.json();
+
+			if (!response.ok) {
+				throw new Error(result.error || 'Failed to submit data');
+			}
+			quillsReady.set(false);
+			nodes = [];
+			tree.setTree(result.data.tree);
+			tick().then(() => {
+				treeContainer = tree.calculateSpacing();
+				updateTreeArray();
+				setTimeout(() => {
+					quillsReady.set(true);
+				}, 20);
+			});
+			$processing = false;
+		} catch (error: any) {
+			$processing = false;
+			failurePopUp.set('Error: ' + error.message);
+		}
+	}
+
 	function navigateToNode(uuid: string | undefined) {
 		const nRect = findNodeInTreeArrays(uuid)?.div?.getBoundingClientRect();
 		if (nRect && uuid) {
@@ -200,17 +312,20 @@
 				moving = true;
 				let parent = tree.getParent(lastNavigatedNode);
 				if (parent) navigateToNode(parent.node.uuid);
+				else navigateToNode('742b77a5-b4ed-4f16-afe1-630686362d10');
 				setTimeout(() => (moving = false), 320);
 			} else if (k === 'ArrowDown') {
 				moving = true;
 				const n = tree.getObjFromId(lastNavigatedNode);
 				if (n) navigateToNode(n.children[0]?.uuid);
+				else navigateToNode('742b77a5-b4ed-4f16-afe1-630686362d10');
 				setTimeout(() => (moving = false), 320);
 			} else if (k === 'ArrowLeft') {
 				moving = true;
 				const parent = tree.getParent(lastNavigatedNode);
 				let i = -1;
 				if (parent) i += parent.i;
+				else navigateToNode('742b77a5-b4ed-4f16-afe1-630686362d10');
 				if (i >= 0) {
 					navigateToNode(parent?.node.children[i]?.uuid);
 				}
@@ -220,6 +335,7 @@
 				const parent = tree.getParent(lastNavigatedNode);
 				let i = 1;
 				if (parent) i += parent.i;
+				else navigateToNode('742b77a5-b4ed-4f16-afe1-630686362d10');
 				if (i < (parent?.node.children.length || 0)) {
 					navigateToNode(parent?.node.children[i]?.uuid);
 				}
@@ -253,13 +369,19 @@
 								</button>
 							</div>
 						{/if}
-						<div class="absolute flex w-[800px] justify-evenly top-[calc(100%+12px)]">
-							{#each node.linking_categories as category}
+						<div class="absolute flex w-[800px] top-[calc(100%+12px)]">
+							{#each node.linking_categories as category (category.id)}
 								<div
-									role="button"
+									role="presentation"
+									on:click={() =>
+										navigateToNode(
+											node.children.find((n) => n.parent_category.id === category.id)?.uuid
+										)}
 									bind:this={category.div}
-									class="relative group text-[13px] px-[12px] py-[1px] rounded-[6px] cursor-pointer"
-									style="background-color: {category.color};"
+									class="absolute group top-0 text-[13px] px-[12px] py-[1px] rounded-[6px] cursor-pointer"
+									style="background-color: {category.color}; left: {categorySpacingReady
+										? category.left
+										: '380'}px;"
 								>
 									<p class="selection:bg-none">{category.title}</p>
 									<FadeElement className="cursor-auto" side="bottom">
@@ -268,14 +390,32 @@
 										>
 											{#if category.description}
 												<p class="mt-[7px]">{category.description}</p>
-												<div class="bg-[#7c7c7c] h-[.3px] w-full mt-[8px]"></div>
+												<div class="bg-[#7c7c7c] h-[.3px] w-full mt-[8px]" />
 											{/if}
 											<button
-												class="border-[#33517b] border-[1px] hover:bg-[#33517b] transition-colors rounded-[6px] w-full py-[1px] mt-[10px]"
+												on:click={() => {
+													if (data.props.loggedIn) {
+														$newNodeModal.uuid = node.uuid;
+														$newNodeModal.category = category.id;
+														$newNodeModal.visible = true;
+													} else loginNotif.set(true);
+												}}
+												class="border-[#3d6297] border-[1px] hover:bg-[#3d6297] transition-colors rounded-[6px] w-full py-[1px] mt-[10px]"
 												>Add Node</button
 											>
 											{#if node.owners?.includes(data.props?.profile?.username)}
 												<button
+													on:click={() => {
+														$categoriesModal = {
+															visible: true,
+															uuid: node.uuid,
+															categories: node.linking_categories,
+															uneditableCats: new Set(
+																node.children.map((child) => child.parent_category.id)
+															),
+															waiting: false
+														};
+													}}
 													class="border-[#2d7356] border-[1px] hover:bg-[#2d7356] transition-colors rounded-[6px] w-full py-[1px] mt-[6px]"
 													>Edit Categories</button
 												>
@@ -286,22 +426,25 @@
 							{/each}
 						</div>
 					{/if}
-					{#if $quillsReady && !node.last}
-						{#each node?.children || [] as child (child.uuid)}
-							<Curve
-								pointA={{
-									x: node.left || 0,
-									y: (node.top || 0) + node.div.clientHeight
-								}}
-								pointB={{
-									x: child.pos.left + 400,
-									y: child.pos.top - 27
-								}}
-								size={treeContainer}
-							/>
-						{/each}
-					{/if}
 				</div>
+				{#if $quillsReady && !node.last && categorySpacingReady}
+					{#each node?.children || [] as child (child.uuid)}
+						<Curve
+							pointA={{
+								x:
+									(node.left || 0) +
+									(child.parent_category.left || 0) +
+									(child.parent_category.div?.offsetWidth || 0) / 2,
+								y: (node.top || 0) + node.div.clientHeight + 33.5
+							}}
+							pointB={{
+								x: child.pos.left + 400,
+								y: child.pos.top - 29
+							}}
+							size={treeContainer}
+						/>
+					{/each}
+				{/if}
 			{/if}
 		{/each}
 	</div>

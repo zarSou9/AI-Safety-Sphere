@@ -1,19 +1,31 @@
 import type { RequestHandler } from './$types';
 import { json } from '@sveltejs/kit';
 import { createTree } from '$lib/stores/nodes';
+import type { LinkingCategory } from '$lib/types';
 import Joi from 'joi';
 
 export const POST: RequestHandler = async ({ request, locals: { supabase, supabaseService } }) => {
 	try {
-		const { parentUUID, parentCategory, title, userId } = await request.json();
+		const LinkingCategoriesSchema = Joi.array().items(
+			Joi.object({
+				id: Joi.string().required(),
+				title: Joi.string().required(),
+				description: Joi.string().required().allow(''),
+				color: Joi.string().required()
+			}).required()
+		);
+
+		const {
+			uuid,
+			newCategories,
+			userId
+		}: { uuid: string; newCategories: LinkingCategory[]; userId: string } = await request.json();
 
 		const userIdValid = Joi.string().validate(userId);
-		const parentUUIDValid = Joi.string().validate(parentUUID);
-		const titleValid = Joi.string().max(32).validate(title);
-		const parentCategoryValid = Joi.string().validate(parentCategory);
+		const uuidValid = Joi.string().validate(uuid);
+		const newCategoriesValid = LinkingCategoriesSchema.validate(newCategories);
 		let tree;
-
-		if (userIdValid.error || parentUUIDValid.error || titleValid.error || parentCategoryValid.error)
+		if (userIdValid.error || uuidValid.error || newCategoriesValid.error)
 			throw { status: 400, message: 'Bad request: missing or incorrect fields' };
 
 		while (true) {
@@ -39,30 +51,24 @@ export const POST: RequestHandler = async ({ request, locals: { supabase, supaba
 			tree = createTree();
 
 			tree.setTree(treeData.data[0].data);
-			const treeNode = tree.getObjFromId(parentUUID);
+			const treeNode = tree.getObjFromId(uuid);
+			if (!treeNode) throw { status: 400, message: 'Node does not exist' };
 			const owners = treeNode?.owners;
 			if (!owners?.includes(username)) {
 				throw { status: 400, message: 'Unauthorized' };
 			}
+			treeNode?.children.forEach((child) => {
+				if (!newCategories.find((cat) => cat.id === child.parent_category)) {
+					throw { status: 400, message: 'Cannot delete category with child nodes' };
+				}
+			});
+			treeNode.linking_categories = newCategories;
 
-			const parent = tree.getObjFromId(parentUUID);
-
-			if (!parent) throw { status: 400, message: 'Parent node could not be found' };
-
-			const node = tree.createNode(parent, parentCategory, title, undefined, [username]);
-			if (!node) throw { status: 400, message: 'error occured while creating node' };
-
-			const nodesPromise = supabaseService
-				.from('Nodes')
-				.insert({ uuid: node.uuid, title, tldr: { ops: [] } });
-			const treePromise = supabaseService
+			const treeResult = await supabaseService
 				.from('Tree')
 				.update({ data: tree.getTree(), changing: 0 })
 				.eq('id', 1);
 
-			const [nodesResult, treeResult] = await Promise.all([nodesPromise, treePromise]);
-
-			if (nodesResult?.error) throw { status: 400, message: nodesResult.error.message };
 			if (treeResult?.error) throw { status: 400, message: treeResult.error.message };
 
 			break;

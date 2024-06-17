@@ -2,7 +2,7 @@
 	import { onMount, onDestroy, tick, getContext } from 'svelte';
 	import Edit from '$lib/icons/Edit.svelte';
 	import View from '$lib/icons/View.svelte';
-	import type { TreeInterface, TreeNode } from '$lib/types/nodes';
+	import type { TreeInterface, TreeNode } from '$lib/types';
 	import { get, type Writable } from 'svelte/store';
 	import type { PageData } from '../$types';
 	import { v4 as uuidv4 } from 'uuid';
@@ -53,7 +53,7 @@
 
 	let sections: any = [
 		{
-			title: 'TL;DR',
+			title: 'Inferential Step',
 			id: uuidv4(),
 			editor: undefined,
 			base: undefined,
@@ -99,7 +99,7 @@
 	let currentQuill: any;
 	let currentEditor: any;
 	let base: any;
-	let currentSection: string = 'TL;DR';
+	let currentSection: string = 'Inferential Step';
 
 	const quillOptions: any = {
 		theme: 'bubble',
@@ -143,13 +143,13 @@
 					}
 				}
 			} else if (eventName === 'text-change') {
-				if (title === 'TL;DR' && quill.getText().split('\n').length > 9) {
+				if (title === 'Inferential Step' && quill.getText().split('\n').length > 9) {
 					quill.setContents(oldQuill);
-					failurePopUp.set('The TL;DR section is limited to 8 new lines');
+					failurePopUp.set('The Inferential Step section is limited to 8 new lines');
 					setTimeout(() => quill.blur(), 10);
-				} else if (title === 'TL;DR' && oldQuill.compose(range).length() > 875) {
+				} else if (title === 'Inferential Step' && oldQuill.compose(range).length() > 875) {
 					quill.setContents(oldQuill);
-					failurePopUp.set('The TL;DR section is limited to 875 characters');
+					failurePopUp.set('The Inferential Step section is limited to 875 characters');
 					setTimeout(() => quill.blur(), 10);
 				} else {
 					if (source !== 'api' && !(range.ops[1]?.delete || range.ops[0]?.delete)) {

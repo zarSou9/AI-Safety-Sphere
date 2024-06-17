@@ -60,7 +60,7 @@ export const POST: RequestHandler = async ({ request, locals: { supabase, supaba
 				throw { status: 400, message: 'Another user is currently editing this node' };
 
 			let baseValid;
-			if (section === 'TL;DR') {
+			if (section === 'Inferential Step') {
 				baseValid = tldrDelta.validate(base);
 				if (baseValid.error)
 					throw { status: 400, message: 'Bad request: missing or incorrect fields' };
@@ -70,7 +70,8 @@ export const POST: RequestHandler = async ({ request, locals: { supabase, supaba
 				dbase.eachLine(() => {
 					i += 1;
 				});
-				if (i > 14) throw { status: 400, message: 'The TL;DR section is limited to 12 lines' };
+				if (i > 14)
+					throw { status: 400, message: 'The Inferential Step section is limited to 12 lines' };
 
 				treeNode.data.tldr = base;
 				const treePostPromise = supabaseService
