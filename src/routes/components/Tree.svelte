@@ -441,7 +441,7 @@
 									(node.left || 0) +
 									(child.parent_category.left || 0) +
 									(child.parent_category.div?.offsetWidth || 0) / 2,
-								y: (node.top || 0) + node.div.clientHeight + 33.5
+								y: (node.top || 0) + node.div.clientHeight + 33
 							}}
 							pointB={{
 								x: child.pos.left + 400,

@@ -104,14 +104,14 @@
 							bind:this={category.input}
 							on:input={() => {
 								setTimeout(() => {
-									if (category.title.length === 16)
-										failurePopUp.set('Title cannot exceed 16 characters');
+									if (category.title.length === 22)
+										failurePopUp.set('Title cannot exceed 22 characters');
 								}, 10);
 							}}
 							placeholder="untitled"
 							class="bg-inherit border-none outline-none"
 							bind:value={category.title}
-							maxlength="16"
+							maxlength="22"
 						/>
 					</div>
 					<div class="flex flex-row space-x-[5px] mt-[3px]">
