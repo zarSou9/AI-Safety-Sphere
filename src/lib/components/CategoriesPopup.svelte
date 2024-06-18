@@ -128,12 +128,12 @@
 							class="bg-inherit border-none outline-none w-full"
 							on:input={() => {
 								setTimeout(() => {
-									if (category.description.length === 170)
-										failurePopUp.set('Description cannot exceed 170 characters');
+									if (category.description.length === 200)
+										failurePopUp.set('Description cannot exceed 200 characters');
 								}, 10);
 							}}
 							bind:value={category.description}
-							maxlength="170"
+							maxlength="200"
 						/>
 					</div>
 					{#if $categoriesModal.uneditableCats.has(category.id) || categories.length === 1}
