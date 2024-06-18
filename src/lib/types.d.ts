@@ -27,10 +27,19 @@ interface LinkingCategory {
 	id: string;
 	title: string;
 	description: string;
-	color: string;
+	color: CategoryColors;
 	left?: number;
 	div?: HTMLDivElement;
 }
+
+type CategoryColors =
+	| '#3f3f3f'
+	| '#46966c'
+	| '#6d4ba3'
+	| '#3f8b91'
+	| '#b04d35'
+	| '#68497a'
+	| '#8d8142';
 
 interface TreeInterface {
 	setTree(t: Tree): void;
@@ -50,4 +59,4 @@ interface CategoriesModal {
 	waiting: boolean;
 }
 
-export { Node, Tree, TreeInterface, TreeNode, LinkingCategory, CategoriesModal };
+export { Node, Tree, TreeInterface, TreeNode, LinkingCategory, CategoriesModal, CategoryColors };

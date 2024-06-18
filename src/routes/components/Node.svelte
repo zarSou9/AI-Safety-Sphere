@@ -50,6 +50,7 @@
 	const linkInput: Writable<any> = getContext('linkInputStore');
 
 	export let treeData: TreeNode | undefined;
+	export let shadowColor: string;
 
 	let sections: any = [
 		{
@@ -1093,7 +1094,7 @@
 
 <div
 	class="grid bg-[#1f1f1f] rounded-[20px] w-[800px] px-[56px] py-[47px] relative selection:bg-[#6a87b389]"
-	style="box-shadow: -2px 2px #a53a3a;"
+	style={`box-shadow: -2px 2px ${shadowColor}`}
 >
 	{#if escBtn}
 		<button

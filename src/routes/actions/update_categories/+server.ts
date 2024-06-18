@@ -1,7 +1,7 @@
 import type { RequestHandler } from './$types';
 import { json } from '@sveltejs/kit';
 import { createTree } from '$lib/stores/nodes';
-import type { LinkingCategory } from '$lib/types';
+import type { LinkingCategory, CategoryColors } from '$lib/types';
 import Joi from 'joi';
 
 export const POST: RequestHandler = async ({ request, locals: { supabase, supabaseService } }) => {
@@ -9,9 +9,17 @@ export const POST: RequestHandler = async ({ request, locals: { supabase, supaba
 		const LinkingCategoriesSchema = Joi.array().items(
 			Joi.object({
 				id: Joi.string().required(),
-				title: Joi.string().required(),
-				description: Joi.string().required().allow(''),
-				color: Joi.string().required()
+				title: Joi.string().required().max(16),
+				description: Joi.string().required().allow('').max(170),
+				color: Joi.alternatives().try(
+					'#3f3f3f',
+					'#46966c',
+					'#6d4ba3',
+					'#3f8b91',
+					'#b04d35',
+					'#68497a',
+					'#8d8142'
+				)
 			}).required()
 		);
 

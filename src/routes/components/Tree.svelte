@@ -127,6 +127,7 @@
 						if (!c.title) c.title = 'untitled';
 						delete c?.input;
 						delete c?.div;
+						delete c?.left;
 					});
 					updateCategories($categoriesModal.uuid, $categoriesModal.categories);
 				} else if (action === 'create-new-node') {
@@ -356,7 +357,10 @@
 					class="absolute"
 					style="left: {node.left}px; top: {node.top}px;"
 				>
-					<Node treeData={tree.getObjFromId(node.uuid)} />
+					<Node
+						shadowColor={node.parent?.category.color || '#a53a3a'}
+						treeData={tree.getObjFromId(node.uuid)}
+					/>
 					{#if extraShown}
 						{#if node.parent}
 							<div class="absolute top-[-30px] flex w-[800px] justify-center">
@@ -364,8 +368,8 @@
 									on:click={() => {
 										navigateToNode(node.parent.uuid);
 									}}
-									class="underline underline-offset-[-14px] text-[13px] text-[#9a9a9a] hover:text-[#ffffff]"
-									>{node.parent.data.title}
+									class="underline underline-offset-[-15px] text-[13px] text-[#9a9a9a] hover:text-[#ffffff]"
+									>{`${node.parent.data.title} (${node.parent.category.title})`}
 								</button>
 							</div>
 						{/if}
@@ -386,6 +390,8 @@
 									<p class="selection:bg-none">{category.title}</p>
 									<FadeElement className="cursor-auto" side="bottom">
 										<div
+											role="presentation"
+											on:click={(e) => e.stopPropagation()}
 											class="flex flex-col items-center w-[180px] bg-[#282828] rounded-[6px] px-[10px] pb-[10px] text-[11.5px] text-[#e4e4e4]"
 										>
 											{#if category.description}
@@ -439,7 +445,7 @@
 							}}
 							pointB={{
 								x: child.pos.left + 400,
-								y: child.pos.top - 29
+								y: child.pos.top - 30
 							}}
 							size={treeContainer}
 						/>

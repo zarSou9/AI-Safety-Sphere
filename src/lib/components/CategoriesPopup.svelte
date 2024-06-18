@@ -2,7 +2,7 @@
 	import { createEventDispatcher } from 'svelte';
 	import { getContext, tick } from 'svelte';
 	import { type Writable } from 'svelte/store';
-	import type { LinkingCategory, CategoriesModal } from '$lib/types';
+	import type { LinkingCategory, CategoriesModal, CategoryColors } from '$lib/types';
 	import { v4 as uuidv4 } from 'uuid';
 
 	import Cross from '$lib/icons/Cross.svelte';
@@ -19,7 +19,15 @@
 	})[];
 	let newCatButtonDisabled = false;
 
-	const colors = ['#3f3f3f', '#00c159', '#ff16ae', '#00c3d0', '#ed8000', '#b53aff', '#74ac00'];
+	const colors: CategoryColors[] = [
+		'#3f3f3f',
+		'#46966c',
+		'#6d4ba3',
+		'#3f8b91',
+		'#b04d35',
+		'#68497a',
+		'#8d8142'
+	];
 	categories.forEach((cat) =>
 		colors.splice(
 			colors.findIndex((c) => c === cat.color),
@@ -94,9 +102,16 @@
 						<p class="font-bold">Title:</p>
 						<input
 							bind:this={category.input}
+							on:input={() => {
+								setTimeout(() => {
+									if (category.title.length === 16)
+										failurePopUp.set('Title cannot exceed 16 characters');
+								}, 10);
+							}}
 							placeholder="untitled"
 							class="bg-inherit border-none outline-none"
 							bind:value={category.title}
+							maxlength="16"
 						/>
 					</div>
 					<div class="flex flex-row space-x-[5px] mt-[3px]">
@@ -111,7 +126,14 @@
 						<textarea
 							placeholder="add description"
 							class="bg-inherit border-none outline-none w-full"
+							on:input={() => {
+								setTimeout(() => {
+									if (category.description.length === 170)
+										failurePopUp.set('Description cannot exceed 170 characters');
+								}, 10);
+							}}
 							bind:value={category.description}
+							maxlength="170"
 						/>
 					</div>
 					{#if $categoriesModal.uneditableCats.has(category.id) || categories.length === 1}
