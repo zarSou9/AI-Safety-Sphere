@@ -10,7 +10,7 @@ export const POST: RequestHandler = async ({ request, locals: { supabase, supaba
 			Joi.object({
 				id: Joi.string().required(),
 				title: Joi.string().required().max(22),
-				description: Joi.string().required().allow('').max(200),
+				description: Joi.string().required().allow('').max(310),
 				color: Joi.alternatives().try(
 					'#3f3f3f',
 					'#46966c',
