@@ -1,11 +1,19 @@
 <script lang="ts">
 	import { getContext, onMount, tick } from 'svelte';
-	import Node from './Node.svelte';
-	import Curve from '$lib/components/Curve.svelte';
-	import type { TreeInterface, LinkingCategory, CategoriesModal } from '$lib/types';
+	import type { TreeInterface, LinkingCategory, CategoriesModal, TreeArrayNode } from '$lib/types';
 	import type { Writable } from 'svelte/store';
 	import type { PageData } from '../$types';
+	import { slide } from 'svelte/transition';
+	import { quintOut } from 'svelte/easing';
+
+	import Node from './Node.svelte';
+	import Poll from './Poll.svelte';
+	import Thread from './Thread.svelte';
+	import Curve from '$lib/components/Curve.svelte';
 	import FadeElement from '$lib/components/FadeElement.svelte';
+	import Left from '$lib/icons/Left.svelte';
+	import Right from '$lib/icons/Right.svelte';
+	import Search from '$lib/icons/Search.svelte';
 
 	const tree: TreeInterface = getContext('tree');
 	const viewingNodeRect: { l: number; t: number; w: number; h: number } =
@@ -34,27 +42,16 @@
 	let treeActionUnsubscribe: any;
 	let viewingNodeUnsubscribe: any;
 	let quillsReadyUnsubscribe: any;
-	let nodes: {
-		uuid: string;
-		data: { title: string; tldr?: Object };
-		div?: HTMLDivElement;
-		top?: number;
-		left?: number;
-		parent?: any;
-		last?: boolean;
-		owners?: Array<string>;
-		children: Array<{
-			uuid: string;
-			pos: { left: number; top: number };
-			parent_category: LinkingCategory;
-		}>;
-		linking_categories: LinkingCategory[];
-	}[] = [];
+	let nodes: TreeArrayNode[] = [];
+
 	let openTree = false;
 	let extraShown = true;
 	let categorySpacingReady = false;
 	let moving = false;
-	let lastNavigatedNode = 'r';
+	let root_id = '742b77a5-b4ed-4f16-afe1-630686362d10';
+	let lastNavigatedNode = root_id;
+	let sectionFunction: any;
+	let sectionsOpen: string | false;
 
 	viewingNode.set(undefined);
 	$quillsReady = false;
@@ -65,7 +62,7 @@
 	}
 
 	function findNodeInTreeArrays(uuid: string | undefined) {
-		return nodes.find((v) => v.uuid === uuid);
+		return nodes.find((v) => v.treeNode.uuid === uuid);
 	}
 
 	onMount(() => {
@@ -128,6 +125,7 @@
 						delete c?.input;
 						delete c?.div;
 						delete c?.left;
+						delete c?.typesOpen;
 					});
 					updateCategories($categoriesModal.uuid, $categoriesModal.categories);
 				} else if (action === 'create-new-node') {
@@ -149,25 +147,35 @@
 	function calculateCategorySpacing() {
 		nodes.forEach((n) => {
 			let catWidths = 0;
-			n.linking_categories.forEach((lc) => (catWidths += lc.div?.offsetWidth || 0));
-			let spacing = (800 - catWidths) / (n.linking_categories.length + 1);
+			n.treeNode.linking_categories.forEach((lc) => (catWidths += lc.div?.offsetWidth || 0));
+			let spacing = (800 - catWidths) / (n.treeNode.linking_categories.length + 1);
 			let accumulator = 0;
-			n.linking_categories.forEach((lc) => {
+			n.treeNode.linking_categories.forEach((lc) => {
 				lc.left = accumulator + spacing;
 				accumulator += spacing + (lc.div?.offsetWidth || 0);
 			});
 		});
 	}
 
-	function updateTreeArray(obj = tree.getTree()?.node, parent: any = undefined) {
+	function updateTreeArray(
+		obj = tree.getTree()?.node,
+		parent?: {
+			node: TreeArrayNode;
+			category: LinkingCategory;
+		}
+	) {
 		if (!obj) return;
-		nodes.push({
-			uuid: obj.uuid,
-			data: obj.data,
-			owners: obj.owners,
-			top: obj.top,
-			left: obj.left,
-			children: obj.children.map((n) => {
+		const searchArray =
+			parent?.category.type === 'Collapsed'
+				? parent?.node.treeNode.fullChildren
+						?.filter((fullChild) => fullChild.parent_category === parent?.category.id)
+						.map((child) => {
+							return { uuid: child.uuid, title: child.data.title };
+						})
+				: undefined;
+		const node: TreeArrayNode = {
+			treeNode: obj,
+			arrayChildren: obj.children.map((n) => {
 				return {
 					uuid: n.uuid,
 					pos: { left: n.left || 0, top: n.top || 0 },
@@ -177,13 +185,16 @@
 				};
 			}),
 			parent,
-			linking_categories: obj.linking_categories
-		});
-		for (let node of obj.children) {
-			updateTreeArray(node, {
-				data: obj.data,
-				uuid: obj.uuid,
-				category: obj.linking_categories.find((cat) => cat.id === node.parent_category)
+			fullSearchSiblings: searchArray,
+			searchSiblings: searchArray
+		};
+		nodes.push(node);
+		for (let child of obj.children) {
+			updateTreeArray(child, {
+				node,
+				category: obj.linking_categories.find(
+					(cat) => cat.id === child.parent_category
+				) as LinkingCategory
 			});
 		}
 	}
@@ -204,17 +215,8 @@
 			if (!response.ok) {
 				throw new Error(result.error || 'Failed to submit data');
 			}
-			quillsReady.set(false);
-			nodes = [];
-			tree.setTree(result.data.tree);
-			tick().then(() => {
-				treeContainer = tree.calculateSpacing();
-				updateTreeArray();
-				setTimeout(() => {
-					quillsReady.set(true);
-					successPopUp.set('Node successfully deleted');
-				}, 20);
-			});
+			tree.setClientTree(result.data.tree);
+			rehydrateTree();
 			$processing = false;
 		} catch (error: any) {
 			failurePopUp.set('Error: ' + error.message);
@@ -240,17 +242,8 @@
 			if (!response.ok) {
 				throw new Error(result.error || 'Failed to submit data');
 			}
-			quillsReady.set(false);
-			nodes = [];
-			tree.setTree(result.data.tree);
-			tick().then(() => {
-				treeContainer = tree.calculateSpacing();
-				updateTreeArray();
-				setTimeout(() => {
-					quillsReady.set(true);
-					successPopUp.set('Categories updated!');
-				}, 20);
-			});
+			tree.setClientTree(result.data.tree);
+			rehydrateTree();
 			$categoriesModal.visible = false;
 		} catch (error: any) {
 			failurePopUp.set('Error: ' + error.message);
@@ -278,16 +271,8 @@
 			if (!response.ok) {
 				throw new Error(result.error || 'Failed to submit data');
 			}
-			quillsReady.set(false);
-			nodes = [];
-			tree.setTree(result.data.tree);
-			tick().then(() => {
-				treeContainer = tree.calculateSpacing();
-				updateTreeArray();
-				setTimeout(() => {
-					quillsReady.set(true);
-				}, 20);
-			});
+			tree.setClientTree(result.data.tree);
+			rehydrateTree();
 			$processing = false;
 		} catch (error: any) {
 			$processing = false;
@@ -295,10 +280,12 @@
 		}
 	}
 
-	function navigateToNode(uuid: string | undefined) {
-		const nRect = findNodeInTreeArrays(uuid)?.div?.getBoundingClientRect();
-		if (nRect && uuid) {
-			lastNavigatedNode = uuid;
+	function navigateToNode(node: string | TreeArrayNode | undefined) {
+		let nRect;
+		if (typeof node === 'string') nRect = findNodeInTreeArrays(node)?.div?.getBoundingClientRect();
+		else nRect = node?.div?.getBoundingClientRect();
+		if (nRect && node) {
+			lastNavigatedNode = typeof node === 'string' ? node : node.treeNode.uuid;
 			navNodeRect.l = nRect.left;
 			navNodeRect.t = nRect.top;
 			navNodeRect.w = nRect.width;
@@ -313,135 +300,289 @@
 				moving = true;
 				let parent = tree.getParent(lastNavigatedNode);
 				if (parent) navigateToNode(parent.node.uuid);
-				else navigateToNode('742b77a5-b4ed-4f16-afe1-630686362d10');
+				else navigateToNode(root_id);
 				setTimeout(() => (moving = false), 320);
 			} else if (k === 'ArrowDown') {
 				moving = true;
 				const n = tree.getObjFromId(lastNavigatedNode);
 				if (n) navigateToNode(n.children[0]?.uuid);
-				else navigateToNode('742b77a5-b4ed-4f16-afe1-630686362d10');
+				else navigateToNode(root_id);
 				setTimeout(() => (moving = false), 320);
 			} else if (k === 'ArrowLeft') {
-				moving = true;
-				const parent = tree.getParent(lastNavigatedNode);
-				let i = -1;
-				if (parent) i += parent.i;
-				else navigateToNode('742b77a5-b4ed-4f16-afe1-630686362d10');
-				if (i >= 0) {
-					navigateToNode(parent?.node.children[i]?.uuid);
+				const node = findNodeInTreeArrays(lastNavigatedNode);
+				if (node?.parent) {
+					let move = false;
+					if (node.parent.category.type === 'Collapsed') {
+						let startIndex = node.parent.node.treeNode.fullChildren?.findIndex(
+							(fellow) => fellow.parent_category === node.parent?.category.id
+						);
+						let nodeIndexFull = node.parent.node.treeNode.fullChildren?.findIndex(
+							(child) => child.uuid === node.treeNode.uuid
+						);
+						if (startIndex !== nodeIndexFull) {
+							selectNodeInTreeArray(node, -1, nodeIndexFull);
+						} else move = true;
+					} else move = true;
+
+					if (move) {
+						let nodeIndex = node.parent.node.treeNode.children.findIndex(
+							(child) => child.uuid === node.treeNode.uuid
+						);
+						if (nodeIndex) {
+							moving = true;
+							navigateToNode(node.parent.node.treeNode.children[nodeIndex - 1]?.uuid);
+							setTimeout(() => (moving = false), 320);
+						}
+					}
 				}
-				setTimeout(() => (moving = false), 320);
 			} else if (k === 'ArrowRight') {
-				moving = true;
-				const parent = tree.getParent(lastNavigatedNode);
-				let i = 1;
-				if (parent) i += parent.i;
-				else navigateToNode('742b77a5-b4ed-4f16-afe1-630686362d10');
-				if (i < (parent?.node.children.length || 0)) {
-					navigateToNode(parent?.node.children[i]?.uuid);
+				const node = findNodeInTreeArrays(lastNavigatedNode);
+				if (node?.parent) {
+					let move = false;
+					if (node.parent.category.type === 'Collapsed') {
+						let endIndex = node.parent.node.treeNode.fullChildren?.findLastIndex(
+							(fellow) => fellow.parent_category === node.parent?.category.id
+						);
+						let nodeIndexFull = node.parent.node.treeNode.fullChildren?.findIndex(
+							(child) => child.uuid === node.treeNode.uuid
+						);
+						if (endIndex !== nodeIndexFull) {
+							selectNodeInTreeArray(node, 1, nodeIndexFull);
+						} else move = true;
+					} else move = true;
+
+					if (move) {
+						let nodeIndex = node.parent.node.treeNode.children.findIndex(
+							(child) => child.uuid === node.treeNode.uuid
+						);
+						if (nodeIndex !== node.parent.node.treeNode.children.length) {
+							moving = true;
+							navigateToNode(node.parent.node.treeNode.children[nodeIndex + 1]?.uuid);
+							setTimeout(() => (moving = false), 320);
+						}
+					}
 				}
-				setTimeout(() => (moving = false), 320);
 			}
 		}
+	}
+	function selectNodeInTreeArray(node: TreeArrayNode, dir: number, nodeIndexFull?: number) {
+		let endIndex = node.parent?.node.treeNode.fullChildren?.findLastIndex(
+			(fellow) => fellow.parent_category === node.parent?.category.id
+		);
+		let nodeIndex = node.parent?.node.treeNode.children.findIndex(
+			(child) => child.uuid === node.treeNode.uuid
+		);
+		if (!nodeIndexFull)
+			nodeIndexFull = node.parent?.node.treeNode.fullChildren?.findIndex(
+				(child) => child.uuid === node.treeNode.uuid
+			);
+		if (
+			nodeIndex !== undefined &&
+			nodeIndexFull !== undefined &&
+			node.parent?.node.treeNode.fullChildren &&
+			nodeIndexFull + dir <= (endIndex ?? -1)
+		) {
+			let newNode = node.parent?.node.treeNode.fullChildren[nodeIndexFull + dir];
+			if (newNode) {
+				node.parent?.node.treeNode.children.splice(nodeIndex, 1, newNode);
+				rehydrateTree();
+				lastNavigatedNode = newNode.uuid;
+			}
+		}
+	}
+
+	function selectSpecificNodeInTreeArray(uuid: string, node: TreeArrayNode) {
+		let nodeIndex = node.parent?.node.treeNode.children.findIndex(
+			(child) => child.uuid === node.treeNode.uuid
+		);
+		let newNode = node.parent?.node.treeNode.fullChildren?.find((child) => child.uuid === uuid);
+		if (nodeIndex && newNode) {
+			node.parent?.node.treeNode.children.splice(nodeIndex, 1, newNode);
+			rehydrateTree();
+			lastNavigatedNode = newNode.uuid;
+		}
+	}
+
+	function rehydrateTree() {
+		treeContainer = tree.calculateSpacing();
+		nodes = [];
+		updateTreeArray();
+		categorySpacingReady = false;
+		tick().then(() => {
+			calculateCategorySpacing();
+			categorySpacingReady = true;
+		});
 	}
 </script>
 
 <div class="h-[20px]" />
 {#if openTree}
 	<div class="relative" style="height: {treeContainer.height}px; width: {treeContainer.width}px;">
-		{#each nodes as node (node.uuid)}
-			{#if extraShown || node.uuid === $viewingNode}
+		{#each nodes as node (node.treeNode.uuid)}
+			{#if extraShown || node.treeNode.uuid === $viewingNode}
 				<div
 					role="presentation"
 					bind:this={node.div}
 					class="absolute"
-					style="left: {node.left}px; top: {node.top}px;"
+					style="left: {node.treeNode.left}px; top: {node.treeNode.top}px;"
 				>
-					<Node
-						shadowColor={node.parent?.category.color || '#a53a3a'}
-						treeData={tree.getObjFromId(node.uuid)}
-					/>
-					{#if extraShown}
-						{#if node.parent}
-							<div class="absolute top-[-30px] flex w-[800px] justify-center">
-								<button
-									on:click={() => {
-										navigateToNode(node.parent.uuid);
-									}}
-									class="underline underline-offset-[-15px] text-[13px] text-[#9a9a9a] hover:text-[#ffffff]"
-									>{`${node.parent.data.title} (${node.parent.category.title})`}
-								</button>
-							</div>
-						{/if}
-						<div class="absolute flex w-[800px] top-[calc(100%+12px)]">
-							{#each node.linking_categories as category (category.id)}
-								<div
-									role="presentation"
-									on:click={() =>
-										navigateToNode(
-											node.children.find((n) => n.parent_category.id === category.id)?.uuid
-										)}
-									bind:this={category.div}
-									class="absolute group top-0 text-[13px] px-[12px] py-[1px] rounded-[6px] cursor-pointer"
-									style="background-color: {category.color}; left: {categorySpacingReady
-										? category.left
-										: '380'}px;"
-								>
-									<p class="selection:bg-none">{category.title}</p>
-									<FadeElement className="cursor-auto" side="bottom">
-										<div
-											role="presentation"
-											on:click={(e) => e.stopPropagation()}
-											class="flex flex-col items-center w-[180px] bg-[#282828] rounded-[6px] px-[10px] pb-[10px] text-[11.5px] text-[#e4e4e4]"
-										>
-											{#if category.description}
-												<p class="mt-[7px]">{category.description}</p>
-												<div class="bg-[#7c7c7c] h-[.3px] w-full mt-[8px]" />
-											{/if}
-											<button
-												on:click={() => {
-													if (data.props.loggedIn) {
-														$newNodeModal.uuid = node.uuid;
-														$newNodeModal.category = category.id;
-														$newNodeModal.visible = true;
-													} else loginNotif.set(true);
-												}}
-												class="border-[#3d6297] border-[1px] hover:bg-[#3d6297] transition-colors rounded-[6px] w-full py-[1px] mt-[10px]"
-												>Add Node</button
+					{#if ['Default', 'Collapsed'].includes(node.parent?.category?.type || 'Default')}
+						<Node shadowColor={node.parent?.category.color || '#a53a3a'} treeData={node.treeNode} />
+						{#if extraShown}
+							{#if node.parent}
+								<div class="absolute top-[-30px] flex w-[800px] justify-center">
+									<button
+										on:click={() => {
+											navigateToNode(node.parent?.node);
+										}}
+										class="underline underline-offset-[-15px] text-[13px] text-[#9a9a9a] hover:text-[#ffffff]"
+										>{`${node.parent.node.treeNode.data.title} (${node.parent.category.title})`}
+									</button>
+								</div>
+							{/if}
+							<div class="absolute flex w-[800px] top-[calc(100%+12px)]">
+								{#each node.treeNode.linking_categories as category (category.id)}
+									<div
+										role="presentation"
+										on:click={() =>
+											navigateToNode(
+												node.arrayChildren.find((n) => n.parent_category.id === category.id)?.uuid
+											)}
+										bind:this={category.div}
+										class="absolute group top-0 text-[12.8px] px-[8px] py-[1px] rounded-[6px] cursor-pointer"
+										style="background-color: {category.color}; left: {categorySpacingReady
+											? category.left
+											: '380'}px;"
+									>
+										<p class="selection:bg-none">{category.title}</p>
+										<FadeElement className="cursor-auto" side="bottom">
+											<div
+												role="presentation"
+												on:click={(e) => e.stopPropagation()}
+												class="flex flex-col items-center w-[180px] bg-[#282828] rounded-[6px] px-[10px] pb-[10px] text-[11.5px] text-[#e4e4e4]"
 											>
-											{#if node.owners?.includes(data.props?.profile?.username)}
+												{#if category.description}
+													<p class="mt-[7px]">{category.description}</p>
+													<div class="bg-[#7c7c7c] h-[.3px] w-full mt-[8px]" />
+												{/if}
 												<button
 													on:click={() => {
-														$categoriesModal = {
-															visible: true,
-															uuid: node.uuid,
-															categories: node.linking_categories,
-															uneditableCats: new Set(
-																node.children.map((child) => child.parent_category.id)
-															),
-															waiting: false
-														};
+														if (data.props.loggedIn) {
+															$newNodeModal.uuid = node.treeNode.uuid;
+															$newNodeModal.category = category.id;
+															$newNodeModal.visible = true;
+														} else loginNotif.set(true);
 													}}
-													class="border-[#2d7356] border-[1px] hover:bg-[#2d7356] transition-colors rounded-[6px] w-full py-[1px] mt-[6px]"
-													>Edit Categories</button
+													class="border-[#3d6297] border-[1px] hover:bg-[#3d6297] transition-colors rounded-[6px] w-full py-[1px] mt-[10px]"
+													>Add Node</button
 												>
-											{/if}
+												{#if node.treeNode.owners?.includes(data.props?.profile?.username)}
+													<button
+														on:click={() => {
+															$categoriesModal = {
+																visible: true,
+																uuid: node.treeNode.uuid,
+																categories: node.treeNode.linking_categories,
+																uneditableCats: new Set(
+																	node.arrayChildren.map((child) => child.parent_category.id)
+																),
+																waiting: false
+															};
+														}}
+														class="border-[#2d7356] border-[1px] hover:bg-[#2d7356] transition-colors rounded-[6px] w-full py-[1px] mt-[6px]"
+														>Edit Categories</button
+													>
+												{/if}
+											</div>
+										</FadeElement>
+									</div>
+								{/each}
+							</div>
+							{#if node.parent?.category?.type === 'Collapsed'}
+								<div class="absolute top-[-30px] left-[70px]">
+									<input
+										bind:value={node.searchInput}
+										on:click={() => {
+											if (!sectionsOpen) {
+												sectionsOpen = node.treeNode.uuid;
+												sectionFunction = () => {
+													sectionsOpen = false;
+													window.removeEventListener('click', sectionFunction);
+												};
+												setTimeout(() => window.addEventListener('click', sectionFunction), 2);
+											}
+										}}
+										class="text-[11px] text-[#b0b0b0] h-[23px] rounded-[5px] w-[160px] border-[#606060] border-[1px]"
+									/>
+									<div class="absolute top-[2.5px] right-[3px]">
+										<Search color="#484848" size="16px" />
+									</div>
+									{#if sectionsOpen === node.treeNode.uuid}
+										<div
+											transition:slide={{ duration: 150, easing: quintOut }}
+											class="h-[340px] absolute bg-[#474747] rounded-[6px] top-[25px] right-[0px] left-0 flex flex-col text-[11px] py-[6px] space-y-[1px] text-[#e9e9e9] overflow-auto"
+										>
+											{#each node.searchSiblings || [] as child (child.uuid)}
+												<button
+													on:click={() => {
+														sectionsOpen = false;
+														window.removeEventListener('click', sectionFunction);
+														selectSpecificNodeInTreeArray(child.uuid, node);
+													}}
+													class="hover:bg-[#626262] pl-[10px] flex justify-start"
+													>{child.title}</button
+												>
+											{/each}
 										</div>
-									</FadeElement>
+									{/if}
 								</div>
-							{/each}
-						</div>
+								<button
+									on:click={() => selectNodeInTreeArray(node, -1)}
+									class="absolute left-[-25px] top-1/2 -translate-y-1/2"
+									style={`opacity: ${
+										node.parent.node.treeNode.fullChildren?.find(
+											(fellow) => fellow.parent_category === node.parent?.category.id
+										)?.uuid ===
+										node.parent.node.treeNode.fullChildren?.find(
+											(fellow) => fellow.uuid === node.treeNode.uuid
+										)?.uuid
+											? '0; pointer-events: none;'
+											: '1;'
+									}`}
+									><Left color="#f0f0f0" size="24px" />
+								</button>
+								<button
+									on:click={() => selectNodeInTreeArray(node, 1)}
+									class="absolute right-[-25px] top-1/2 -translate-y-1/2"
+									style={`opacity: ${
+										node.parent.node.treeNode.fullChildren?.findLast(
+											(fellow) => fellow.parent_category === node.parent?.category.id
+										)?.uuid ===
+										node.parent.node.treeNode.fullChildren?.find(
+											(fellow) => fellow.uuid === node.treeNode.uuid
+										)?.uuid
+											? '0; pointer-events: none;'
+											: '1;'
+									};`}
+									><Right color="#f0f0f0" size="24px" />
+								</button>
+							{/if}
+						{/if}
+					{:else if node.parent?.category?.type === 'Thread'}
+						<Thread />
+					{:else if node.parent?.category?.type === 'Poll'}
+						<Poll />
 					{/if}
 				</div>
 				{#if $quillsReady && !node.last && categorySpacingReady}
-					{#each node?.children || [] as child (child.uuid)}
+					{#each node?.arrayChildren || [] as child (child.uuid)}
 						<Curve
 							pointA={{
 								x:
-									(node.left || 0) +
+									(node.treeNode.left || 0) +
 									(child.parent_category.left || 0) +
 									(child.parent_category.div?.offsetWidth || 0) / 2,
-								y: (node.top || 0) + node.div.clientHeight + 33
+								y: (node.treeNode.top || 0) + (node.div?.clientHeight || 0) + 33
 							}}
 							pointB={{
 								x: child.pos.left + 400,

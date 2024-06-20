@@ -1,7 +1,7 @@
 import type { RequestHandler } from './$types';
 import { json } from '@sveltejs/kit';
 import { createTree } from '$lib/stores/nodes';
-import type { LinkingCategory, CategoryColors } from '$lib/types';
+import type { LinkingCategory } from '$lib/types';
 import Joi from 'joi';
 
 export const POST: RequestHandler = async ({ request, locals: { supabase, supabaseService } }) => {
@@ -19,7 +19,8 @@ export const POST: RequestHandler = async ({ request, locals: { supabase, supaba
 					'#b04d35',
 					'#68497a',
 					'#8d8142'
-				)
+				),
+				type: Joi.alternatives().try('Thread', 'Poll', 'Default', 'Collapsed')
 			}).required()
 		);
 

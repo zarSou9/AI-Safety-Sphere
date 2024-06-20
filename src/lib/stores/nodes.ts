@@ -1,9 +1,18 @@
-import type { Tree, TreeNode } from '../types';
+import type { Tree, TreeNode, CategoryTypes } from '../types';
 import { v4 as uuidv4 } from 'uuid';
+import treeSelections from './local_storage/treeSelections';
+import type { TreeSelects } from './local_storage/treeSelections';
+
+let treeSelectsValue: TreeSelects;
+
+treeSelections.subscribe((v) => {
+	treeSelectsValue = v;
+});
 
 export function createTree() {
 	let tree: Tree;
 	let ySpace = 560;
+	let xSpace = 30;
 
 	function endNodes(
 		obj: TreeNode,
@@ -17,10 +26,10 @@ export function createTree() {
 			obj.top = (currentDepth - 1) * ySpace;
 			if (firstNode && pos.left !== 0) {
 				obj.left = pos.left + 60;
-				pos.left += 880;
+				pos.left += 860 + xSpace;
 			} else {
 				obj.left = pos.left;
-				pos.left += 820;
+				pos.left += 800 + xSpace;
 			}
 		} else {
 			for (let i = 0; i < obj.children.length; i++) {
@@ -58,9 +67,42 @@ export function createTree() {
 		}
 	}
 
+	function filterTree(node = tree.node) {
+		const newChildren: TreeNode[] = [];
+		const taken: string[] = [];
+		node.children.forEach((child) => {
+			const cat = node.linking_categories.find((lc) => lc.id === child.parent_category);
+			if (cat?.type === 'Collapsed') {
+				if (!taken.includes(cat.id)) {
+					taken.push(cat.id);
+					const selectedChild = node.children.find(
+						(nc) =>
+							nc.uuid ===
+							treeSelectsValue.find(
+								(ts) => ts.uuid === node.uuid && ts.catId === child.parent_category
+							)?.selection
+					);
+					newChildren.push(selectedChild || child);
+					filterTree(child);
+				}
+			} else {
+				newChildren.push(child);
+				filterTree(child);
+			}
+		});
+		if (node.linking_categories.find((lc) => lc.type === 'Collapsed')) {
+			node.fullChildren = node.children;
+			node.children = newChildren;
+		}
+	}
+
 	return {
 		setTree(t: Tree) {
 			tree = JSON.parse(JSON.stringify(t));
+		},
+		setClientTree(t: Tree) {
+			tree = JSON.parse(JSON.stringify(t));
+			filterTree();
 		},
 		getTree() {
 			return tree;
@@ -106,6 +148,7 @@ export function createTree() {
 				linking_categories: [
 					{
 						id: uuidv4(),
+						type: 'Default',
 						title: 'Other',
 						description:
 							'For ideas which relate to this node in a way which is not defined by other categories',
@@ -114,7 +157,17 @@ export function createTree() {
 				],
 				children: []
 			};
-			parent.children.push(newNode);
+			let i = parent.linking_categories.findIndex((lc) => lc.id === parent_category);
+			for (i; i >= 0; i--) {
+				const childFoundI = parent.children.findLastIndex(
+					(child) => child.parent_category === parent.linking_categories[i].id
+				);
+				if (childFoundI !== -1) {
+					parent.children.splice(childFoundI + 1, 0, newNode);
+					return newNode;
+				}
+			}
+			parent.children.splice(0, 0, newNode);
 			return newNode;
 		},
 		deleteNode(uuid: string) {

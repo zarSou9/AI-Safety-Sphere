@@ -102,7 +102,6 @@
 	const sectionModal: any = writable({
 		visible: false,
 		title: '',
-		suggestions: [],
 		sections: [],
 		after: 0
 	});
@@ -153,7 +152,7 @@
 	setContext('categoriesModalStore', categoriesModal);
 
 	const tree = createTree();
-	if (data.props?.hier[0]?.data?.node) tree.setTree(data.props.hier[0].data);
+	if (data.props?.hier[0]?.data?.node) tree.setClientTree(data.props.hier[0].data);
 
 	setContext('tree', tree);
 
@@ -310,7 +309,6 @@
 {:else if $sectionModal.visible}
 	<NewSection
 		sections={$sectionModal.sections}
-		suggestions={$sectionModal.suggestions}
 		{toolbarResult}
 		on:close={() => {
 			$sectionModal.visible = false;

@@ -10,14 +10,11 @@
 	const failurePopUp: Writable<any> = getContext('failurePopUpStore');
 
 	export let sections: any;
-	export let suggestions: any;
 	export let toolbarResult: any;
 	toolbarResult.title = '';
 	toolbarResult.after = sections.length - 1;
 
-	let suggestionsOpen = false;
 	let sectionsOpen = false;
-	let suggestedArrow: HTMLDivElement;
 	let sectionsArrow: HTMLDivElement;
 
 	const dispatch = createEventDispatcher();
@@ -47,63 +44,32 @@
 
 <div on:keydown={handleKeyDown} class="modal-background" on:click={close} role="presentation">
 	<div
-		class="modal-content flex-col bg-[#383c51] rounded-md p-[17px] px-4 pt-[8px]"
+		class="modal-content flex-col bg-[#383c51] rounded-md p-[17px] px-4 pt-[7px]"
 		on:click={(e) => e.stopPropagation()}
 		role="presentation"
 	>
 		<button
 			on:click={close}
-			class="flex absolute top-[8.5px] right-[12px] hover:bg-[#5f5f5f4f] rounded-md w-[18px] h-[18px] items-center justify-center"
+			class="flex absolute top-[9px] right-[12px] hover:bg-[#5f5f5f4f] rounded-md w-[18px] h-[18px] items-center justify-center"
 		>
 			<Cross size="16px" color="#c3c3c3" />
 		</button>
-
 		<label>
-			<p class="text-[#c7c7c7] text-[13px]">New Section</p>
+			<p class="text-[#c7c7c7] text-[14.5px]">New Section</p>
 			<input
 				bind:this={toolbarResult.div}
 				bind:value={toolbarResult.title}
-				class="text-[#000000] mt-[6px] pl-2 pr-1 rounded-sm py-1 border-[.1px] outline-[0px] selection:bg-[#80808080] selection:text-[#f5f5f5]"
+				class="text-[#000000] bg-[#e4e4e4] mt-[8px] pl-2 pr-1 rounded-sm py-1 border-[.1px] outline-[0px]"
 			/>
 		</label>
-		<button
-			on:click={() => {
-				suggestionsOpen = !suggestionsOpen;
-				sectionsOpen = false;
-				sectionsArrow.style.transform = `rotate(90deg)`;
-				if (suggestionsOpen) suggestedArrow.style.transform = `rotate(270deg)`;
-				else suggestedArrow.style.transform = `rotate(90deg)`;
-			}}
-			class="mt-[13px] w-full text-[12px] mr-auto bg-[#e4e4e4] text-[#484848] rounded-[5px] flex items-center justify-center relative py-[3px]"
-			>Suggested...
-			<div bind:this={suggestedArrow} class="absolute top-[3.4px] right-[3px] arrow">
-				<FolderArrow color="#484848" size="18px" />
-			</div>
-			{#if suggestionsOpen}
-				<div
-					transition:slide={{ duration: 150, easing: quintOut }}
-					class="z-[400] absolute bg-[#474747] rounded-[6px] top-[25px] right-[0px] left-0 flex flex-col text-[12px] py-[4.5px] space-y-[3px] text-[#e9e9e9]"
-				>
-					{#each suggestions as suggestion}
-						<button
-							on:click={() => {
-								toolbarResult.title = suggestion;
-							}}
-							class="hover:bg-[#626262] pl-[10px] flex justify-start">{suggestion}</button
-						>
-					{/each}
-				</div>
-			{/if}
-		</button>
-		<p class="text-gray-300 text-[12px] mt-[6px] mb-[1px]">Place after...</p>
+		<p class="text-[#c7c7c7] text-[13px] mt-[6px] mb-[1px]">Place after...</p>
 		<button
 			on:click={() => {
 				sectionsOpen = !sectionsOpen;
-				suggestionsOpen = false;
 				if (sectionsOpen) sectionsArrow.style.transform = `rotate(270deg)`;
 				else sectionsArrow.style.transform = `rotate(90deg)`;
 			}}
-			class="w-full text-[12px] mr-auto bg-[#e4e4e4] text-[#484848] rounded-[5px] flex items-center justify-center relative py-[3px]"
+			class="w-full text-[12px] mt-[3px] mr-auto bg-[#e4e4e4] text-[#484848] rounded-[5px] flex items-center justify-center relative py-[3px]"
 			>{sections[toolbarResult.after]}
 			<div bind:this={sectionsArrow} class="absolute top-[3.4px] right-[3px] arrow">
 				<FolderArrow color="#484848" size="18px" />
@@ -118,7 +84,7 @@
 							on:click={() => {
 								toolbarResult.after = i;
 							}}
-							class="hover:bg-[#626262] pl-[10px] flex justify-start">{section}</button
+							class="hover:bg-[#626262] py-[2px] pl-[10px] flex justify-start">{section}</button
 						>
 					{/each}
 				</div>

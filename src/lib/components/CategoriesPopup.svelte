@@ -2,13 +2,16 @@
 	import { createEventDispatcher } from 'svelte';
 	import { getContext, tick } from 'svelte';
 	import { type Writable } from 'svelte/store';
-	import type { LinkingCategory, CategoriesModal, CategoryColors } from '$lib/types';
+	import type { LinkingCategory, CategoriesModal, CategoryColors, CategoryTypes } from '$lib/types';
 	import { v4 as uuidv4 } from 'uuid';
+	import { slide } from 'svelte/transition';
+	import { quintOut } from 'svelte/easing';
 
 	import Cross from '$lib/icons/Cross.svelte';
 	import Trash from '$lib/icons/Trash.svelte';
 	import Plus from '$lib/icons/Plus.svelte';
 	import ToolTip from './ToolTip.svelte';
+	import FolderArrow from '$lib/icons/FolderArrow.svelte';
 
 	const failurePopUp: Writable<string> = getContext('failurePopUpStore');
 
@@ -18,6 +21,7 @@
 		input?: HTMLInputElement;
 	})[];
 	let newCatButtonDisabled = false;
+	let types: CategoryTypes[] = ['Default', 'Collapsed', 'Thread', 'Poll'];
 
 	const colors: CategoryColors[] = [
 		'#3f3f3f',
@@ -60,7 +64,11 @@
 >
 	<div
 		class="relative flex-col bg-[#383c51] w-[300px] rounded-md pb-[16px] pt-[10px] px-[16px]"
-		on:click={(e) => e.stopPropagation()}
+		on:click={(e) => {
+			e.stopPropagation();
+			categories.forEach((c) => (c.typesOpen = false));
+			categories = [...categories];
+		}}
 		role="presentation"
 	>
 		<button
@@ -84,6 +92,7 @@
 					const colorI = Math.floor(Math.random() * colors.length);
 					categories.splice(0, 0, {
 						id: uuidv4(),
+						type: 'Default',
 						title: '',
 						description: '',
 						color: colors[colorI]
@@ -115,9 +124,35 @@
 						/>
 					</div>
 					<div class="flex flex-row space-x-[5px] mt-[3px]">
+						<p class="font-bold">Type:</p>
+						<button
+							on:click={(e) => {
+								category.typesOpen = !category.typesOpen;
+								e.stopPropagation();
+							}}
+							class="w-[90px] text-[12px] mt-[1.2px] mr-auto border-[#e4e4e4] border-[.7px] rounded-[5px] flex items-center justify-center relative py-[.4px]"
+							>{category.type}
+							{#if category.typesOpen}
+								<div
+									transition:slide={{ duration: 150, easing: quintOut }}
+									class="z-[400] absolute bg-[#474747] rounded-[6px] top-[calc(100%+.7px)] right-[0px] left-0 flex flex-col text-[12px] py-[4px] space-y-[1px] text-[#e9e9e9]"
+								>
+									{#each types as type (category.id + type)}
+										<button
+											on:click={() => {
+												category.type = type;
+											}}
+											class="hover:bg-[#626262] py-[1px] pl-[8px] flex justify-start">{type}</button
+										>
+									{/each}
+								</div>
+							{/if}
+						</button>
+					</div>
+					<div class="flex flex-row space-x-[5px] mt-[3px]">
 						<p class="font-bold">Color:</p>
 						<button
-							class="size-[13px] rounded-full border-[.9px] border-[#aeaeae] mt-[4px]"
+							class="size-[13px] rounded-full border-[.9px] border-[#aeaeae] mt-[4.3px]"
 							style="background-color: {category.color};"
 						/>
 					</div>

@@ -2,7 +2,7 @@
 	import { onMount, onDestroy, tick, getContext } from 'svelte';
 	import Edit from '$lib/icons/Edit.svelte';
 	import View from '$lib/icons/View.svelte';
-	import type { TreeInterface, TreeNode } from '$lib/types';
+	import type { TreeInterface, TreeNode, TreeArrayNode } from '$lib/types';
 	import { get, type Writable } from 'svelte/store';
 	import type { PageData } from '../$types';
 	import { v4 as uuidv4 } from 'uuid';
@@ -20,7 +20,6 @@
 	const sectionModal: Writable<{
 		visible: boolean;
 		title: string;
-		suggestions: any;
 		sections: any;
 		after: number;
 	}> = getContext('sectionModalStore');
@@ -402,13 +401,6 @@
 						newSects.push(sect.title);
 					}
 					$sectionModal.sections = newSects;
-					$sectionModal.suggestions = [
-						'Prerequisites',
-						'Measurable Objective',
-						'Skills Needed',
-						'Existing Work',
-						'References'
-					];
 					$sectionModal.visible = true;
 				} else if (action === 'save-section-title') {
 					const store = get(sectionTitleModal);

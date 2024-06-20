@@ -21,6 +21,7 @@ interface TreeNode {
 	linking_categories: LinkingCategory[];
 	top?: number | undefined;
 	left?: number | undefined;
+	fullChildren?: TreeNode[];
 }
 
 interface LinkingCategory {
@@ -28,9 +29,13 @@ interface LinkingCategory {
 	title: string;
 	description: string;
 	color: CategoryColors;
+	type: CategoryTypes;
 	left?: number;
 	div?: HTMLDivElement;
+	typesOpen?: boolean;
 }
+
+type CategoryTypes = 'Thread' | 'Poll' | 'Default' | 'Collapsed';
 
 type CategoryColors =
 	| '#3f3f3f'
@@ -43,6 +48,7 @@ type CategoryColors =
 
 interface TreeInterface {
 	setTree(t: Tree): void;
+	setClientTree(t: Tree): void;
 	getTree(): Tree | undefined;
 	getParent(uuid: string | undefined, obj?: TreeNode): { i: number; node: TreeNode } | undefined;
 	getObjFromId(uuid?: string | undefined): TreeNode | undefined;
@@ -59,4 +65,38 @@ interface CategoriesModal {
 	waiting: boolean;
 }
 
-export { Node, Tree, TreeInterface, TreeNode, LinkingCategory, CategoriesModal, CategoryColors };
+type TreeArrayNode = {
+	treeNode: TreeNode;
+	arrayChildren: Array<{
+		uuid: string;
+		pos: { left: number; top: number };
+		parent_category: LinkingCategory;
+	}>;
+	fullSearchSiblings?: {
+		uuid: string;
+		title: string;
+	}[];
+	parent?: {
+		node: TreeArrayNode;
+		category: LinkingCategory;
+	};
+	div?: HTMLDivElement;
+	last?: boolean;
+	searchSiblings?: {
+		uuid: string;
+		title: string;
+	}[];
+	searchInput?: string;
+};
+
+export {
+	Node,
+	Tree,
+	TreeInterface,
+	TreeNode,
+	LinkingCategory,
+	CategoriesModal,
+	CategoryColors,
+	CategoryTypes,
+	TreeArrayNode
+};
