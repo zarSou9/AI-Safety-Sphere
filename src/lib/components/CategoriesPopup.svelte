@@ -126,6 +126,8 @@
 					<div class="flex flex-row space-x-[5px] mt-[3px]">
 						<p class="font-bold">Type:</p>
 						<button
+							disabled={$categoriesModal.uneditableCats.has(category.id) &&
+								(category.type === 'Poll' || category.type === 'Thread')}
 							on:click={(e) => {
 								category.typesOpen = !category.typesOpen;
 								e.stopPropagation();
@@ -135,15 +137,19 @@
 							{#if category.typesOpen}
 								<div
 									transition:slide={{ duration: 150, easing: quintOut }}
-									class="z-[400] absolute bg-[#474747] rounded-[6px] top-[calc(100%+.7px)] right-[0px] left-0 flex flex-col text-[12px] py-[4px] space-y-[1px] text-[#e9e9e9]"
+									class="z-[400] absolute bg-[#474747] rounded-md overflow-hidden top-[calc(100%+.7px)] right-[0px] left-0 flex flex-col text-[12px] py-[4px] space-y-[1px] text-[#e9e9e9]"
 								>
 									{#each types as type (category.id + type)}
-										<button
-											on:click={() => {
-												category.type = type;
-											}}
-											class="hover:bg-[#626262] py-[1px] pl-[8px] flex justify-start">{type}</button
-										>
+										{#if ($categoriesModal.uneditableCats.has(category.id) && (type === 'Collapsed' || type === 'Default')) || !$categoriesModal.uneditableCats.has(category.id)}
+											<button
+												on:click={() => {
+													category.type = type;
+												}}
+												class="py-[1px] pl-[8px] flex justify-start {category.type === type
+													? 'bg-[#626262]'
+													: 'hover:bg-[#585858]'}">{type}</button
+											>
+										{/if}
 									{/each}
 								</div>
 							{/if}

@@ -33,6 +33,7 @@
 	const loginNotif: Writable<boolean> = getContext('loginNotifStore');
 	const categoriesModal: Writable<CategoriesModal> = getContext('categoriesModalStore');
 	const newNodeModal: Writable<any> = getContext('newNodeModalStore');
+	const shortCutsEnabled: Writable<boolean> = getContext('shortCutsEnabledStore');
 
 	let viewingNodeDiv: HTMLDivElement | undefined;
 	let treeContainer: {
@@ -50,7 +51,7 @@
 	let moving = false;
 	let root_id = '742b77a5-b4ed-4f16-afe1-630686362d10';
 	let lastNavigatedNode = root_id;
-	let sectionFunction: any;
+	let searchCallback: any;
 	let sectionsOpen: string | false;
 
 	viewingNode.set(undefined);
@@ -198,6 +199,7 @@
 			});
 		}
 	}
+	const removeType = (o: any) => o;
 
 	async function deleteNode(uuid: string | undefined): Promise<void> {
 		$processing = true;
@@ -499,40 +501,65 @@
 								{/each}
 							</div>
 							{#if node.parent?.category?.type === 'Collapsed'}
-								<div class="absolute top-[-30px] left-[70px]">
+								<div class="absolute top-[-33px] left-[30px]">
 									<input
 										bind:value={node.searchInput}
-										on:click={() => {
+										on:input={(e) => {
+											if (sectionsOpen !== node.treeNode.uuid) {
+												removeType(e).target?.blur();
+												if (searchCallback) searchCallback();
+											}
+											node.searchSiblings = node.fullSearchSiblings?.filter((ss) =>
+												ss.title.toLowerCase().includes(node.searchInput?.toLowerCase() || '')
+											);
+										}}
+										on:click={(e) => {
+											e.stopPropagation();
 											if (!sectionsOpen) {
 												sectionsOpen = node.treeNode.uuid;
-												sectionFunction = () => {
+												$shortCutsEnabled = false;
+												searchCallback = () => {
 													sectionsOpen = false;
-													window.removeEventListener('click', sectionFunction);
+													$shortCutsEnabled = true;
+													window.removeEventListener('click', searchCallback);
+													node.searchInput = '';
+													node.searchSiblings = JSON.parse(JSON.stringify(node.fullSearchSiblings));
 												};
-												setTimeout(() => window.addEventListener('click', sectionFunction), 2);
+												setTimeout(() => window.addEventListener('click', searchCallback), 2);
 											}
 										}}
-										class="text-[11px] text-[#b0b0b0] h-[23px] rounded-[5px] w-[160px] border-[#606060] border-[1px]"
+										class="text-[11px] text-[#b0b0b0] w-[120px] pl-[22px] h-[23px] bg-[#151515] placeholder:text-[#848484] rounded-md outline-none transition-colors border-[#606060] border-[1px]"
+										style={sectionsOpen === node.treeNode.uuid
+											? 'border-color: #9c9c9c; width: 150px; transition: width 0.15s ease-out;'
+											: 'transition: width 0.15s ease-out;'}
+										placeholder="Search nodes..."
 									/>
-									<div class="absolute top-[2.5px] right-[3px]">
-										<Search color="#484848" size="16px" />
+									<div class="absolute top-[8px] left-[7px] pointer-events-none transition-colors">
+										<Search
+											color={sectionsOpen === node.treeNode.uuid ? '#9c9c9c' : '#606060'}
+											size="12px"
+										/>
 									</div>
 									{#if sectionsOpen === node.treeNode.uuid}
 										<div
 											transition:slide={{ duration: 150, easing: quintOut }}
-											class="h-[340px] absolute bg-[#474747] rounded-[6px] top-[25px] right-[0px] left-0 flex flex-col text-[11px] py-[6px] space-y-[1px] text-[#e9e9e9] overflow-auto"
+											class="h-[200px] absolute bg-[#474747] rounded-[6px] top-[25px] right-[0px] left-0 flex flex-col text-[11px] py-[6px] space-y-[1px] text-[#e9e9e9] overflow-auto"
 										>
 											{#each node.searchSiblings || [] as child (child.uuid)}
 												<button
 													on:click={() => {
-														sectionsOpen = false;
-														window.removeEventListener('click', sectionFunction);
+														searchCallback();
 														selectSpecificNodeInTreeArray(child.uuid, node);
 													}}
-													class="hover:bg-[#626262] pl-[10px] flex justify-start"
+													class="hover:bg-[#626262] pl-[13px] flex justify-start"
 													>{child.title}</button
 												>
 											{/each}
+											{#if !node.searchSiblings?.length}<p
+													class="pl-[13px] text-[#d5d5d5] justify-start"
+												>
+													No results found
+												</p>{/if}
 										</div>
 									{/if}
 								</div>
