@@ -139,7 +139,6 @@ export function createTree() {
 			tldr: any = undefined,
 			owners: any = undefined
 		) {
-			if (!parent.linking_categories.find((lc) => lc.id === parent_category)) return;
 			const newNode: TreeNode = {
 				uuid: uuidv4(),
 				data: { title, tldr },
@@ -158,6 +157,36 @@ export function createTree() {
 				children: []
 			};
 			let i = parent.linking_categories.findIndex((lc) => lc.id === parent_category);
+			if (i === -1) return;
+			// Place node at the end of respective category or categories before it
+			for (i; i >= 0; i--) {
+				const childFoundI = parent.children.findLastIndex(
+					(child) => child.parent_category === parent.linking_categories[i].id
+				);
+				if (childFoundI !== -1) {
+					parent.children.splice(childFoundI + 1, 0, newNode);
+					return newNode;
+				}
+			}
+			parent.children.splice(0, 0, newNode);
+			return newNode;
+		},
+		createThread(
+			parent: TreeNode,
+			parent_category: string,
+			owners: string[] | undefined = parent.owners
+		) {
+			const newNode: TreeNode = {
+				uuid: uuidv4(),
+				data: { title: '' },
+				owners,
+				parent_category,
+				linking_categories: [],
+				children: []
+			};
+			let i = parent.linking_categories.findIndex((lc) => lc.id === parent_category);
+			if (i === -1) return;
+			// Place node at the end of respective category or categories before it
 			for (i; i >= 0; i--) {
 				const childFoundI = parent.children.findLastIndex(
 					(child) => child.parent_category === parent.linking_categories[i].id

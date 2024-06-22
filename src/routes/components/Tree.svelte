@@ -428,20 +428,20 @@
 					class="absolute"
 					style="left: {node.treeNode.left}px; top: {node.treeNode.top}px;"
 				>
+					{#if extraShown && node.parent}
+						<div class="absolute top-[-30px] flex w-[800px] justify-center">
+							<button
+								on:click={() => {
+									navigateToNode(node.parent?.node);
+								}}
+								class="underline underline-offset-[-15px] text-[13px] transition-colors text-[#9a9a9a] hover:text-[#ffffff]"
+								>{`${node.parent.node.treeNode.data.title} (${node.parent.category.title})`}
+							</button>
+						</div>
+					{/if}
 					{#if ['Default', 'Collapsed'].includes(node.parent?.category?.type || 'Default')}
 						<Node shadowColor={node.parent?.category.color || '#a53a3a'} treeData={node.treeNode} />
 						{#if extraShown}
-							{#if node.parent}
-								<div class="absolute top-[-30px] flex w-[800px] justify-center">
-									<button
-										on:click={() => {
-											navigateToNode(node.parent?.node);
-										}}
-										class="underline underline-offset-[-15px] text-[13px] text-[#9a9a9a] hover:text-[#ffffff]"
-										>{`${node.parent.node.treeNode.data.title} (${node.parent.category.title})`}
-									</button>
-								</div>
-							{/if}
 							<div class="absolute flex w-[800px] top-[calc(100%+12px)]">
 								{#each node.treeNode.linking_categories as category (category.id)}
 									<div
@@ -457,46 +457,50 @@
 											: '380'}px;"
 									>
 										<p class="selection:bg-none">{category.title}</p>
-										<FadeElement className="cursor-auto" side="bottom">
-											<div
-												role="presentation"
-												on:click={(e) => e.stopPropagation()}
-												class="flex flex-col items-center w-[180px] bg-[#282828] rounded-[6px] px-[10px] pb-[10px] text-[11.5px] text-[#e4e4e4]"
-											>
-												{#if category.description}
-													<p class="mt-[7px]">{category.description}</p>
-													<div class="bg-[#7c7c7c] h-[.3px] w-full mt-[8px]" />
-												{/if}
-												<button
-													on:click={() => {
-														if (data.props.loggedIn) {
-															$newNodeModal.uuid = node.treeNode.uuid;
-															$newNodeModal.category = category.id;
-															$newNodeModal.visible = true;
-														} else loginNotif.set(true);
-													}}
-													class="border-[#3d6297] border-[1px] hover:bg-[#3d6297] transition-colors rounded-[6px] w-full py-[1px] mt-[10px]"
-													>Add Node</button
+										{#if category.type === 'Default' || category.type === 'Collapsed' || node.treeNode.owners?.includes(data.props?.profile?.username)}
+											<FadeElement className="cursor-auto" side="bottom">
+												<div
+													role="presentation"
+													on:click={(e) => e.stopPropagation()}
+													class="flex flex-col items-center w-[180px] bg-[#282828] rounded-[6px] px-[10px] pb-[10px] text-[11.5px] text-[#e4e4e4]"
 												>
-												{#if node.treeNode.owners?.includes(data.props?.profile?.username)}
-													<button
-														on:click={() => {
-															$categoriesModal = {
-																visible: true,
-																uuid: node.treeNode.uuid,
-																categories: node.treeNode.linking_categories,
-																uneditableCats: new Set(
-																	node.arrayChildren.map((child) => child.parent_category.id)
-																),
-																waiting: false
-															};
-														}}
-														class="border-[#2d7356] border-[1px] hover:bg-[#2d7356] transition-colors rounded-[6px] w-full py-[1px] mt-[6px]"
-														>Edit Categories</button
-													>
-												{/if}
-											</div>
-										</FadeElement>
+													{#if category.description}
+														<p class="mt-[7px]">{category.description}</p>
+														<div class="bg-[#7c7c7c] h-[.3px] w-full mt-[8px]" />
+													{/if}
+													{#if category.type === 'Default' || category.type === 'Collapsed'}
+														<button
+															on:click={() => {
+																if (data.props.loggedIn) {
+																	$newNodeModal.uuid = node.treeNode.uuid;
+																	$newNodeModal.category = category.id;
+																	$newNodeModal.visible = true;
+																} else loginNotif.set(true);
+															}}
+															class="border-[#3d6297] border-[1px] hover:bg-[#3d6297] transition-colors rounded-[6px] w-full py-[1px] mt-[10px]"
+															>Add Node</button
+														>
+													{/if}
+													{#if node.treeNode.owners?.includes(data.props?.profile?.username)}
+														<button
+															on:click={() => {
+																$categoriesModal = {
+																	visible: true,
+																	uuid: node.treeNode.uuid,
+																	categories: node.treeNode.linking_categories,
+																	uneditableCats: new Set(
+																		node.arrayChildren.map((child) => child.parent_category.id)
+																	),
+																	waiting: false
+																};
+															}}
+															class="border-[#2d7356] border-[1px] hover:bg-[#2d7356] transition-colors rounded-[6px] w-full py-[1px] mt-[6px]"
+															>Edit Categories</button
+														>
+													{/if}
+												</div>
+											</FadeElement>
+										{/if}
 									</div>
 								{/each}
 							</div>
@@ -596,7 +600,7 @@
 							{/if}
 						{/if}
 					{:else if node.parent?.category?.type === 'Thread'}
-						<Thread />
+						<Thread treeData={node} />
 					{:else if node.parent?.category?.type === 'Poll'}
 						<Poll />
 					{/if}

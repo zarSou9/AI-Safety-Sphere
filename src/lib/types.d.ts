@@ -49,12 +49,27 @@ type CategoryColors =
 interface TreeInterface {
 	setTree(t: Tree): void;
 	setClientTree(t: Tree): void;
-	getTree(): Tree | undefined;
-	getParent(uuid: string | undefined, obj?: TreeNode): { i: number; node: TreeNode } | undefined;
+	getTree(): Tree;
+	getParent(
+		uuid: string | undefined,
+		obj?: any
+	):
+		| {
+				i: number;
+				node: TreeNode;
+		  }
+		| undefined;
 	getObjFromId(uuid?: string | undefined): TreeNode | undefined;
 	calculateSpacing(): { width: number; height: number };
-	createNode(parent: TreeNode, title?: string, tldr?: any, owners?: any): TreeNode;
-	deleteNode(uuid: string): { error?: string };
+	createNode(
+		parent: TreeNode,
+		parent_category: string,
+		title?: string,
+		tldr?: any,
+		owners?: any
+	): TreeNode | undefined;
+	createThread(parent: TreeNode, parent_category: string, owners?: string[]): TreeNode | undefined;
+	deleteNode(uuid: string): { error?: string } | undefined;
 }
 
 interface CategoriesModal {
@@ -63,6 +78,13 @@ interface CategoriesModal {
 	categories: linking_category[];
 	uneditableCats: Set<string>;
 	waiting: boolean;
+}
+
+interface ThreadPost {
+	owner: string;
+	post: string;
+	vote: number;
+	created_at: number;
 }
 
 type TreeArrayNode = {
@@ -98,5 +120,6 @@ export {
 	CategoriesModal,
 	CategoryColors,
 	CategoryTypes,
-	TreeArrayNode
+	TreeArrayNode,
+	ThreadPost
 };

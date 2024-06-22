@@ -1,7 +1,7 @@
 import type { RequestHandler } from './$types';
 import { json } from '@sveltejs/kit';
 import { createTree } from '$lib/stores/nodes';
-import type { LinkingCategory } from '$lib/types';
+import type { LinkingCategory, TreeInterface } from '$lib/types';
 import Joi from 'joi';
 
 export const POST: RequestHandler = async ({ request, locals: { supabase, supabaseService } }) => {
@@ -33,7 +33,7 @@ export const POST: RequestHandler = async ({ request, locals: { supabase, supaba
 		const userIdValid = Joi.string().validate(userId);
 		const uuidValid = Joi.string().validate(uuid);
 		const newCategoriesValid = LinkingCategoriesSchema.validate(newCategories);
-		let tree;
+		let tree: TreeInterface;
 		if (userIdValid.error || uuidValid.error || newCategoriesValid.error)
 			throw { status: 400, message: 'Bad request: missing or incorrect fields' };
 
@@ -67,18 +67,44 @@ export const POST: RequestHandler = async ({ request, locals: { supabase, supaba
 				throw { status: 400, message: 'Unauthorized' };
 			}
 			treeNode?.children.forEach((child) => {
-				if (!newCategories.find((cat) => cat.id === child.parent_category)) {
+				const deletedCategory = !newCategories.find((cat) => cat.id === child.parent_category);
+				if (deletedCategory)
 					throw { status: 400, message: 'Cannot delete category with child nodes' };
-				}
 			});
+			const oldCats = treeNode.linking_categories;
 			treeNode.linking_categories = newCategories;
 
-			const treeResult = await supabaseService
-				.from('Tree')
-				.update({ data: tree.getTree(), changing: 0 })
-				.eq('id', 1);
+			const postPromises: any = [];
+			newCategories.forEach((newCat) => {
+				if (newCat.type === 'Poll' || newCat.type === 'Thread') {
+					const oldFound = oldCats.find((cat) => cat.id === newCat.id);
+					if (oldFound) {
+						if (oldFound.type !== newCat.type)
+							throw {
+								status: 400,
+								message: `Cannot change category of ${oldFound.type.toLowerCase()} node`
+							};
+					} else {
+						if (newCat.type === 'Thread') {
+							const newThread = tree.createThread(treeNode, newCat.id, owners);
+							postPromises.push(
+								supabaseService.from('Threads').insert([{ uuid: newThread?.uuid }])
+							);
+						} else if (newCat.type === 'Poll') {
+						}
+					}
+				}
+			});
 
-			if (treeResult?.error) throw { status: 400, message: treeResult.error.message };
+			postPromises.push(
+				supabaseService.from('Tree').update({ data: tree.getTree(), changing: 0 }).eq('id', 1)
+			);
+
+			const results = await Promise.all(postPromises);
+
+			results.forEach((result) => {
+				if (result.error) throw { status: 400, message: result.error.message };
+			});
 
 			break;
 		}

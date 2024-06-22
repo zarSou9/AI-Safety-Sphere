@@ -1085,7 +1085,7 @@
 </script>
 
 <div
-	class="grid bg-[#1f1f1f] rounded-[20px] w-[800px] px-[56px] py-[47px] relative selection:bg-[#6a87b389]"
+	class="grid bg-[#1f1f1f] rounded-[20px] w-[800px] px-[50px] py-[42px] relative selection:bg-[#6a87b389]"
 	style={`box-shadow: -2px 2px ${shadowColor}`}
 >
 	{#if escBtn}
@@ -1099,7 +1099,7 @@
 	<button
 		on:click={changeEditable}
 		disabled={!editBtnActive}
-		class="absolute top-[55px] right-[65px] rounded-md w-[36px] h-[36px] items-center justify-center {editBtnActive
+		class="absolute top-[53px] right-[65px] rounded-md w-[36px] h-[36px] items-center transition-colors justify-center {editBtnActive
 			? 'hover:bg-[#4949495a]'
 			: ''}"
 	>
