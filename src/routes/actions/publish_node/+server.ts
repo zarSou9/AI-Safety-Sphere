@@ -51,6 +51,12 @@ export const POST: RequestHandler = async ({ request, locals: { supabase, supaba
 			const parent = tree.getObjFromId(parentUUID);
 
 			if (!parent) throw { status: 400, message: 'Parent node could not be found' };
+			if (
+				!parent.linking_categories
+					.find((lc) => lc.id === parentCategory)
+					?.nodesAllowed.includes(type)
+			)
+				throw { status: 400, message: 'Node type not allowed' };
 
 			const node = tree.createNode(parent, parentCategory, title, type, undefined, [username]);
 			if (!node) throw { status: 400, message: 'error occured while creating node' };

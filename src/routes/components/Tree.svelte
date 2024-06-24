@@ -495,7 +495,7 @@
 																	$newNodeModal.uuid = node.treeNode.uuid;
 																	$newNodeModal.category_id = category.id;
 																	$newNodeModal.allowedTypes = category.nodesAllowed;
-																	$newNodeModal.type = 'Default';
+																	$newNodeModal.type = category.nodesAllowed[0];
 																	$newNodeModal.visible = true;
 																} else loginNotif.set(true);
 															}}

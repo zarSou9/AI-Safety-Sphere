@@ -1,7 +1,7 @@
 import type { RequestHandler } from './$types';
 import { json } from '@sveltejs/kit';
 import { createTree } from '$lib/stores/nodes';
-import type { LinkingCategory, TreeInterface } from '$lib/types';
+import type { TreeInterface } from '$lib/types';
 import Joi from 'joi';
 
 export const POST: RequestHandler = async ({ request, locals: { supabase, supabaseService } }) => {

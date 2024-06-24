@@ -97,6 +97,7 @@
 			if (action) {
 				if (action === 'save-title') {
 				} else if (action === 'clean-up') {
+					nodeActionUnsubscribe();
 					$viewingNode = false;
 					$shortCutsEnabled = true;
 				} else if (action === 'delete') {
@@ -179,7 +180,7 @@
 				throw new Error(result.error || 'Failed to submit data');
 			}
 			commenting = false;
-			$shortCutsEnabled = true;
+			if (!$viewingNode) $shortCutsEnabled = true;
 			posts = result.data;
 			comment = '';
 		} catch (error: any) {
@@ -418,7 +419,10 @@
 	{/if}
 	{#if commenting}
 		<textarea
-			on:wheel={(e) => e.stopPropagation()}
+			on:wheel={(e) => {
+				e.preventDefault();
+				e.stopPropagation();
+			}}
 			bind:value={comment}
 			bind:this={commentTextarea}
 			rows="3"
@@ -428,6 +432,7 @@
 			<button
 				class="rounded-md text-[13px] px-[6px] ml-auto bg-[#7c3636] transition-colors hover:bg-[#a44848]"
 				on:click={() => {
+					if (!$viewingNode) $shortCutsEnabled = true;
 					commenting = false;
 					comment = '';
 				}}>Cancel</button

@@ -25,8 +25,8 @@ export function createTree() {
 			if (currentDepth > pos.height) pos.height = currentDepth;
 			obj.top = (currentDepth - 1) * ySpace;
 			if (firstNode && pos.left !== 0) {
-				obj.left = pos.left + 60;
-				pos.left += 860 + xSpace;
+				obj.left = pos.left + 30;
+				pos.left += 830 + xSpace;
 			} else {
 				obj.left = pos.left;
 				pos.left += 800 + xSpace;

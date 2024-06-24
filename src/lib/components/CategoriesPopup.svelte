@@ -207,8 +207,11 @@
 									<button
 										on:click={() => {
 											let i = category.nodesAllowed.findIndex((v) => v === nodeType);
-											if (i !== -1) category.nodesAllowed.splice(i, 1);
-											else category.nodesAllowed.push(nodeType);
+											if (i !== -1) {
+												if (category.nodesAllowed.length === 1)
+													failurePopUp.set('At least one type required');
+												else category.nodesAllowed.splice(i, 1);
+											} else category.nodesAllowed.push(nodeType);
 										}}
 										class="flex size-[15px] rounded-md items-center border-[#41649d] justify-center transition-colors {category.nodesAllowed.includes(
 											nodeType

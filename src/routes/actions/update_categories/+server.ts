@@ -22,7 +22,9 @@ export const POST: RequestHandler = async ({ request, locals: { supabase, supaba
 				),
 				type: Joi.alternatives().try('Expanded', 'Collapsed'),
 				postPermissions: Joi.alternatives().try('Members', 'Owner', 'Anyone'),
-				nodesAllowed: Joi.array().items(Joi.alternatives().try('Thread', 'Poll', 'Default'))
+				nodesAllowed: Joi.array()
+					.items(Joi.alternatives().try('Thread', 'Poll', 'Default'))
+					.min(1)
 			}).required()
 		);
 
