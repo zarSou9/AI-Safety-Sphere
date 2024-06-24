@@ -107,7 +107,7 @@
 						description: '',
 						color: colors[colorI],
 						postPermissions: 'Anyone',
-						nodesAllowed: ['Thread', 'Poll', 'Default']
+						nodesAllowed: ['Default', 'Thread', 'Poll']
 					});
 					colors.splice(colorI, 1);
 					categories = [...categories];

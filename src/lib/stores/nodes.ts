@@ -157,7 +157,7 @@ export function createTree() {
 										'For ideas which relate to this node in a way which is not defined by other categories',
 									color: '#3f3f3f',
 									postPermissions: 'Anyone',
-									nodesAllowed: ['Thread', 'Poll', 'Default']
+									nodesAllowed: ['Default', 'Thread', 'Poll']
 								}
 							]
 						: [],
