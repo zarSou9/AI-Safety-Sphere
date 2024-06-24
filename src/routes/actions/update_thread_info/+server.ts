@@ -14,7 +14,6 @@ export const POST: RequestHandler = async ({ request, locals: { supabase, supaba
 			userId: Joi.string()
 		});
 		const req = await request.json();
-		console.log(requestSchema.validate(req).error);
 		if (requestSchema.validate(req).error)
 			throw { status: 400, message: 'Bad request: missing or incorrect fields' };
 
