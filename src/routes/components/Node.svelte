@@ -431,6 +431,7 @@
 				else if (action === 'aj') aj();
 				else if (action === 'indent') indent();
 				else if (action === 'dedent') dedent();
+				else if (action === 'color') color();
 
 				nodeAction.set(null);
 			}
@@ -740,6 +741,9 @@
 		} else {
 			currentQuill.format('indent', null);
 		}
+	}
+	function color() {
+		currentQuill.format('color', null);
 	}
 
 	function saving(start: boolean = false) {
