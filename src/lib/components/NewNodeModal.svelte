@@ -1,27 +1,32 @@
 <script lang="ts">
 	import { createEventDispatcher } from 'svelte';
-	import Cross from '$lib/icons/Cross.svelte';
 	import { getContext } from 'svelte';
 	import { type Writable } from 'svelte/store';
-	import { writable } from 'svelte/store';
+	import type { NodeTypes, NewNodeModalStore } from '$lib/types';
+	import { slide } from 'svelte/transition';
+	import { quintOut } from 'svelte/easing';
+
+	import Cross from '$lib/icons/Cross.svelte';
 
 	const failurePopUp: Writable<any> = getContext('failurePopUpStore');
 
-	export let titleResult: any;
+	export let newNodeModal: NewNodeModalStore;
 	export let titleMessage: string = 'New Title';
 	export let maxLength: number = 32;
+
+	let typesOpen = false;
 
 	let sectionsOpen = false;
 	const dispatch = createEventDispatcher();
 
 	function close() {
-		dispatch('close');
+		$newNodeModal.visible = false;
 	}
 	function save() {
-		if (!titleResult.title) {
+		if (!$newNodeModal.title) {
 			failurePopUp.set('Please provide a title');
 			return;
-		} else if (titleResult.title.length > maxLength) {
+		} else if ($newNodeModal.title.length > maxLength) {
 			failurePopUp.set(`Title can't be greater than ${maxLength} characters`);
 			return;
 		}
@@ -30,7 +35,7 @@
 	function handleKeyDown(e: KeyboardEvent) {
 		e.stopPropagation();
 		if (e.key === 'Escape') {
-			dispatch('close');
+			$newNodeModal.visible = false;
 		}
 	}
 </script>
@@ -55,11 +60,36 @@
 				{titleMessage}
 			</p>
 			<input
-				bind:this={titleResult.div}
-				bind:value={titleResult.title}
-				class="w-full text-[#000000] mt-[10px] pl-2 pr-1 rounded-sm py-1 border-[.1px] outline-[0px]"
+				bind:this={$newNodeModal.input}
+				bind:value={$newNodeModal.title}
+				class="w-full text-[#000000] mt-[7px] pl-2 pr-1 rounded-sm py-1 border-[.1px] outline-[0px]"
 			/>
 		</label>
+		<button
+			on:click={(e) => {
+				typesOpen = !typesOpen;
+				e.stopPropagation();
+			}}
+			class="w-full text-[12px] mt-[12px] mr-auto border-[#e4e4e4] border-[.7px] rounded-[5px] flex items-center justify-center relative py-[2px]"
+			>{$newNodeModal.type}
+			{#if typesOpen}
+				<div
+					transition:slide={{ duration: 150, easing: quintOut }}
+					class="z-[400] absolute bg-[#474747] rounded-md overflow-hidden top-[calc(100%+.7px)] right-[0px] left-0 flex flex-col text-[12px] py-[4px] space-y-[1px] text-[#e9e9e9]"
+				>
+					{#each $newNodeModal.allowedTypes as type (type)}
+						<button
+							on:click={() => {
+								$newNodeModal.type = type;
+							}}
+							class="py-[1px] pl-[8px] flex justify-start {$newNodeModal.type === type
+								? 'bg-[#626262]'
+								: 'hover:bg-[#585858]'}">{type}</button
+						>
+					{/each}
+				</div>
+			{/if}
+		</button>
 		<div class="flex mt-[12px]">
 			<button
 				on:click={save}

@@ -1,21 +1,22 @@
 import type { RequestHandler } from './$types';
 import { json } from '@sveltejs/kit';
 import type { ThreadPost } from '$lib/types';
-import { v4 as uuidv4 } from 'uuid';
+import { createTree } from '$lib/stores/nodes';
 
 import Joi from 'joi';
 
 export const POST: RequestHandler = async ({ request, locals: { supabase, supabaseService } }) => {
 	try {
-		const { uuid, comment, userId }: { uuid: string; comment: string; userId: string } =
-			await request.json();
-
-		const userIdValid = Joi.string().validate(userId);
-		const uuidValid = Joi.string().validate(uuid);
-		const commentValid = Joi.string().validate(comment);
-
-		if (userIdValid.error || uuidValid.error || commentValid.error)
+		const requestSchema = Joi.object({
+			uuid: Joi.string(),
+			postID: Joi.string(),
+			userId: Joi.string()
+		});
+		const req = await request.json();
+		if (requestSchema.validate(req).error)
 			throw { status: 400, message: 'Bad request: missing or incorrect fields' };
+
+		const { uuid, userId, postID }: { uuid: string; userId: string; postID: string } = req;
 
 		let posts: ThreadPost[] = [];
 
@@ -30,19 +31,38 @@ export const POST: RequestHandler = async ({ request, locals: { supabase, supaba
 				.eq('uuid', uuid)
 				.select('posts');
 			const usernamePromise = supabase.from('Profiles').select('username').eq('user_id', userId);
+			const treePromise = supabase.from('Tree').select('data').eq('id', 1);
 
-			const [threadData, usernameResult] = await Promise.all([threadeDataPromise, usernamePromise]);
+			const [threadData, usernameResult, treeResult] = await Promise.all([
+				threadeDataPromise,
+				usernamePromise,
+				treePromise
+			]);
 
 			if (threadData?.error) throw { status: 400, message: threadData.error.message };
 			if (usernameResult?.error) throw { status: 400, message: usernameResult.error.message };
+			if (treeResult?.error) throw { status: 400, message: treeResult.error.message };
 
 			if (!threadData.data.length) continue;
 
-			const user = usernameResult.data[0].username;
+			const username = usernameResult.data[0].username;
 			posts = threadData.data[0].posts;
-			const id = uuidv4();
 
-			posts.push({ id, owner: user, post: comment, vote: 0, created_at: now, votes: [] });
+			const tree = createTree();
+
+			tree.setTree(treeResult.data[0].data);
+			const treeNode = tree.getObjFromId(uuid);
+			const owners = treeNode?.owners;
+
+			const post = posts.find((p) => p.id === postID);
+			if (!post) throw { status: 400, message: 'Could not find post' };
+			if (post.owner !== username && !owners?.includes(username))
+				throw { status: 400, message: 'Unauthorized' };
+
+			posts.splice(
+				posts.findIndex((p) => p.id === postID),
+				1
+			);
 
 			const { data, error } = await supabaseService
 				.from('Threads')

@@ -1,6 +1,13 @@
 <script lang="ts">
 	import { getContext, onMount, tick } from 'svelte';
-	import type { TreeInterface, LinkingCategory, CategoriesModal, TreeArrayNode } from '$lib/types';
+	import type {
+		TreeInterface,
+		LinkingCategory,
+		CategoriesModal,
+		TreeArrayNode,
+		NewNodeModalStore,
+		NodeTypes
+	} from '$lib/types';
 	import type { Writable } from 'svelte/store';
 	import type { PageData } from '../$types';
 	import { slide } from 'svelte/transition';
@@ -32,7 +39,7 @@
 	const processing: Writable<boolean> = getContext('processingStore');
 	const loginNotif: Writable<boolean> = getContext('loginNotifStore');
 	const categoriesModal: Writable<CategoriesModal> = getContext('categoriesModalStore');
-	const newNodeModal: Writable<any> = getContext('newNodeModalStore');
+	const newNodeModal: NewNodeModalStore = getContext('newNodeModalStore');
 	const shortCutsEnabled: Writable<boolean> = getContext('shortCutsEnabledStore');
 
 	let viewingNodeDiv: HTMLDivElement | undefined;
@@ -127,10 +134,16 @@
 						delete c?.div;
 						delete c?.left;
 						delete c?.typesOpen;
+						delete c?.permissionsOpen;
 					});
 					updateCategories($categoriesModal.uuid, $categoriesModal.categories);
 				} else if (action === 'create-new-node') {
-					publishNode($newNodeModal.uuid, $newNodeModal.category, $newNodeModal.title);
+					publishNode(
+						$newNodeModal.uuid || '',
+						$newNodeModal.category_id || '',
+						$newNodeModal.title,
+						$newNodeModal.type || 'Default'
+					);
 					$newNodeModal.title = '';
 				}
 				treeAction.set(null);
@@ -256,7 +269,8 @@
 	async function publishNode(
 		parentUUID: string,
 		parentCategory: string,
-		title: string
+		title: string,
+		type: NodeTypes
 	): Promise<void> {
 		$processing = true;
 		try {
@@ -265,7 +279,13 @@
 				headers: {
 					'Content-Type': 'application/json'
 				},
-				body: JSON.stringify({ parentUUID, parentCategory, title, userId: data.session?.user.id })
+				body: JSON.stringify({
+					parentUUID,
+					parentCategory,
+					title,
+					type,
+					userId: data.session?.user.id
+				})
 			});
 
 			const result: any = await response.json();
@@ -439,7 +459,7 @@
 							</button>
 						</div>
 					{/if}
-					{#if ['Default', 'Collapsed'].includes(node.parent?.category?.type || 'Default')}
+					{#if node.treeNode.type === 'Default'}
 						<Node shadowColor={node.parent?.category.color || '#a53a3a'} treeData={node.treeNode} />
 						{#if extraShown}
 							<div class="absolute flex w-[800px] top-[calc(100%+12px)]">
@@ -457,7 +477,7 @@
 											: '380'}px;"
 									>
 										<p class="selection:bg-none">{category.title}</p>
-										{#if category.type === 'Default' || category.type === 'Collapsed' || node.treeNode.owners?.includes(data.props?.profile?.username)}
+										{#if node.treeNode.owners?.includes(data.props?.profile?.username)}
 											<FadeElement className="cursor-auto" side="bottom">
 												<div
 													role="presentation"
@@ -468,19 +488,20 @@
 														<p class="mt-[7px]">{category.description}</p>
 														<div class="bg-[#7c7c7c] h-[.3px] w-full mt-[8px]" />
 													{/if}
-													{#if category.type === 'Default' || category.type === 'Collapsed'}
+													{#if category.postPermissions === 'Anyone' || node.treeNode.owners.includes(data.props.profile?.username)}
 														<button
 															on:click={() => {
 																if (data.props.loggedIn) {
 																	$newNodeModal.uuid = node.treeNode.uuid;
-																	$newNodeModal.category = category.id;
+																	$newNodeModal.category_id = category.id;
+																	$newNodeModal.allowedTypes = category.nodesAllowed;
+																	$newNodeModal.type = 'Default';
 																	$newNodeModal.visible = true;
 																} else loginNotif.set(true);
 															}}
 															class="border-[#3d6297] border-[1px] hover:bg-[#3d6297] transition-colors rounded-[6px] w-full py-[1px] mt-[10px]"
 															>Add Node</button
-														>
-													{/if}
+														>{/if}
 													{#if node.treeNode.owners?.includes(data.props?.profile?.username)}
 														<button
 															on:click={() => {
@@ -599,9 +620,12 @@
 								</button>
 							{/if}
 						{/if}
-					{:else if node.parent?.category?.type === 'Thread'}
-						<Thread treeData={node} />
-					{:else if node.parent?.category?.type === 'Poll'}
+					{:else if node.treeNode.type === 'Thread'}
+						<Thread
+							shadowColor={node.parent?.category.color || '#a53a3a'}
+							treeData={node.treeNode}
+						/>
+					{:else if node.treeNode.type === 'Poll'}
 						<Poll />
 					{/if}
 				</div>

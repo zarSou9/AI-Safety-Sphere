@@ -5,7 +5,7 @@
 	import { writable } from 'svelte/store';
 	import { fly, fade, slide } from 'svelte/transition';
 	import { quintOut } from 'svelte/easing';
-	import type { CategoriesModal } from '$lib/types';
+	import type { CategoriesModal, NewNodeModalStore, EditThreadInfoStore } from '$lib/types';
 
 	import InfiniteCanvas from './components/InfiniteCanvas.svelte';
 	import TitleModal from '$lib/components/TitleModal.svelte';
@@ -14,6 +14,7 @@
 	import ConfirmationModal from '$lib/components/ConfirmationModal.svelte';
 	import InfoModal from '$lib/components/InfoModal.svelte';
 	import CategoriesPopup from '$lib/components/CategoriesPopup.svelte';
+	import EditThreadInfo from '$lib/components/EditThreadInfo.svelte';
 
 	import Cross from '$lib/icons/Cross.svelte';
 	import ThreeDots from '$lib/icons/ThreeDots.svelte';
@@ -94,9 +95,10 @@
 		title: ''
 	});
 	setContext('newStrategyTitleModalStore', newStrategyTitleModal);
-	const newNodeModal: any = writable({
+	const newNodeModal: NewNodeModalStore = writable({
 		visible: false,
-		title: ''
+		title: '',
+		allowedTypes: []
 	});
 	setContext('newNodeModalStore', newNodeModal);
 	const sectionModal: any = writable({
@@ -119,6 +121,8 @@
 	setContext('toolBarShownStore', toolBarShown);
 	const toolBarDotsShown = writable(false);
 	setContext('toolBarDotsShownStore', toolBarDotsShown);
+	const toolBarThread = writable(false);
+	setContext('toolBarThreadStore', toolBarThread);
 	const successPopUp = writable(false);
 	setContext('successPopUpStore', successPopUp);
 	const failurePopUp = writable(false);
@@ -150,6 +154,13 @@
 	setContext('linkInputStore', linkInput);
 	const categoriesModal = writable(undefined as CategoriesModal | undefined);
 	setContext('categoriesModalStore', categoriesModal);
+	const editThreadInfo: EditThreadInfoStore = writable({
+		visible: false,
+		title: '',
+		tldr: '',
+		vote_message: ''
+	});
+	setContext('editThreadInfoStore', editThreadInfo);
 
 	const tree = createTree();
 	if (data.props?.hier[0]?.data?.node) tree.setClientTree(data.props.hier[0].data);
@@ -165,8 +176,7 @@
 		tick().then(() => titleResult.div?.focus());
 	}
 	$: if ($newNodeModal.visible) {
-		titleResult.title = $newNodeModal.title;
-		tick().then(() => titleResult.div?.focus());
+		tick().then(() => $newNodeModal.input?.focus());
 	}
 	$: if ($sectionModal.visible) {
 		tick().then(() => toolbarResult.div?.focus());
@@ -336,13 +346,9 @@
 	/>
 {:else if $newNodeModal.visible}
 	<NewNodeModal
-		{titleResult}
+		{newNodeModal}
 		titleMessage="New Node Title"
-		on:close={() => {
-			$newNodeModal.visible = false;
-		}}
 		on:save={() => {
-			$newNodeModal.title = titleResult.title;
 			treeAction.set('create-new-node');
 			$newNodeModal.visible = false;
 		}}
@@ -352,6 +358,13 @@
 		{categoriesModal}
 		on:save={() => {
 			treeAction.set('save-new-categories');
+		}}
+	/>
+{:else if $editThreadInfo?.visible}
+	<EditThreadInfo
+		{editThreadInfo}
+		on:save={() => {
+			nodeAction.set('save-thread-info');
 		}}
 	/>
 {:else if confirmationModalVisible}
@@ -422,203 +435,11 @@
 		class="relative flex items-center w-full h-[40px] bg-[#272727] border-b-[.3px] border-b-[#70747c]"
 	>
 		{#if $toolBarShown}
-			<div
-				transition:fade={{ duration: 100 }}
-				class="h-[28px] bg-[#303032] flex rounded-full ml-[233px] w-[69%] items-center flex-shrink-0"
-			>
-				<button
-					on:click={() => {
-						nodeAction.set('bold');
-					}}
-					class="ml-[20px] p-[3px] rounded-[5px] {$bolded
-						? 'bg-[#7db1ff25]'
-						: ' hover:bg-[#393939]'}"><Bold color="#9c9c9c" size="16px" /></button
+			{#if $toolBarThread}
+				<div
+					transition:fade={{ duration: 100 }}
+					class="h-[28px] bg-[#303032] flex rounded-full ml-[233px] w-[69%] items-center flex-shrink-0"
 				>
-				<button
-					on:click={() => {
-						nodeAction.set('italic');
-					}}
-					class="ml-[2px] p-[3px] rounded-[5px] {$italicized
-						? 'bg-[#7db1ff25]'
-						: ' hover:bg-[#393939]'}"><Italic color="#9c9c9c" size="16px" /></button
-				>
-				<button
-					on:click={() => {
-						nodeAction.set('underline');
-					}}
-					class="ml-[2px] p-[2.5px] rounded-[5px] {$underlined
-						? 'bg-[#7db1ff25]'
-						: ' hover:bg-[#393939]'}"><Underline color="#9c9c9c" size="17px" /></button
-				>
-				<button
-					on:click={() => {
-						nodeAction.set('strike');
-					}}
-					class="ml-[2px] p-[2px] rounded-[5px] {$striked
-						? 'bg-[#7db1ff25]'
-						: ' hover:bg-[#393939]'}"><Strike color="#9c9c9c" size="18px" /></button
-				>
-				<button
-					on:click={() => {
-						nodeAction.set('subscript');
-					}}
-					class="ml-[20px] px-[3px] pt-[4px] pb-[2px] rounded-[5px] {$scripted === 'sub'
-						? 'bg-[#7db1ff25]'
-						: ' hover:bg-[#393939]'}"><Subscript color="#9c9c9c" size="16px" /></button
-				>
-				<button
-					on:click={() => {
-						nodeAction.set('superscript');
-					}}
-					class="ml-[2px] px-[3px] pt-[2px] pb-[4px] rounded-[5px] {$scripted === 'super'
-						? 'bg-[#7db1ff25]'
-						: ' hover:bg-[#393939]'}"><Superscript color="#9c9c9c" size="16px" /></button
-				>
-				<button
-					on:click={() => {
-						nodeAction.set('dedent');
-					}}
-					class="ml-[20px] p-[3px] rounded-[5px] hover:bg-[#393939]"
-					><Dedent color="#9c9c9c" size="16px" /></button
-				>
-				<button
-					on:click={() => {
-						nodeAction.set('indent');
-					}}
-					class="p-[3px] rounded-[5px] hover:bg-[#393939]"
-					><Indent color="#9c9c9c" size="16px" /></button
-				>
-				<button
-					on:click={() => {
-						alignBar = !alignBar;
-						if (alignBar) setTimeout(() => window.addEventListener('click', closeAlignBar), 2);
-					}}
-					class="ml-[4px] p-[3px] rounded-[5px] relative {$aligned
-						? 'bg-[#7db1ff25]'
-						: !alignBar
-							? 'hover:bg-[#393939]'
-							: 'bg-[#393939]'}"
-				>
-					{#if $aligned === 'right'}
-						<AlignR color="#9c9c9c" size="16px" />
-					{:else if $aligned === 'center'}
-						<AlignC color="#9c9c9c" size="16px" />
-					{:else if $aligned === 'justify'}
-						<AlignJ color="#9c9c9c" size="16px" />
-					{:else}
-						<AlignL color="#9c9c9c" size="16px" />
-					{/if}
-					{#if alignBar}
-						<div
-							class="z-[10] flex absolute p-[4px] bg-[#303032] rounded-[6px] bottom-[-35px] left-[-10px] border-[.3px] border-[#47494c]"
-						>
-							<button
-								on:click={() => {
-									nodeAction.set('al');
-								}}
-								class="p-[3px] rounded-[5px] {!$aligned ? 'bg-[#7db1ff25]' : ' hover:bg-[#393939]'}"
-								><AlignL color="#9c9c9c" size="16px" />
-							</button>
-							<button
-								on:click={() => {
-									nodeAction.set('ac');
-								}}
-								class="ml-[3px] p-[3px] rounded-[5px] {$aligned === 'center'
-									? 'bg-[#7db1ff25]'
-									: ' hover:bg-[#393939]'}"
-								><AlignC color="#9c9c9c" size="16px" />
-							</button>
-							<button
-								on:click={() => {
-									nodeAction.set('ar');
-								}}
-								class="ml-[3px] p-[3px] rounded-[5px] {$aligned === 'right'
-									? 'bg-[#7db1ff25]'
-									: ' hover:bg-[#393939]'}"
-								><AlignR color="#9c9c9c" size="16px" />
-							</button>
-							<button
-								on:click={() => {
-									nodeAction.set('aj');
-								}}
-								class="ml-[3px] p-[3px] rounded-[5px] {$aligned === 'justify'
-									? 'bg-[#7db1ff25]'
-									: ' hover:bg-[#393939]'}"
-								><AlignJ color="#9c9c9c" size="16px" />
-							</button>
-						</div>
-					{/if}
-				</button>
-				<button
-					on:click={() => {
-						nodeAction.set('quote');
-					}}
-					class="ml-[20px] p-[4.5px] rounded-[5px] {$quoted
-						? 'bg-[#7db1ff25]'
-						: ' hover:bg-[#393939]'}"><Quote color="#9c9c9c" size="13px" /></button
-				>
-				<button
-					on:click={(e) => {
-						if (!linkBar) {
-							$linkInput = '';
-							linkBar = true;
-							nodeAction.set('get-selection');
-							setTimeout(() => {
-								window.addEventListener('click', closeLinkBar);
-								linkInputElement.focus();
-							}, 3);
-						} else e.stopPropagation();
-					}}
-					class="ml-[2px] p-[1.5px] rounded-[5px] relative {linkBar
-						? 'bg-[#393939]'
-						: 'hover:bg-[#393939]'} "
-				>
-					<Link color="#9c9c9c" size="19px" />
-					{#if linkBar}
-						<div
-							class="z-[10] flex absolute p-[6px] bg-[#303032] rounded-[6px] bottom-[-46px] left-[-10px] border-[.3px] border-[#47494c]"
-						>
-							<input
-								bind:this={linkInputElement}
-								bind:value={$linkInput}
-								class="text-[#000000] selection:bg-[#7db1ff] pl-[3px]"
-							/>
-							<button
-								class="ml-[10px] border-[1px] border-[#0e67d3] hover:bg-[#0e67d3] px-[10px]"
-								on:click={(e) => {
-									e.stopPropagation();
-									window.removeEventListener('click', closeLinkBar);
-									linkBar = false;
-									nodeAction.set('link');
-								}}
-							>
-								save
-							</button>
-						</div>
-					{/if}
-				</button>
-				<button
-					on:click={() => {
-						nodeAction.set('fx');
-					}}
-					class="ml-[2px] p-[4.5px] rounded-[5px] hover:bg-[#393939]"
-					><Fx color="#9c9c9c" size="13px" /></button
-				>
-				<button
-					on:click={() => {
-						nodeAction.set('image');
-					}}
-					class="ml-[20px] p-[2.5px] rounded-[5px] hover:bg-[#393939]"
-					><Image color="#9c9c9c" size="17px" /></button
-				>
-				<button
-					on:click={() => {
-						nodeAction.set('video');
-					}}
-					class="ml-[2px] p-[3px] mr-auto rounded-[5px] hover:bg-[#393939]"
-					><Video color="#9c9c9c" size="16px" /></button
-				>
-				{#if $toolBarDotsShown}
 					<button
 						bind:this={toolBarDropE}
 						on:click={() => {
@@ -627,7 +448,7 @@
 								window.addEventListener('click', handleMouseOut);
 							}
 						}}
-						class="p-[4px] px-[4.5px] rounded-[5px] mr-[16px] relative {toolBarMenuDropdown
+						class="p-[4px] px-[4.5px] rounded-[5px] ml-auto mr-[16px] relative {toolBarMenuDropdown
 							? 'bg-[#3f3f3f]'
 							: 'hover:bg-[#393939]'}"
 					>
@@ -640,10 +461,9 @@
 							>
 								<button
 									on:click={() => {
-										nodeAction.set('start-new-section');
+										nodeAction.set('edit-thread-info');
 									}}
-									class="hover:bg-[#626262] pl-[10px] py-[3px] flex justify-start"
-									>New Section</button
+									class="hover:bg-[#626262] pl-[10px] py-[3px] flex justify-start">Edit Info</button
 								>
 								<button
 									on:click={() => {
@@ -655,8 +475,245 @@
 							</div>
 						{/if}
 					</button>
-				{/if}
-			</div>
+				</div>
+			{:else}
+				<div
+					transition:fade={{ duration: 100 }}
+					class="h-[28px] bg-[#303032] flex rounded-full ml-[233px] w-[69%] items-center flex-shrink-0"
+				>
+					<button
+						on:click={() => {
+							nodeAction.set('bold');
+						}}
+						class="ml-[20px] p-[3px] rounded-[5px] {$bolded
+							? 'bg-[#7db1ff25]'
+							: ' hover:bg-[#393939]'}"><Bold color="#9c9c9c" size="16px" /></button
+					>
+					<button
+						on:click={() => {
+							nodeAction.set('italic');
+						}}
+						class="ml-[2px] p-[3px] rounded-[5px] {$italicized
+							? 'bg-[#7db1ff25]'
+							: ' hover:bg-[#393939]'}"><Italic color="#9c9c9c" size="16px" /></button
+					>
+					<button
+						on:click={() => {
+							nodeAction.set('underline');
+						}}
+						class="ml-[2px] p-[2.5px] rounded-[5px] {$underlined
+							? 'bg-[#7db1ff25]'
+							: ' hover:bg-[#393939]'}"><Underline color="#9c9c9c" size="17px" /></button
+					>
+					<button
+						on:click={() => {
+							nodeAction.set('strike');
+						}}
+						class="ml-[2px] p-[2px] rounded-[5px] {$striked
+							? 'bg-[#7db1ff25]'
+							: ' hover:bg-[#393939]'}"><Strike color="#9c9c9c" size="18px" /></button
+					>
+					<button
+						on:click={() => {
+							nodeAction.set('subscript');
+						}}
+						class="ml-[20px] px-[3px] pt-[4px] pb-[2px] rounded-[5px] {$scripted === 'sub'
+							? 'bg-[#7db1ff25]'
+							: ' hover:bg-[#393939]'}"><Subscript color="#9c9c9c" size="16px" /></button
+					>
+					<button
+						on:click={() => {
+							nodeAction.set('superscript');
+						}}
+						class="ml-[2px] px-[3px] pt-[2px] pb-[4px] rounded-[5px] {$scripted === 'super'
+							? 'bg-[#7db1ff25]'
+							: ' hover:bg-[#393939]'}"><Superscript color="#9c9c9c" size="16px" /></button
+					>
+					<button
+						on:click={() => {
+							nodeAction.set('dedent');
+						}}
+						class="ml-[20px] p-[3px] rounded-[5px] hover:bg-[#393939]"
+						><Dedent color="#9c9c9c" size="16px" /></button
+					>
+					<button
+						on:click={() => {
+							nodeAction.set('indent');
+						}}
+						class="p-[3px] rounded-[5px] hover:bg-[#393939]"
+						><Indent color="#9c9c9c" size="16px" /></button
+					>
+					<button
+						on:click={() => {
+							alignBar = !alignBar;
+							if (alignBar) setTimeout(() => window.addEventListener('click', closeAlignBar), 2);
+						}}
+						class="ml-[4px] p-[3px] rounded-[5px] relative {$aligned
+							? 'bg-[#7db1ff25]'
+							: !alignBar
+								? 'hover:bg-[#393939]'
+								: 'bg-[#393939]'}"
+					>
+						{#if $aligned === 'right'}
+							<AlignR color="#9c9c9c" size="16px" />
+						{:else if $aligned === 'center'}
+							<AlignC color="#9c9c9c" size="16px" />
+						{:else if $aligned === 'justify'}
+							<AlignJ color="#9c9c9c" size="16px" />
+						{:else}
+							<AlignL color="#9c9c9c" size="16px" />
+						{/if}
+						{#if alignBar}
+							<div
+								class="z-[10] flex absolute p-[4px] bg-[#303032] rounded-[6px] bottom-[-35px] left-[-10px] border-[.3px] border-[#47494c]"
+							>
+								<button
+									on:click={() => {
+										nodeAction.set('al');
+									}}
+									class="p-[3px] rounded-[5px] {!$aligned
+										? 'bg-[#7db1ff25]'
+										: ' hover:bg-[#393939]'}"
+									><AlignL color="#9c9c9c" size="16px" />
+								</button>
+								<button
+									on:click={() => {
+										nodeAction.set('ac');
+									}}
+									class="ml-[3px] p-[3px] rounded-[5px] {$aligned === 'center'
+										? 'bg-[#7db1ff25]'
+										: ' hover:bg-[#393939]'}"
+									><AlignC color="#9c9c9c" size="16px" />
+								</button>
+								<button
+									on:click={() => {
+										nodeAction.set('ar');
+									}}
+									class="ml-[3px] p-[3px] rounded-[5px] {$aligned === 'right'
+										? 'bg-[#7db1ff25]'
+										: ' hover:bg-[#393939]'}"
+									><AlignR color="#9c9c9c" size="16px" />
+								</button>
+								<button
+									on:click={() => {
+										nodeAction.set('aj');
+									}}
+									class="ml-[3px] p-[3px] rounded-[5px] {$aligned === 'justify'
+										? 'bg-[#7db1ff25]'
+										: ' hover:bg-[#393939]'}"
+									><AlignJ color="#9c9c9c" size="16px" />
+								</button>
+							</div>
+						{/if}
+					</button>
+					<button
+						on:click={() => {
+							nodeAction.set('quote');
+						}}
+						class="ml-[20px] p-[4.5px] rounded-[5px] {$quoted
+							? 'bg-[#7db1ff25]'
+							: ' hover:bg-[#393939]'}"><Quote color="#9c9c9c" size="13px" /></button
+					>
+					<button
+						on:click={(e) => {
+							if (!linkBar) {
+								$linkInput = '';
+								linkBar = true;
+								nodeAction.set('get-selection');
+								setTimeout(() => {
+									window.addEventListener('click', closeLinkBar);
+									linkInputElement.focus();
+								}, 3);
+							} else e.stopPropagation();
+						}}
+						class="ml-[2px] p-[1.5px] rounded-[5px] relative {linkBar
+							? 'bg-[#393939]'
+							: 'hover:bg-[#393939]'} "
+					>
+						<Link color="#9c9c9c" size="19px" />
+						{#if linkBar}
+							<div
+								class="z-[10] flex absolute p-[6px] bg-[#303032] rounded-[6px] bottom-[-46px] left-[-10px] border-[.3px] border-[#47494c]"
+							>
+								<input
+									bind:this={linkInputElement}
+									bind:value={$linkInput}
+									class="text-[#000000] selection:bg-[#7db1ff] pl-[3px]"
+								/>
+								<button
+									class="ml-[10px] border-[1px] border-[#0e67d3] hover:bg-[#0e67d3] px-[10px]"
+									on:click={(e) => {
+										e.stopPropagation();
+										window.removeEventListener('click', closeLinkBar);
+										linkBar = false;
+										nodeAction.set('link');
+									}}
+								>
+									save
+								</button>
+							</div>
+						{/if}
+					</button>
+					<button
+						on:click={() => {
+							nodeAction.set('fx');
+						}}
+						class="ml-[2px] p-[4.5px] rounded-[5px] hover:bg-[#393939]"
+						><Fx color="#9c9c9c" size="13px" /></button
+					>
+					<button
+						on:click={() => {
+							nodeAction.set('image');
+						}}
+						class="ml-[20px] p-[2.5px] rounded-[5px] hover:bg-[#393939]"
+						><Image color="#9c9c9c" size="17px" /></button
+					>
+					<button
+						on:click={() => {
+							nodeAction.set('video');
+						}}
+						class="ml-[2px] p-[3px] mr-auto rounded-[5px] hover:bg-[#393939]"
+						><Video color="#9c9c9c" size="16px" /></button
+					>
+					{#if $toolBarDotsShown}
+						<button
+							bind:this={toolBarDropE}
+							on:click={() => {
+								toolBarMenuDropdown = !toolBarMenuDropdown;
+								if (toolBarMenuDropdown) {
+									window.addEventListener('click', handleMouseOut);
+								}
+							}}
+							class="p-[4px] px-[4.5px] rounded-[5px] mr-[16px] relative {toolBarMenuDropdown
+								? 'bg-[#3f3f3f]'
+								: 'hover:bg-[#393939]'}"
+						>
+							<ThreeDots color="#9c9c9c" size="14px" />
+							{#if toolBarMenuDropdown}
+								<div
+									in:slide={{ duration: 100, easing: quintOut }}
+									out:slide={{ delay: 100, duration: 100, easing: quintOut }}
+									class="absolute z-[20] w-[150px] bg-[#474747] rounded-[5px] top-[25px] right-[0px] flex flex-col text-[12px] py-[5px]"
+								>
+									<button
+										on:click={() => {
+											nodeAction.set('start-new-section');
+										}}
+										class="hover:bg-[#626262] pl-[10px] py-[3px] flex justify-start"
+										>New Section</button
+									>
+									<button
+										on:click={() => {
+											confirmationModalVisible = true;
+										}}
+										class="hover:bg-[#934a4a] pl-[10px] mt-[3px] py-[3px] flex justify-start"
+										>Delete Node</button
+									>
+								</div>
+							{/if}
+						</button>
+					{/if}
+				</div>{/if}
 		{/if}
 		<div
 			class="relative flex items-center w-full h-[40px] bg-[#272727] border-b-[.3px] border-b-[#70747c] flex-shrink-0"

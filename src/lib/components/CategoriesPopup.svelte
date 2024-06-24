@@ -2,7 +2,14 @@
 	import { createEventDispatcher } from 'svelte';
 	import { getContext, tick } from 'svelte';
 	import { type Writable } from 'svelte/store';
-	import type { LinkingCategory, CategoriesModal, CategoryColors, CategoryTypes } from '$lib/types';
+	import type {
+		LinkingCategory,
+		CategoriesModal,
+		CategoryColors,
+		CategoryTypes,
+		PostPermissions,
+		NodeTypes
+	} from '$lib/types';
 	import { v4 as uuidv4 } from 'uuid';
 	import { slide } from 'svelte/transition';
 	import { quintOut } from 'svelte/easing';
@@ -11,17 +18,17 @@
 	import Trash from '$lib/icons/Trash.svelte';
 	import Plus from '$lib/icons/Plus.svelte';
 	import ToolTip from './ToolTip.svelte';
-	import FolderArrow from '$lib/icons/FolderArrow.svelte';
+	import Check from '$lib/icons/Check.svelte';
 
 	const failurePopUp: Writable<string> = getContext('failurePopUpStore');
 
 	export let categoriesModal: Writable<CategoriesModal>;
 
-	let categories = JSON.parse(JSON.stringify($categoriesModal.categories)) as (LinkingCategory & {
-		input?: HTMLInputElement;
-	})[];
+	let categories = JSON.parse(JSON.stringify($categoriesModal.categories)) as LinkingCategory[];
 	let newCatButtonDisabled = false;
-	let types: CategoryTypes[] = ['Default', 'Collapsed', 'Thread', 'Poll'];
+	let types: CategoryTypes[] = ['Expanded', 'Collapsed'];
+	let nodeTypes: NodeTypes[] = ['Default', 'Thread', 'Poll'];
+	let permissions: PostPermissions[] = ['Owner', 'Members', 'Anyone'];
 
 	const colors: CategoryColors[] = [
 		'#3f3f3f',
@@ -66,7 +73,10 @@
 		class="relative flex-col bg-[#383c51] w-[300px] rounded-md pb-[16px] pt-[10px] px-[16px]"
 		on:click={(e) => {
 			e.stopPropagation();
-			categories.forEach((c) => (c.typesOpen = false));
+			categories.forEach((c) => {
+				c.typesOpen = false;
+				c.permissionsOpen = false;
+			});
 			categories = [...categories];
 		}}
 		role="presentation"
@@ -92,10 +102,12 @@
 					const colorI = Math.floor(Math.random() * colors.length);
 					categories.splice(0, 0, {
 						id: uuidv4(),
-						type: 'Default',
+						type: 'Expanded',
 						title: '',
 						description: '',
-						color: colors[colorI]
+						color: colors[colorI],
+						postPermissions: 'Anyone',
+						nodesAllowed: ['Thread', 'Poll', 'Default']
 					});
 					colors.splice(colorI, 1);
 					categories = [...categories];
@@ -123,11 +135,16 @@
 							maxlength="22"
 						/>
 					</div>
-					<div class="flex flex-row space-x-[5px] mt-[3px]">
+					<div class="flex flex-row space-x-[5px] mt-[4.5px]">
+						<p class="font-bold">Color:</p>
+						<button
+							class="size-[13px] rounded-full border-[.9px] border-[#aeaeae] mt-[4.3px]"
+							style="background-color: {category.color};"
+						/>
+					</div>
+					<div class="flex flex-row space-x-[5px] mt-[4.5px]">
 						<p class="font-bold">Type:</p>
 						<button
-							disabled={$categoriesModal.uneditableCats.has(category.id) &&
-								(category.type === 'Poll' || category.type === 'Thread')}
 							on:click={(e) => {
 								category.typesOpen = !category.typesOpen;
 								e.stopPropagation();
@@ -139,34 +156,80 @@
 									transition:slide={{ duration: 150, easing: quintOut }}
 									class="z-[400] absolute bg-[#474747] rounded-md overflow-hidden top-[calc(100%+.7px)] right-[0px] left-0 flex flex-col text-[12px] py-[4px] space-y-[1px] text-[#e9e9e9]"
 								>
-									{#each types as type (category.id + type)}
-										{#if ($categoriesModal.uneditableCats.has(category.id) && (type === 'Collapsed' || type === 'Default')) || !$categoriesModal.uneditableCats.has(category.id)}
-											<button
-												on:click={() => {
-													category.type = type;
-												}}
-												class="py-[1px] pl-[8px] flex justify-start {category.type === type
-													? 'bg-[#626262]'
-													: 'hover:bg-[#585858]'}">{type}</button
-											>
-										{/if}
+									{#each types as type (type)}
+										<button
+											on:click={() => {
+												category.type = type;
+											}}
+											class="py-[1px] pl-[8px] flex justify-start {category.type === type
+												? 'bg-[#626262]'
+												: 'hover:bg-[#585858]'}">{type}</button
+										>
 									{/each}
 								</div>
 							{/if}
 						</button>
 					</div>
-					<div class="flex flex-row space-x-[5px] mt-[3px]">
-						<p class="font-bold">Color:</p>
+					<div class="flex flex-row space-x-[5px] mt-[4.5px]">
+						<p class="font-bold">Post Permissions:</p>
 						<button
-							class="size-[13px] rounded-full border-[.9px] border-[#aeaeae] mt-[4.3px]"
-							style="background-color: {category.color};"
-						/>
+							on:click={(e) => {
+								category.permissionsOpen = !category.permissionsOpen;
+								e.stopPropagation();
+							}}
+							class="w-[90px] text-[12px] mt-[1.2px] mr-auto border-[#e4e4e4] border-[.7px] rounded-[5px] flex items-center justify-center relative py-[.4px]"
+							>{category.postPermissions}
+							{#if category.permissionsOpen}
+								<div
+									transition:slide={{ duration: 150, easing: quintOut }}
+									class="z-[400] absolute bg-[#474747] rounded-md overflow-hidden top-[calc(100%+.7px)] right-[0px] left-0 flex flex-col text-[12px] py-[4px] space-y-[1px] text-[#e9e9e9]"
+								>
+									{#each permissions as permission (permission)}
+										<button
+											on:click={() => {
+												category.postPermissions = permission;
+											}}
+											class="py-[1px] pl-[8px] flex justify-start {category.postPermissions ===
+											permission
+												? 'bg-[#626262]'
+												: 'hover:bg-[#585858]'}">{permission}</button
+										>
+									{/each}
+								</div>
+							{/if}
+						</button>
 					</div>
-					<div class="flex flex-col mt-[3px]">
+					<div class="flex flex-col space-y-[3px] mt-[4.5px]">
+						<p class="font-bold">Allowed Node Types:</p>
+						<div class="ml-[7px] space-y-[2px] text-[13px]">
+							{#each nodeTypes as nodeType (nodeType)}
+								<div class="flex space-x-[4px] items-center">
+									<button
+										on:click={() => {
+											let i = category.nodesAllowed.findIndex((v) => v === nodeType);
+											if (i !== -1) category.nodesAllowed.splice(i, 1);
+											else category.nodesAllowed.push(nodeType);
+										}}
+										class="flex size-[15px] rounded-md items-center border-[#41649d] justify-center transition-colors {category.nodesAllowed.includes(
+											nodeType
+										)
+											? 'bg-[#41649d]'
+											: 'border-[1px]'}"
+									>
+										{#if category.nodesAllowed.includes(nodeType)}
+											<Check color="#f0f0f0" size="10px" />
+										{/if}
+									</button>
+									<p>{nodeType}</p>
+								</div>
+							{/each}
+						</div>
+					</div>
+					<div class="flex flex-col mt-[4.5px]">
 						<p class="font-bold">Description:</p>
 						<textarea
 							placeholder="add description"
-							class="bg-inherit border-none outline-none w-full"
+							class="bg-inherit border-none outline-none w-full mt-[1px]"
 							on:input={() => {
 								setTimeout(() => {
 									if (category.description.length === 310)

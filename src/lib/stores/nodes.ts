@@ -1,4 +1,4 @@
-import type { Tree, TreeNode, CategoryTypes } from '../types';
+import type { Tree, TreeNode, CategoryTypes, NodeTypes } from '../types';
 import { v4 as uuidv4 } from 'uuid';
 import treeSelections from './local_storage/treeSelections';
 import type { TreeSelects } from './local_storage/treeSelections';
@@ -136,6 +136,7 @@ export function createTree() {
 			parent: TreeNode,
 			parent_category: string,
 			title: string = 'untitled',
+			type: NodeTypes,
 			tldr: any = undefined,
 			owners: any = undefined
 		) {
@@ -143,45 +144,23 @@ export function createTree() {
 				uuid: uuidv4(),
 				data: { title, tldr },
 				owners,
+				type,
 				parent_category,
-				linking_categories: [
-					{
-						id: uuidv4(),
-						type: 'Default',
-						title: 'Other',
-						description:
-							'For ideas which relate to this node in a way which is not defined by other categories',
-						color: '#3f3f3f'
-					}
-				],
-				children: []
-			};
-			let i = parent.linking_categories.findIndex((lc) => lc.id === parent_category);
-			if (i === -1) return;
-			// Place node at the end of respective category or categories before it
-			for (i; i >= 0; i--) {
-				const childFoundI = parent.children.findLastIndex(
-					(child) => child.parent_category === parent.linking_categories[i].id
-				);
-				if (childFoundI !== -1) {
-					parent.children.splice(childFoundI + 1, 0, newNode);
-					return newNode;
-				}
-			}
-			parent.children.splice(0, 0, newNode);
-			return newNode;
-		},
-		createThread(
-			parent: TreeNode,
-			parent_category: string,
-			owners: string[] | undefined = parent.owners
-		) {
-			const newNode: TreeNode = {
-				uuid: uuidv4(),
-				data: { title: '' },
-				owners,
-				parent_category,
-				linking_categories: [],
+				linking_categories:
+					type === 'Default'
+						? [
+								{
+									id: uuidv4(),
+									type: 'Expanded',
+									title: 'Other',
+									description:
+										'For ideas which relate to this node in a way which is not defined by other categories',
+									color: '#3f3f3f',
+									postPermissions: 'Anyone',
+									nodesAllowed: ['Thread', 'Poll', 'Default']
+								}
+							]
+						: [],
 				children: []
 			};
 			let i = parent.linking_categories.findIndex((lc) => lc.id === parent_category);

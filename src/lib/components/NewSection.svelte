@@ -93,7 +93,7 @@
 		<div class="flex mt-[13px]">
 			<button
 				on:click={save}
-				class="btn-sm rounded-sm w-full py-[7px] border-[#56a2ff] border-[1px] hover:bg-[#56a2ff] hover:text-black"
+				class="rounded-md transition-colors w-full py-[6px] border-[#56a2ff] border-[1px] hover:bg-[#56a2ff] hover:text-black"
 				>Save</button
 			>
 		</div>

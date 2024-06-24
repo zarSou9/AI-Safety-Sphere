@@ -1,23 +1,26 @@
 import type { RequestHandler } from './$types';
 import { json } from '@sveltejs/kit';
 import { createTree } from '$lib/stores/nodes';
+import type { LinkingCategory, TreeInterface } from '$lib/types';
 import Joi from 'joi';
 
 export const POST: RequestHandler = async ({ request, locals: { supabase, supabaseService } }) => {
 	try {
 		const requestSchema = Joi.object({
-			parentUUID: Joi.string(),
-			parentCategory: Joi.string(),
+			uuid: Joi.string(),
+			tldr: Joi.string().max(310).allow(''),
 			title: Joi.string().max(32),
-			type: Joi.alternatives().try('Thread', 'Poll', 'Default'),
+			vote_message: Joi.string().max(200).allow(''),
 			userId: Joi.string()
 		});
 		const req = await request.json();
+		console.log(requestSchema.validate(req).error);
 		if (requestSchema.validate(req).error)
 			throw { status: 400, message: 'Bad request: missing or incorrect fields' };
 
-		const { parentUUID, parentCategory, title, type, userId } = req;
-		let tree;
+		const { uuid, tldr, title, vote_message, userId } = req;
+
+		let tree: TreeInterface;
 
 		while (true) {
 			const now = Date.now();
@@ -42,28 +45,19 @@ export const POST: RequestHandler = async ({ request, locals: { supabase, supaba
 			tree = createTree();
 
 			tree.setTree(treeData.data[0].data);
-			const treeNode = tree.getObjFromId(parentUUID);
+			const treeNode = tree.getObjFromId(uuid);
+			if (!treeNode) throw { status: 400, message: 'Node does not exist' };
 			const owners = treeNode?.owners;
 			if (!owners?.includes(username)) {
 				throw { status: 400, message: 'Unauthorized' };
 			}
-
-			const parent = tree.getObjFromId(parentUUID);
-
-			if (!parent) throw { status: 400, message: 'Parent node could not be found' };
-
-			const node = tree.createNode(parent, parentCategory, title, type, undefined, [username]);
-			if (!node) throw { status: 400, message: 'error occured while creating node' };
+			treeNode.data.title = title;
+			treeNode.data.tldr = tldr;
 
 			const postPromises: any = [
-				supabaseService.from('Tree').update({ data: tree.getTree(), changing: 0 }).eq('id', 1)
+				supabaseService.from('Tree').update({ data: tree.getTree(), changing: 0 }).eq('id', 1),
+				supabaseService.from('Threads').update({ vote_message }).eq('uuid', uuid)
 			];
-			if (type === 'Default')
-				postPromises.push(
-					supabaseService.from('Nodes').insert({ uuid: node.uuid, title, tldr: { ops: [] } })
-				);
-			else if (type === 'Thread')
-				postPromises.push(supabaseService.from('Threads').insert({ uuid: node.uuid }));
 
 			const results = await Promise.all(postPromises);
 

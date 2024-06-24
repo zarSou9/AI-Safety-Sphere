@@ -20,7 +20,9 @@ export const POST: RequestHandler = async ({ request, locals: { supabase, supaba
 					'#68497a',
 					'#8d8142'
 				),
-				type: Joi.alternatives().try('Thread', 'Poll', 'Default', 'Collapsed')
+				type: Joi.alternatives().try('Expanded', 'Collapsed'),
+				postPermissions: Joi.alternatives().try('Members', 'Owner', 'Anyone'),
+				nodesAllowed: Joi.array().items(Joi.alternatives().try('Thread', 'Poll', 'Default'))
 			}).required()
 		);
 
@@ -71,34 +73,11 @@ export const POST: RequestHandler = async ({ request, locals: { supabase, supaba
 				if (deletedCategory)
 					throw { status: 400, message: 'Cannot delete category with child nodes' };
 			});
-			const oldCats = treeNode.linking_categories;
 			treeNode.linking_categories = newCategories;
 
-			const postPromises: any = [];
-			newCategories.forEach((newCat) => {
-				if (newCat.type === 'Poll' || newCat.type === 'Thread') {
-					const oldFound = oldCats.find((cat) => cat.id === newCat.id);
-					if (oldFound) {
-						if (oldFound.type !== newCat.type)
-							throw {
-								status: 400,
-								message: `Cannot change category of ${oldFound.type.toLowerCase()} node`
-							};
-					} else {
-						if (newCat.type === 'Thread') {
-							const newThread = tree.createThread(treeNode, newCat.id, owners);
-							postPromises.push(
-								supabaseService.from('Threads').insert([{ uuid: newThread?.uuid }])
-							);
-						} else if (newCat.type === 'Poll') {
-						}
-					}
-				}
-			});
-
-			postPromises.push(
+			const postPromises: any = [
 				supabaseService.from('Tree').update({ data: tree.getTree(), changing: 0 }).eq('id', 1)
-			);
+			];
 
 			const results = await Promise.all(postPromises);
 

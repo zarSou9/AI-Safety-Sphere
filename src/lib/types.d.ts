@@ -1,3 +1,4 @@
+import type { Writable } from 'svelte/store';
 interface Node {
 	uuid: string;
 	created_at?: any;
@@ -14,7 +15,8 @@ interface Tree {
 
 interface TreeNode {
 	uuid: string;
-	data: { title: string; tldr?: Object };
+	type: NodeTypes;
+	data: { title: string; tldr?: any };
 	owners?: string[];
 	children: TreeNode[];
 	parent_category: string;
@@ -30,12 +32,18 @@ interface LinkingCategory {
 	description: string;
 	color: CategoryColors;
 	type: CategoryTypes;
+	postPermissions: PostPermissions;
+	nodesAllowed: NodeTypes[];
 	left?: number;
 	div?: HTMLDivElement;
 	typesOpen?: boolean;
+	permissionsOpen?: boolean;
+	input?: HTMLInputElement;
 }
 
-type CategoryTypes = 'Thread' | 'Poll' | 'Default' | 'Collapsed';
+type CategoryTypes = 'Expanded' | 'Collapsed';
+type PostPermissions = 'Members' | 'Owner' | 'Anyone';
+type NodeTypes = 'Thread' | 'Poll' | 'Default';
 
 type CategoryColors =
 	| '#3f3f3f'
@@ -68,24 +76,50 @@ interface TreeInterface {
 		tldr?: any,
 		owners?: any
 	): TreeNode | undefined;
-	createThread(parent: TreeNode, parent_category: string, owners?: string[]): TreeNode | undefined;
 	deleteNode(uuid: string): { error?: string } | undefined;
 }
 
 interface CategoriesModal {
 	uuid: string;
 	visible: boolean;
-	categories: linking_category[];
+	categories: LinkingCategory[];
 	uneditableCats: Set<string>;
 	waiting: boolean;
 }
 
+type NewNodeModalStore = Writable<{
+	visible: boolean;
+	title: string;
+	allowedTypes: NodeTypes[];
+	uuid?: string;
+	category_id?: string;
+	type?: NodeTypes;
+	input?: HTMLInputElement;
+}>;
+
+type EditThreadInfoStore = Writable<{
+	visible: boolean;
+	title: string;
+	tldr: string;
+	vote_message: string;
+	titleInput?: HTMLInputElement;
+	tldrInput?: HTMLTextAreaElement;
+}>;
+
 interface ThreadPost {
+	id: string;
 	owner: string;
 	post: string;
 	vote: number;
+	votes: ThreadVotes;
 	created_at: number;
+	openSettings?: boolean;
+	editing?: boolean;
+	previousValue?: string;
+	textarea?: HTMLTextAreaElement;
 }
+
+type ThreadVotes = { vote: number; user: string }[];
 
 type TreeArrayNode = {
 	treeNode: TreeNode;
@@ -121,5 +155,10 @@ export {
 	CategoryColors,
 	CategoryTypes,
 	TreeArrayNode,
-	ThreadPost
+	ThreadPost,
+	PostPermissions,
+	NodeTypes,
+	NewNodeModalStore,
+	EditThreadInfoStore,
+	ThreadVotes
 };
