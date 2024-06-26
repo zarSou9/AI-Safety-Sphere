@@ -35,10 +35,9 @@
 	}
 </script>
 
-<div on:keydown={handleKeyDown} class="modal-background" on:click={close} role="presentation">
+<div on:keydown={handleKeyDown} class="modal-background" role="presentation">
 	<div
 		class="modal-content flex-col bg-[#383c51] rounded-md p-[17px] px-4 pt-[9px]"
-		on:click={(e) => e.stopPropagation()}
 		role="presentation"
 	>
 		<button

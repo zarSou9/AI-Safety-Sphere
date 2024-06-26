@@ -293,7 +293,7 @@
 	function handleKeyUp(e: KeyboardEvent) {
 		const k = e.key;
 		if (isZooming) {
-			if (k === '=' || k === '-' || k === 'z' || k === 'x') {
+			if (k === '=' || k === '-' || k === 'z' || k === 'x' || k === 'Control' || k === 'Meta') {
 				isZooming = false;
 			}
 		}

@@ -520,11 +520,13 @@
 						class="ml-[2px] p-[2px] relative rounded-[5px] size-[22px] hover:bg-[#393939]"
 					>
 						<div
-							class="text-[#9c9c9c] text-[14.5px] font-[300] leading-[0] flex items-center justify-center absolute w-full left-0 top-[3px] h-[14.5px]"
+							class="text-[#9c9c9c] text-[14px] font-[300] leading-[0] flex items-center justify-center absolute w-full left-0 top-[3px] h-[14.5px]"
 						>
 							A
 						</div>
-						<div class="w-[70%] bottom-[3px] left-[15%] h-[1.5px] bg-[#9c9c9c] absolute" />
+						<div
+							class="w-[70%] bottom-[4px] left-[15%] h-[1px] rounded-full bg-[#9c9c9c] absolute"
+						/>
 					</button>
 					<button
 						on:click={() => {

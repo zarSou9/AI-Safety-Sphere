@@ -66,13 +66,11 @@
 <div
 	on:keydown={handleKeyDown}
 	class="fixed top-0 left-0 w-screen h-screen bg-black bg-opacity-40 flex justify-center items-center z-50"
-	on:click={close}
 	role="presentation"
 >
 	<div
 		class="relative flex-col bg-[#383c51] w-[300px] rounded-md pb-[16px] pt-[10px] px-[16px]"
-		on:click={(e) => {
-			e.stopPropagation();
+		on:click={() => {
 			categories.forEach((c) => {
 				c.typesOpen = false;
 				c.permissionsOpen = false;

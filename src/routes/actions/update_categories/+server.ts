@@ -70,6 +70,8 @@ export const POST: RequestHandler = async ({ request, locals: { supabase, supaba
 			if (!owners?.includes(username)) {
 				throw { status: 400, message: 'Unauthorized' };
 			}
+			if (treeNode.type !== 'Default')
+				throw { status: 400, message: 'Node type does not allow children' };
 			treeNode?.children.forEach((child) => {
 				const deletedCategory = !newCategories.find((cat) => cat.id === child.parent_category);
 				if (deletedCategory)

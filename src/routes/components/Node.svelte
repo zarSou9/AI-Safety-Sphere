@@ -143,9 +143,9 @@
 					}
 				}
 			} else if (eventName === 'text-change') {
-				if (title === 'Inferential Step' && quill.getText().split('\n').length > 9) {
+				if (title === 'Inferential Step' && quill.getText().split('\n').length > 4) {
 					quill.setContents(oldQuill);
-					failurePopUp.set('The Inferential Step section is limited to 8 new lines');
+					failurePopUp.set('The Inferential Step section is limited to 3 new lines');
 					setTimeout(() => quill.blur(), 10);
 				} else if (title === 'Inferential Step' && oldQuill.compose(range).length() > 875) {
 					quill.setContents(oldQuill);

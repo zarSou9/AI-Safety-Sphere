@@ -146,7 +146,7 @@
 				throw new Error(result.error || 'Failed to submit data');
 			}
 			$editThreadInfo.visible = false;
-			voteMessage = voteMessage;
+			voteMessage = vote_message;
 			treeData.data.title = title;
 			treeData.data.tldr = tldr;
 		} catch (error: any) {
@@ -377,7 +377,8 @@
 </script>
 
 <div
-	class="flex flex-col overflow-auto bg-[#1f1f1f] rounded-[20px] w-[800px] px-[64px] py-[42px] relative selection:bg-[#6a87b389] max-h-[550px]"
+	class="overflow-auto bg-[#1f1f1f] rounded-[20px] w-[800px] px-[64px] py-[42px] relative selection:bg-[#6a87b389] {$viewingNode ||
+		'max-h-[550px]'}"
 	style={`box-shadow: -2px 2px ${shadowColor}`}
 >
 	<button
@@ -426,7 +427,7 @@
 			bind:value={comment}
 			bind:this={commentTextarea}
 			rows="3"
-			class="bg-[#1f1f1f] outline-none border-[1px] mt-[25px] border-[#b7b7b7] rounded-md p-[15px] text-[14px]"
+			class="bg-[#1f1f1f] w-full outline-none border-[1px] mt-[25px] border-[#b7b7b7] rounded-md p-[15px] text-[14px]"
 		/>
 		<div class="flex items-center mt-[10px]">
 			<button
@@ -458,7 +459,7 @@
 	<div class="mt-[20px]">
 		{#each posts as post (post.id)}
 			<div
-				class="relative w-full text-[14px] rounded-md border-[.9px] border-[#949494] flex flex-col max-h-[140px] px-[16px] py-[12px]"
+				class="relative w-full text-[14px] mt-[15px] rounded-md border-[.9px] border-[#949494] flex flex-col max-h-[140px] px-[16px] py-[12px]"
 			>
 				<div class="flex">
 					<p class="font-[800] mr-[5px]">{post.owner}</p>
@@ -489,7 +490,7 @@
 						</div>
 						{#if post.openSettings}
 							<div
-								transition:fade={{ duration: 100 }}
+								transition:fade={{ duration: 50 }}
 								class="absolute right-[calc(100%+2px)] py-[2px] text-[11px] w-[60px] top-0 rounded-md bg-[#3d3d3d] overflow-hidden"
 							>
 								<button
@@ -512,7 +513,7 @@
 					</button>
 				{/if}
 				<div
-					class="absolute top-1/2 -translate-y-1/2 left-0 translate-x-[calc(-6px-100%)] flex flex-col"
+					class="absolute group top-1/2 -translate-y-1/2 left-0 translate-x-[calc(-6px-100%)] flex flex-col"
 				>
 					<p
 						class="right-[calc(100%+4px)] absolute top-1/2 -translate-y-1/2 text-[11.5px] text-[#b8b8b8]"
@@ -533,10 +534,18 @@
 						}}
 						class="-rotate-90"><Vote voted={getVote(post.votes)} up={false} size="18px" /></button
 					>
+					{#if voteMessage}
+						<ToolTip
+							className="max-w-[120px] w-max text-wrap text-[11px]"
+							fadeClasName="translate-x-[calc(-50%+20px)] -translate-y-[calc(100%-6px)]"
+							side="top"
+							tip={voteMessage}
+						/>
+					{/if}
 				</div>
 			</div>
 			{#if post.editing}
-				<div class="flex items-center mt-[10px] mr-[2px]">
+				<div class="flex items-center mt-[7px] mr-[2px]">
 					<button
 						class="rounded-md text-[13px] px-[6px] ml-auto bg-[#383838] transition-colors hover:bg-[#575757]"
 						on:click={() => {

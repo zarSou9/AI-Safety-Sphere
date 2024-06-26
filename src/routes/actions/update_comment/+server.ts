@@ -8,7 +8,7 @@ export const POST: RequestHandler = async ({ request, locals: { supabase, supaba
 	try {
 		const requestSchema = Joi.object({
 			uuid: Joi.string(),
-			comment: Joi.string(),
+			comment: Joi.string().max(2000),
 			postID: Joi.string(),
 			userId: Joi.string()
 		});

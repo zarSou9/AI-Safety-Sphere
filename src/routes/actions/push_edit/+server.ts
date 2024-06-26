@@ -70,8 +70,8 @@ export const POST: RequestHandler = async ({ request, locals: { supabase, supaba
 				dbase.eachLine(() => {
 					i += 1;
 				});
-				if (i > 14)
-					throw { status: 400, message: 'The Inferential Step section is limited to 12 lines' };
+				if (i > 4)
+					throw { status: 400, message: 'The Inferential Step section is limited to 3 lines' };
 
 				treeNode.data.tldr = base;
 				const treePostPromise = supabaseService
