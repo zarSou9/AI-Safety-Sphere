@@ -486,9 +486,11 @@
 					bind:this={node.div}
 					class="absolute"
 					style="left: {node.treeNode.left}px; top: {node.treeNode.top}px;"
-					on:contextmenu={addContextItem(node.treeNode.pinned ? 'Unpin Node' : 'Pin Node', () =>
-						pinNode(node.treeNode.uuid, !node.treeNode.pinned)
-					)}
+					on:contextmenu={(node.treeNode.owners?.includes(data.props.profile?.username) ||
+						undefined) &&
+						addContextItem(node.treeNode.pinned ? 'Unpin Node' : 'Pin Node', () =>
+							pinNode(node.treeNode.uuid, !node.treeNode.pinned)
+						)}
 				>
 					{#if extraShown && node.parent}
 						<div class="absolute top-[-30px] flex w-[800px] justify-center">
