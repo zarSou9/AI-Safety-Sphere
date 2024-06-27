@@ -81,7 +81,6 @@
 	function escapeNode() {
 		readBtnActive = true;
 		window.removeEventListener('keydown', handleKeyDown);
-		toolBarShown.set(false);
 		toolBarThread.set(false);
 		exitIcon = false;
 		canvasAction.set('zoom-out-from-node');
@@ -334,8 +333,7 @@
 	function toggleRead() {
 		if (!$viewingNode) {
 			readBtnActive = false;
-			toolBarShown.set(true);
-			toolBarThread.set(true);
+			if (owner) toolBarThread.set(true);
 			$shortCutsEnabled = false;
 			$viewingNode = treeData?.uuid;
 			startListening();
@@ -377,7 +375,7 @@
 </script>
 
 <div
-	class="overflow-auto bg-[#1f1f1f] rounded-[20px] w-[800px] px-[64px] py-[42px] relative selection:bg-[#6a87b389] {$viewingNode ||
+	class="overflow-hidden bg-[#1f1f1f] rounded-[20px] w-[800px] px-[64px] py-[42px] relative selection:bg-[#6a87b389] {$viewingNode ||
 		'max-h-[550px]'}"
 	style={`box-shadow: -2px 2px ${shadowColor}`}
 >
@@ -397,7 +395,7 @@
 	<p
 		class="text-[35px] font-[500]"
 		on:dblclick={() => {
-			if ($viewingNode) {
+			if ($viewingNode && owner) {
 				activateInfoModal();
 				tick().then(() => $editThreadInfo.titleInput?.focus());
 			}
@@ -409,7 +407,7 @@
 		<p
 			class="text-[#bdbdbd] mt-[4px] text-[14px]"
 			on:dblclick={() => {
-				if ($viewingNode) {
+				if ($viewingNode && owner) {
 					activateInfoModal();
 					tick().then(() => $editThreadInfo.tldrInput?.focus());
 				}
@@ -476,7 +474,7 @@
 					disabled={!post.editing}
 					class="overflow-auto mt-[7px] outline-none bg-inherit resize-none"
 				/>
-				{#if treeData.owners?.includes(post.owner) || username === post.owner}
+				{#if owner || username === post.owner}
 					<button
 						on:click={() => {
 							post.openSettings = !post.openSettings;

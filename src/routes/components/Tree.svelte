@@ -6,7 +6,8 @@
 		CategoriesModal,
 		TreeArrayNode,
 		NewNodeModalStore,
-		NodeTypes
+		NodeTypes,
+		ExtraContextStore
 	} from '$lib/types';
 	import type { Writable } from 'svelte/store';
 	import type { PageData } from '../$types';
@@ -21,6 +22,8 @@
 	import Left from '$lib/icons/Left.svelte';
 	import Right from '$lib/icons/Right.svelte';
 	import Search from '$lib/icons/Search.svelte';
+	import Pin from '$lib/icons/Pin.svelte';
+	import ToolTip from '$lib/components/ToolTip.svelte';
 
 	const tree: TreeInterface = getContext('tree');
 	const viewingNodeRect: { l: number; t: number; w: number; h: number } =
@@ -41,6 +44,7 @@
 	const categoriesModal: Writable<CategoriesModal> = getContext('categoriesModalStore');
 	const newNodeModal: NewNodeModalStore = getContext('newNodeModalStore');
 	const shortCutsEnabled: Writable<boolean> = getContext('shortCutsEnabledStore');
+	const extraContext: ExtraContextStore = getContext('extraContextStore');
 
 	let viewingNodeDiv: HTMLDivElement | undefined;
 	let treeContainer: {
@@ -182,7 +186,9 @@
 		const searchArray =
 			parent?.category.type === 'Collapsed'
 				? parent?.node.treeNode.fullChildren
-						?.filter((fullChild) => fullChild.parent_category === parent?.category.id)
+						?.filter(
+							(fullChild) => fullChild.parent_category === parent?.category.id && !fullChild.pinned
+						)
 						.map((child) => {
 							return { uuid: child.uuid, title: child.data.title };
 						})
@@ -301,6 +307,34 @@
 			failurePopUp.set('Error: ' + error.message);
 		}
 	}
+	async function pinNode(uuid: string, pin: boolean): Promise<void> {
+		$processing = true;
+		try {
+			const response = await fetch('/actions/pin_node', {
+				method: 'POST',
+				headers: {
+					'Content-Type': 'application/json'
+				},
+				body: JSON.stringify({
+					uuid,
+					userId: data.session?.user.id,
+					pin
+				})
+			});
+
+			const result: any = await response.json();
+
+			if (!response.ok) {
+				throw new Error(result.error || 'Failed to submit data');
+			}
+			tree.setClientTree(result.data.tree);
+			rehydrateTree();
+			$processing = false;
+		} catch (error: any) {
+			$processing = false;
+			failurePopUp.set('Error: ' + error.message);
+		}
+	}
 
 	function navigateToNode(node: string | TreeArrayNode | undefined) {
 		let nRect;
@@ -334,9 +368,9 @@
 				const node = findNodeInTreeArrays(lastNavigatedNode);
 				if (node?.parent) {
 					let move = false;
-					if (node.parent.category.type === 'Collapsed') {
+					if (node.parent.category.type === 'Collapsed' && !node.treeNode.pinned) {
 						let startIndex = node.parent.node.treeNode.fullChildren?.findIndex(
-							(fellow) => fellow.parent_category === node.parent?.category.id
+							(fellow) => fellow.parent_category === node.parent?.category.id && !fellow.pinned
 						);
 						let nodeIndexFull = node.parent.node.treeNode.fullChildren?.findIndex(
 							(child) => child.uuid === node.treeNode.uuid
@@ -361,7 +395,7 @@
 				const node = findNodeInTreeArrays(lastNavigatedNode);
 				if (node?.parent) {
 					let move = false;
-					if (node.parent.category.type === 'Collapsed') {
+					if (node.parent.category.type === 'Collapsed' && !node.treeNode.pinned) {
 						let endIndex = node.parent.node.treeNode.fullChildren?.findLastIndex(
 							(fellow) => fellow.parent_category === node.parent?.category.id
 						);
@@ -435,6 +469,11 @@
 			categorySpacingReady = true;
 		});
 	}
+
+	const addContextItem = (title: string, callback: () => void) => () =>
+		setTimeout(() => {
+			$extraContext = [...$extraContext, { title, callback }];
+		}, 1);
 </script>
 
 <div class="h-[20px]" />
@@ -447,6 +486,9 @@
 					bind:this={node.div}
 					class="absolute"
 					style="left: {node.treeNode.left}px; top: {node.treeNode.top}px;"
+					on:contextmenu={addContextItem(node.treeNode.pinned ? 'Unpin Node' : 'Pin Node', () =>
+						pinNode(node.treeNode.uuid, !node.treeNode.pinned)
+					)}
 				>
 					{#if extraShown && node.parent}
 						<div class="absolute top-[-30px] flex w-[800px] justify-center">
@@ -458,6 +500,111 @@
 								>{`${node.parent.node.treeNode.data.title} (${node.parent.category.title})`}
 							</button>
 						</div>
+						{#if node.treeNode.pinned}
+							<div class="absolute top-[15px] left-[18px] z-[1] group">
+								<div class="-rotate-[85deg]"><Pin size="16px" color="#676767" /></div>
+								<ToolTip
+									side="top"
+									className="text-[12px]"
+									tip="This Node was pinned by the owner"
+								/>
+							</div>
+						{/if}
+						{#if node.parent?.category?.type === 'Collapsed' && !node.treeNode.pinned}
+							<div class="absolute top-[-33px] left-[30px] z-[1]">
+								<input
+									bind:value={node.searchInput}
+									on:input={(e) => {
+										if (sectionsOpen !== node.treeNode.uuid) {
+											removeType(e).target?.blur();
+											if (searchCallback) searchCallback();
+										}
+										node.searchSiblings = node.fullSearchSiblings?.filter((ss) =>
+											ss.title.toLowerCase().includes(node.searchInput?.toLowerCase() || '')
+										);
+									}}
+									on:click={(e) => {
+										e.stopPropagation();
+										if (!sectionsOpen) {
+											sectionsOpen = node.treeNode.uuid;
+											$shortCutsEnabled = false;
+											searchCallback = () => {
+												sectionsOpen = false;
+												$shortCutsEnabled = true;
+												window.removeEventListener('click', searchCallback);
+												node.searchInput = '';
+												node.searchSiblings = JSON.parse(JSON.stringify(node.fullSearchSiblings));
+											};
+											setTimeout(() => window.addEventListener('click', searchCallback), 2);
+										}
+									}}
+									class="text-[11px] text-[#b0b0b0] w-[120px] pl-[22px] h-[23px] bg-[#151515] placeholder:text-[#848484] rounded-md outline-none transition-colors border-[#606060] border-[1px]"
+									style={sectionsOpen === node.treeNode.uuid
+										? 'border-color: #9c9c9c; width: 150px; transition: width 0.15s ease-out;'
+										: 'transition: width 0.15s ease-out;'}
+									placeholder="Search nodes..."
+								/>
+								<div class="absolute top-[8px] left-[7px] pointer-events-none transition-colors">
+									<Search
+										color={sectionsOpen === node.treeNode.uuid ? '#9c9c9c' : '#606060'}
+										size="12px"
+									/>
+								</div>
+								{#if sectionsOpen === node.treeNode.uuid}
+									<div
+										transition:slide={{ duration: 150, easing: quintOut }}
+										class="h-[200px] absolute bg-[#474747] rounded-[6px] top-[25px] right-[0px] left-0 flex flex-col text-[11px] py-[6px] space-y-[1px] text-[#e9e9e9] overflow-auto"
+									>
+										{#each node.searchSiblings || [] as child (child.uuid)}
+											<button
+												on:click={() => {
+													searchCallback();
+													selectSpecificNodeInTreeArray(child.uuid, node);
+												}}
+												class="hover:bg-[#626262] pl-[13px] flex justify-start"
+												>{child.title}</button
+											>
+										{/each}
+										{#if !node.searchSiblings?.length}<p
+												class="pl-[13px] text-[#d5d5d5] justify-start"
+											>
+												No results found
+											</p>{/if}
+									</div>
+								{/if}
+							</div>
+							<button
+								on:click={() => selectNodeInTreeArray(node, -1)}
+								class="absolute left-[-25px] top-1/2 -translate-y-1/2"
+								style={`opacity: ${
+									node.parent.node.treeNode.fullChildren?.find(
+										(fellow) =>
+											fellow.parent_category === node.parent?.category.id && !fellow.pinned
+									)?.uuid ===
+									node.parent.node.treeNode.fullChildren?.find(
+										(fellow) => fellow.uuid === node.treeNode.uuid
+									)?.uuid
+										? '0; pointer-events: none;'
+										: '1;'
+								}`}
+								><Left color="#f0f0f0" size="24px" />
+							</button>
+							<button
+								on:click={() => selectNodeInTreeArray(node, 1)}
+								class="absolute right-[-25px] top-1/2 -translate-y-1/2"
+								style={`opacity: ${
+									node.parent.node.treeNode.fullChildren?.findLast(
+										(fellow) => fellow.parent_category === node.parent?.category.id
+									)?.uuid ===
+									node.parent.node.treeNode.fullChildren?.find(
+										(fellow) => fellow.uuid === node.treeNode.uuid
+									)?.uuid
+										? '0; pointer-events: none;'
+										: '1;'
+								};`}
+								><Right color="#f0f0f0" size="24px" />
+							</button>
+						{/if}
 					{/if}
 					{#if node.treeNode.type === 'Default'}
 						<Node shadowColor={node.parent?.category.color || '#a53a3a'} treeData={node.treeNode} />
@@ -527,100 +674,6 @@
 									</div>
 								{/each}
 							</div>
-							{#if node.parent?.category?.type === 'Collapsed'}
-								<div class="absolute top-[-33px] left-[30px]">
-									<input
-										bind:value={node.searchInput}
-										on:input={(e) => {
-											if (sectionsOpen !== node.treeNode.uuid) {
-												removeType(e).target?.blur();
-												if (searchCallback) searchCallback();
-											}
-											node.searchSiblings = node.fullSearchSiblings?.filter((ss) =>
-												ss.title.toLowerCase().includes(node.searchInput?.toLowerCase() || '')
-											);
-										}}
-										on:click={(e) => {
-											e.stopPropagation();
-											if (!sectionsOpen) {
-												sectionsOpen = node.treeNode.uuid;
-												$shortCutsEnabled = false;
-												searchCallback = () => {
-													sectionsOpen = false;
-													$shortCutsEnabled = true;
-													window.removeEventListener('click', searchCallback);
-													node.searchInput = '';
-													node.searchSiblings = JSON.parse(JSON.stringify(node.fullSearchSiblings));
-												};
-												setTimeout(() => window.addEventListener('click', searchCallback), 2);
-											}
-										}}
-										class="text-[11px] text-[#b0b0b0] w-[120px] pl-[22px] h-[23px] bg-[#151515] placeholder:text-[#848484] rounded-md outline-none transition-colors border-[#606060] border-[1px]"
-										style={sectionsOpen === node.treeNode.uuid
-											? 'border-color: #9c9c9c; width: 150px; transition: width 0.15s ease-out;'
-											: 'transition: width 0.15s ease-out;'}
-										placeholder="Search nodes..."
-									/>
-									<div class="absolute top-[8px] left-[7px] pointer-events-none transition-colors">
-										<Search
-											color={sectionsOpen === node.treeNode.uuid ? '#9c9c9c' : '#606060'}
-											size="12px"
-										/>
-									</div>
-									{#if sectionsOpen === node.treeNode.uuid}
-										<div
-											transition:slide={{ duration: 150, easing: quintOut }}
-											class="h-[200px] absolute bg-[#474747] rounded-[6px] top-[25px] right-[0px] left-0 flex flex-col text-[11px] py-[6px] space-y-[1px] text-[#e9e9e9] overflow-auto"
-										>
-											{#each node.searchSiblings || [] as child (child.uuid)}
-												<button
-													on:click={() => {
-														searchCallback();
-														selectSpecificNodeInTreeArray(child.uuid, node);
-													}}
-													class="hover:bg-[#626262] pl-[13px] flex justify-start"
-													>{child.title}</button
-												>
-											{/each}
-											{#if !node.searchSiblings?.length}<p
-													class="pl-[13px] text-[#d5d5d5] justify-start"
-												>
-													No results found
-												</p>{/if}
-										</div>
-									{/if}
-								</div>
-								<button
-									on:click={() => selectNodeInTreeArray(node, -1)}
-									class="absolute left-[-25px] top-1/2 -translate-y-1/2"
-									style={`opacity: ${
-										node.parent.node.treeNode.fullChildren?.find(
-											(fellow) => fellow.parent_category === node.parent?.category.id
-										)?.uuid ===
-										node.parent.node.treeNode.fullChildren?.find(
-											(fellow) => fellow.uuid === node.treeNode.uuid
-										)?.uuid
-											? '0; pointer-events: none;'
-											: '1;'
-									}`}
-									><Left color="#f0f0f0" size="24px" />
-								</button>
-								<button
-									on:click={() => selectNodeInTreeArray(node, 1)}
-									class="absolute right-[-25px] top-1/2 -translate-y-1/2"
-									style={`opacity: ${
-										node.parent.node.treeNode.fullChildren?.findLast(
-											(fellow) => fellow.parent_category === node.parent?.category.id
-										)?.uuid ===
-										node.parent.node.treeNode.fullChildren?.find(
-											(fellow) => fellow.uuid === node.treeNode.uuid
-										)?.uuid
-											? '0; pointer-events: none;'
-											: '1;'
-									};`}
-									><Right color="#f0f0f0" size="24px" />
-								</button>
-							{/if}
 						{/if}
 					{:else if node.treeNode.type === 'Thread'}
 						<Thread

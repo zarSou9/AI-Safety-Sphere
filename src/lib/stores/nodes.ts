@@ -72,7 +72,7 @@ export function createTree() {
 		const taken: string[] = [];
 		node.children.forEach((child) => {
 			const cat = node.linking_categories.find((lc) => lc.id === child.parent_category);
-			if (cat?.type === 'Collapsed') {
+			if (cat?.type === 'Collapsed' && !child.pinned) {
 				if (!taken.includes(cat.id)) {
 					taken.push(cat.id);
 					const selectedChild = node.children.find(

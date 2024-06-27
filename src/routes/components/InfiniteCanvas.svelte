@@ -6,6 +6,7 @@
 	import { getContext } from 'svelte';
 	import type { Writable } from 'svelte/store';
 	import Tree from './Tree.svelte';
+	import type { ExtraContextStore } from '$lib/types';
 
 	const viewingNodeRect: { l: number; t: number; w: number; h: number } =
 		getContext('viewingNodeRect');
@@ -19,6 +20,7 @@
 	const viewPortContext: { height: number; top: number } = getContext('viewPort');
 	const stratChange: { l: number; t: number; pl: number; pt: number } = getContext('stratChange');
 	const sectionContextE: Writable<any> = getContext('sectionContextEStore');
+	const extraContext: ExtraContextStore = getContext('extraContextStore');
 
 	const zoomIntensity = 0.016;
 
@@ -671,6 +673,7 @@
 		if (!$viewingNode) {
 			e.preventDefault();
 			if (contextOpen) closeContext();
+			$extraContext = [];
 			contextOpen = true;
 			setTimeout(() => {
 				window.addEventListener('click', closeContext);
@@ -691,15 +694,27 @@
 
 {#if contextOpen}
 	<div
-		class="fixed z-[200] w-auto top-[-100px] left-[-100px] rounded-md bg-[#282828] grid text-[12px] text-nowrap px-[5px] py-[5px] h-auto outline outline-[1px] outline-[#535353]"
+		class="fixed z-[200] space-y-[1px] w-auto top-[-100px] left-[-100px] rounded-md bg-[#282828] grid text-[12px] text-nowrap px-[5px] py-[5px] h-auto outline outline-[1px] outline-[#535353]"
 		bind:this={rightClickDropdown}
+		on:wheel={(e) => e.preventDefault()}
 	>
-		<button on:click={setHome} class="hover:bg-[#3c72ca] rounded-[4px] flex items-center px-[6px]"
+		<button
+			on:click={setHome}
+			class="hover:bg-[#2055aa] rounded-[4px] flex items-center py-[1px] px-[6px]"
 			>Set Home <p class="ml-2">(<kbd>cmd</kbd>+<kbd>h</kbd>)</p></button
 		>
-		<button on:click={goHome} class="hover:bg-[#3c72ca] rounded-[4px] flex items-center px-[6px]"
+		<button
+			on:click={goHome}
+			class="hover:bg-[#2055aa] rounded-[4px] flex items-center py-[1px] px-[6px]"
 			>Go Home <p class="ml-auto">(<kbd>h</kbd>)</p></button
 		>
+		{#each $extraContext as context}
+			<button
+				on:click={context.callback}
+				class="hover:bg-[#2055aa] rounded-[4px] flex items-center py-[1px] px-[6px]"
+				>{context.title}</button
+			>
+		{/each}
 	</div>
 {:else if sectionContextOpen}
 	<div

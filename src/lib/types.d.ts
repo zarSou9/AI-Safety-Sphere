@@ -24,6 +24,7 @@ interface TreeNode {
 	top?: number | undefined;
 	left?: number | undefined;
 	fullChildren?: TreeNode[];
+	pinned?: boolean;
 }
 
 interface LinkingCategory {
@@ -106,6 +107,13 @@ type EditThreadInfoStore = Writable<{
 	tldrInput?: HTMLTextAreaElement;
 }>;
 
+type ExtraContextStore = Writable<
+	{
+		title: string;
+		callback: () => void;
+	}[]
+>;
+
 interface ThreadPost {
 	id: string;
 	owner: string;
@@ -160,5 +168,6 @@ export {
 	NodeTypes,
 	NewNodeModalStore,
 	EditThreadInfoStore,
-	ThreadVotes
+	ThreadVotes,
+	ExtraContextStore
 };

@@ -37,7 +37,7 @@
 		<div class="flex mt-2">
 			<button
 				on:click={save}
-				class="rounded-md transition-colors mt-[6px] w-full p-[7px] border-[#ff5656] border-[1px] hover:bg-[#ff5656] hover:text-black"
+				class="rounded-md transition-colors mt-[6px] w-full py-[6px] px-[12px] border-[#ff5656] border-[1px] hover:bg-[#ff5656] hover:text-black"
 				>Delete Node</button
 			>
 		</div>
