@@ -343,6 +343,12 @@
 			if (!response.ok) {
 				throw new Error(result.error || 'Failed to submit data');
 			}
+			if (treeData) {
+				treeData.anyonePermissions = result.data.anyonePermissions;
+				treeData.memberPermissions = result.data.memberPermissions;
+				treeData.members = result.data.members;
+				treeData.owners = result.data.owners;
+			}
 			$editPermissions.visible = false;
 			successPopUp.set('Permissions Saved!');
 		} catch (error: any) {

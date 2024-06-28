@@ -1,11 +1,13 @@
 <script lang="ts">
 	import { onMount, onDestroy, tick, getContext } from 'svelte';
-	import Edit from '$lib/icons/Edit.svelte';
-	import View from '$lib/icons/View.svelte';
 	import type { TreeInterface, TreeNode, EditPermissionsStore } from '$lib/types';
 	import { get, type Writable } from 'svelte/store';
 	import type { PageData } from '../$types';
 	import { v4 as uuidv4 } from 'uuid';
+
+	import Edit from '$lib/icons/Edit.svelte';
+	import View from '$lib/icons/View.svelte';
+	import FadeElement from '$lib/components/FadeElement.svelte';
 
 	const tree: TreeInterface = getContext('tree');
 	const titleModal: Writable<{
@@ -31,8 +33,8 @@
 	const viewPort: { height: number; top: number } = getContext('viewPort');
 	const data: PageData = getContext('data');
 	const quillsReady: Writable<boolean> = getContext('quillsReadyStore');
-	const toolBarShown: Writable<boolean> = getContext('toolBarShownStore');
-	const toolBarDotsShown: Writable<boolean> = getContext('toolBarDotsShownStore');
+	const toolBarDefault: Writable<boolean> = getContext('toolBarDefaultStore');
+	const toolBarForOwner: Writable<boolean> = getContext('toolBarForOwnerStore');
 	const successPopUp: Writable<any> = getContext('successPopUpStore');
 	const failurePopUp: Writable<any> = getContext('failurePopUpStore');
 	const sectionContextE: Writable<any> = getContext('sectionContextEStore');
@@ -83,18 +85,23 @@
 
 	let nodeActionUnsubscribe: any;
 	let editBtnActive = true;
-	let currentUser = null;
+	let currentUser: any = null;
 	let nodeChannel: any = undefined;
 	let linkRange: any;
 	let moved = false;
+	let unactivatingUser = false;
 
 	let sessionTimeout: any;
 	let escBtn = false;
 
-	let userColor: string;
+	let canEdit = false;
+	let isOwner = false;
 	let username = data.props?.profile?.username;
 	if (treeData?.owners?.includes(username)) {
-		userColor = 'owner';
+		canEdit = true;
+		isOwner = true;
+	} else if (treeData?.members?.includes(username) && treeData.memberPermissions === 'Can edit') {
+		canEdit = true;
 	}
 
 	let currentQuill: any;
@@ -339,8 +346,8 @@
 		nodeReady = false;
 		enableQuills(false);
 		if (editable) unactivateUser();
-		toolBarShown.set(false);
-		toolBarDotsShown.set(false);
+		toolBarDefault.set(false);
+		toolBarForOwner.set(false);
 		editable = false;
 		editIconActive = false;
 		canvasAction.set('zoom-out-from-node');
@@ -496,7 +503,7 @@
 		currentSection = section.title;
 	}
 	function loadData() {
-		if (userColor === 'owner') {
+		if (canEdit) {
 			nodeChannel = data.supabase
 				.channel('schema-db-changes')
 				.on(
@@ -516,8 +523,8 @@
 								editable = false;
 								enableQuills(false);
 								editIconActive = true;
-								toolBarShown.set(false);
-								toolBarDotsShown.set(false);
+								toolBarDefault.set(false);
+								toolBarForOwner.set(false);
 								$titleModal.visible = false;
 								$sectionModal.visible = false;
 								$sectionTitleModal.visible = false;
@@ -571,7 +578,7 @@
 			.eq('uuid', treeData?.uuid)
 			.then(({ data: nodeData }) => {
 				if (nodeData) {
-					if (userColor === 'owner') {
+					if (canEdit) {
 						currentUser = nodeData[0].active_user;
 						if (currentUser === username || !currentUser) editBtnActive = true;
 						else {
@@ -771,7 +778,7 @@
 		}
 	}
 	function save(closing = false) {
-		if (!saved && !posting && userColor === 'owner') {
+		if (!saved && !posting && canEdit) {
 			pushEdit({
 				uuid: treeData?.uuid,
 				base,
@@ -1038,6 +1045,12 @@
 			if (!response.ok) {
 				throw new Error(result.error || 'Failed to submit data');
 			}
+			if (treeData) {
+				treeData.anyonePermissions = result.data.anyonePermissions;
+				treeData.memberPermissions = result.data.memberPermissions;
+				treeData.members = result.data.members;
+				treeData.owners = result.data.owners;
+			}
 			$editPermissions.visible = false;
 			successPopUp.set('Permissions Saved!');
 		} catch (error: any) {
@@ -1067,12 +1080,12 @@
 			editBtnActive = false;
 			loadData();
 			$shortCutsEnabled = false;
-			if (userColor === 'owner') editIconActive = true;
+			if (canEdit) editIconActive = true;
 			$viewingNode = treeData?.uuid;
 			startListening();
 			escBtn = true;
 			treeAction.set('find-node-position');
-		} else if (userColor === 'owner') {
+		} else if (canEdit) {
 			if (editable) {
 				editBtnActive = false;
 				isSaving = false;
@@ -1080,8 +1093,8 @@
 				editable = false;
 				enableQuills(false);
 				editIconActive = true;
-				toolBarShown.set(false);
-				toolBarDotsShown.set(false);
+				toolBarDefault.set(false);
+				toolBarForOwner.set(false);
 				unactivateUser().then(() => {
 					editBtnActive = true;
 				});
@@ -1103,9 +1116,9 @@
 										saving(true);
 										enableQuills(true);
 										editable = true;
-										toolBarShown.set(true);
-										if (userColor === 'owner') {
-											toolBarDotsShown.set(true);
+										toolBarDefault.set(true);
+										if (isOwner) {
+											toolBarForOwner.set(true);
 										}
 										editBtnActive = true;
 										$processing = false;
@@ -1124,20 +1137,20 @@
 		}
 	}
 	function editTitle() {
-		if (editable && userColor === 'owner') {
+		if (editable && isOwner) {
 			$titleModal.title = title || '';
 			$titleModal.visible = true;
 		}
 	}
 	function editSectionTitle(i: number, currentTitle: string) {
-		if (i && editable && userColor === 'owner') {
+		if (i && editable && canEdit) {
 			$sectionTitleModal.title = currentTitle;
 			$sectionTitleModal.i = i;
 			$sectionTitleModal.visible = true;
 		}
 	}
 	function handleSectionTitleContext(e: any, i: any) {
-		if (i && editable && userColor === 'owner') {
+		if (i && editable && canEdit) {
 			e.preventDefault();
 			deleteI = i;
 			sectionContextE.set(e);
@@ -1161,12 +1174,37 @@
 	<button
 		on:click={changeEditable}
 		disabled={!editBtnActive}
-		class="absolute top-[53px] right-[65px] rounded-md w-[36px] h-[36px] items-center transition-colors justify-center {editBtnActive
+		class="absolute group top-[53px] right-[65px] rounded-md w-[36px] h-[36px] items-center transition-colors justify-center {editBtnActive
 			? 'hover:bg-[#4949495a]'
 			: ''}"
 	>
 		{#if editIconActive}
 			<Edit color={editBtnActive ? '#9c9c9c' : '#595959'} size="36px" />
+			{#if currentUser !== username && currentUser && isOwner && !editBtnActive}
+				<FadeElement side="left">
+					<div
+						on:click={(e) => e.stopPropagation()}
+						role="presentation"
+						class="cursor-default rounded-md bg-[#323232e7] w-[130px] p-[8px]"
+					>
+						<p class="text-[11px]">{currentUser} is currently editing this node</p>
+						<button
+							disabled={unactivatingUser}
+							on:click={async () => {
+								$processing = true;
+								unactivatingUser = true;
+								await unactivateUser();
+								unactivatingUser = false;
+								$processing = false;
+							}}
+							class="border-[1px] font-bold mt-[8px] text-[11px] rounded-md w-full py-[2px] transition-colors border-[#751f1f] {unactivatingUser ||
+								'hover:bg-[#751f1f]'}"
+						>
+							Stop {currentUser}'s session
+						</button>
+					</div>
+				</FadeElement>
+			{/if}
 		{:else}
 			<View color={editBtnActive ? '#9c9c9c' : '#595959'} size="36px" />
 		{/if}

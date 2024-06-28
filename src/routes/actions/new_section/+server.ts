@@ -35,8 +35,13 @@ export const POST: RequestHandler = async ({ request, locals: { supabase, supaba
 
 		tree.setTree(treeResult.data[0].data);
 		const treeNode = tree.getObjFromId(uuid);
+		if (!treeNode) throw { status: 400, message: 'Node does not exist' };
+
 		const owners = treeNode?.owners;
-		if (!owners?.includes(username)) {
+		if (
+			!owners?.includes(username) &&
+			!(treeNode.members?.includes(username) && treeNode.memberPermissions === 'Can edit')
+		) {
 			throw { status: 400, message: 'Unauthorized' };
 		}
 

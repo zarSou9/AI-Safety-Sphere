@@ -2,6 +2,7 @@ import type { RequestHandler } from './$types';
 import { json } from '@sveltejs/kit';
 import { createTree } from '$lib/stores/nodes';
 import Joi from 'joi';
+import type { TreeNode } from '$lib/types';
 
 export const POST: RequestHandler = async ({ request, locals: { supabase, supabaseService } }) => {
 	try {
@@ -44,6 +45,7 @@ export const POST: RequestHandler = async ({ request, locals: { supabase, supaba
 		const { uuid, userId, type, anyonePermissions, memberPermissions, members, owners } = req;
 		let tree;
 		let username: string;
+		let treeNode: TreeNode | undefined;
 
 		while (true) {
 			const now = Date.now();
@@ -54,7 +56,7 @@ export const POST: RequestHandler = async ({ request, locals: { supabase, supaba
 				.update({ changing: now })
 				.lt('changing', nowCompare)
 				.select('data');
-			const usernamePromise = supabase.from('Profiles').select('username, user_id');
+			const usernamePromise = supabaseService.from('Profiles').select('username, user_id');
 
 			const [treeData, usernameResult] = await Promise.all([treeDataPromise, usernamePromise]);
 
@@ -70,7 +72,7 @@ export const POST: RequestHandler = async ({ request, locals: { supabase, supaba
 
 			tree.setTree(treeData.data[0].data);
 
-			const treeNode = tree.getObjFromId(uuid);
+			treeNode = tree.getObjFromId(uuid);
 			if (!treeNode) throw { status: 400, message: 'Parent node could not be found' };
 			if (!treeNode.owners?.includes(username)) {
 				throw { status: 400, message: 'Unauthorized' };
@@ -103,10 +105,7 @@ export const POST: RequestHandler = async ({ request, locals: { supabase, supaba
 			break;
 		}
 
-		return json(
-			{ message: 'Data submitted successfully', data: { tree: tree.getTree(username) } },
-			{ status: 200 }
-		);
+		return json({ message: 'Data submitted successfully', data: treeNode }, { status: 200 });
 	} catch (error: any) {
 		await supabaseService.from('Tree').update({ changing: 0 }).eq('id', 1);
 		return json(

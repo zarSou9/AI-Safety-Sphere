@@ -124,10 +124,10 @@
 	setContext('shortCutsEnabledStore', shortCutsEnabled);
 	const quillsReady = writable(false);
 	setContext('quillsReadyStore', quillsReady);
-	const toolBarShown = writable(false);
-	setContext('toolBarShownStore', toolBarShown);
-	const toolBarDotsShown = writable(false);
-	setContext('toolBarDotsShownStore', toolBarDotsShown);
+	const toolBarDefault = writable(false);
+	setContext('toolBarDefaultStore', toolBarDefault);
+	const toolBarForOwner = writable(false);
+	setContext('toolBarForOwnerStore', toolBarForOwner);
 	const toolBarThread = writable(false);
 	setContext('toolBarThreadStore', toolBarThread);
 	const successPopUp = writable(false);
@@ -174,7 +174,7 @@
 		visible: false,
 		members: [],
 		owners: [],
-		type: 'Node',
+		type: 'Default',
 		anyonePermissions: 'Can view',
 		memberPermissions: 'Can edit'
 	});
@@ -232,7 +232,7 @@
 		}
 	}
 	onMount(() => {
-		toolBarShown.subscribe((v) => {
+		toolBarDefault.subscribe((v) => {
 			if (!v) {
 				toolBarMenuDropdown = false;
 				window.removeEventListener('click', handleMouseOut);
@@ -505,7 +505,7 @@
 					{/if}
 				</button>
 			</div>{/if}
-		{#if $toolBarShown}
+		{#if $toolBarDefault}
 			<div
 				transition:fade={{ duration: 100 }}
 				class="h-[28px] bg-[#303032] flex rounded-full ml-[233px] w-[69%] items-center flex-shrink-0"
@@ -715,33 +715,33 @@
 					class="ml-[2px] p-[3px] mr-auto rounded-[5px] hover:bg-[#393939]"
 					><Video color="#9c9c9c" size="16px" /></button
 				>
-				{#if $toolBarDotsShown}
-					<button
-						bind:this={toolBarDropE}
-						on:click={() => {
-							toolBarMenuDropdown = !toolBarMenuDropdown;
-							if (toolBarMenuDropdown) {
-								window.addEventListener('click', handleMouseOut);
-							}
-						}}
-						class="p-[4px] px-[4.5px] rounded-[5px] mr-[16px] relative {toolBarMenuDropdown
-							? 'bg-[#3f3f3f]'
-							: 'hover:bg-[#393939]'}"
-					>
-						<ThreeDots color="#9c9c9c" size="14px" />
-						{#if toolBarMenuDropdown}
-							<div
-								in:slide={{ duration: 100, easing: quintOut }}
-								out:slide={{ delay: 100, duration: 100, easing: quintOut }}
-								class="absolute z-[20] w-[150px] bg-[#474747] rounded-[5px] space-y-[3px] top-[25px] right-[0px] flex flex-col text-[12px] py-[5px]"
+
+				<button
+					bind:this={toolBarDropE}
+					on:click={() => {
+						toolBarMenuDropdown = !toolBarMenuDropdown;
+						if (toolBarMenuDropdown) {
+							window.addEventListener('click', handleMouseOut);
+						}
+					}}
+					class="p-[4px] px-[4.5px] rounded-[5px] mr-[16px] relative {toolBarMenuDropdown
+						? 'bg-[#3f3f3f]'
+						: 'hover:bg-[#393939]'}"
+				>
+					<ThreeDots color="#9c9c9c" size="14px" />
+					{#if toolBarMenuDropdown}
+						<div
+							in:slide={{ duration: 100, easing: quintOut }}
+							out:slide={{ delay: 100, duration: 100, easing: quintOut }}
+							class="absolute z-[20] w-[150px] bg-[#474747] rounded-[5px] space-y-[3px] top-[25px] right-[0px] flex flex-col text-[12px] py-[5px]"
+						>
+							<button
+								on:click={() => {
+									nodeAction.set('start-new-section');
+								}}
+								class="hover:bg-[#626262] pl-[10px] py-[3px] flex justify-start">New Section</button
 							>
-								<button
-									on:click={() => {
-										nodeAction.set('start-new-section');
-									}}
-									class="hover:bg-[#626262] pl-[10px] py-[3px] flex justify-start"
-									>New Section</button
-								>
+							{#if $toolBarForOwner}
 								<button
 									on:click={() => {
 										nodeAction.set('edit-permissions');
@@ -756,10 +756,10 @@
 									class="hover:bg-[#934a4a] pl-[10px] py-[3px] flex justify-start"
 									>Delete Node</button
 								>
-							</div>
-						{/if}
-					</button>
-				{/if}
+							{/if}
+						</div>
+					{/if}
+				</button>
 			</div>
 		{/if}
 		<div
