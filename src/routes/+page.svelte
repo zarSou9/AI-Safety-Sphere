@@ -9,7 +9,8 @@
 		CategoriesModal,
 		NewNodeModalStore,
 		EditThreadInfoStore,
-		ExtraContextStore
+		ExtraContextStore,
+		EditPermissionsStore
 	} from '$lib/types';
 
 	import InfiniteCanvas from './components/InfiniteCanvas.svelte';
@@ -20,6 +21,7 @@
 	import InfoModal from '$lib/components/InfoModal.svelte';
 	import CategoriesPopup from '$lib/components/CategoriesPopup.svelte';
 	import EditThreadInfo from '$lib/components/EditThreadInfo.svelte';
+	import EditPermissions from '$lib/components/EditPermissions.svelte';
 
 	import Cross from '$lib/icons/Cross.svelte';
 	import ThreeDots from '$lib/icons/ThreeDots.svelte';
@@ -168,9 +170,18 @@
 	setContext('editThreadInfoStore', editThreadInfo);
 	const extraContext: ExtraContextStore = writable([]);
 	setContext('extraContextStore', extraContext);
+	const editPermissions: EditPermissionsStore = writable({
+		visible: false,
+		members: [],
+		owners: [],
+		type: 'Node',
+		anyonePermissions: 'Can view',
+		memberPermissions: 'Can edit'
+	});
+	setContext('editPermissionsStore', editPermissions);
 
 	const tree = createTree();
-	if (data.props?.hier[0]?.data?.node) tree.setClientTree(data.props.hier[0].data);
+	tree.setClientTree(data.props.hier);
 
 	setContext('tree', tree);
 
@@ -374,6 +385,13 @@
 			nodeAction.set('save-thread-info');
 		}}
 	/>
+{:else if $editPermissions?.visible}
+	<EditPermissions
+		{editPermissions}
+		on:save={() => {
+			nodeAction.set('save-permissions');
+		}}
+	/>
 {:else if confirmationModalVisible}
 	<ConfirmationModal
 		on:delete={() => {
@@ -470,6 +488,12 @@
 									nodeAction.set('edit-thread-info');
 								}}
 								class="hover:bg-[#626262] pl-[10px] py-[3px] flex justify-start">Edit Info</button
+							>
+							<button
+								on:click={() => {
+									nodeAction.set('edit-permissions');
+								}}
+								class="hover:bg-[#626262] pl-[10px] py-[3px] flex justify-start">Permissions</button
 							>
 							<button
 								on:click={() => {
@@ -717,6 +741,13 @@
 									}}
 									class="hover:bg-[#626262] pl-[10px] py-[3px] flex justify-start"
 									>New Section</button
+								>
+								<button
+									on:click={() => {
+										nodeAction.set('edit-permissions');
+									}}
+									class="hover:bg-[#626262] pl-[10px] py-[3px] flex justify-start"
+									>Permissions</button
 								>
 								<button
 									on:click={() => {

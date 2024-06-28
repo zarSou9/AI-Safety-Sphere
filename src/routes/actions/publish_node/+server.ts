@@ -18,6 +18,7 @@ export const POST: RequestHandler = async ({ request, locals: { supabase, supaba
 
 		const { parentUUID, parentCategory, title, type, userId } = req;
 		let tree;
+		let username;
 
 		while (true) {
 			const now = Date.now();
@@ -37,7 +38,7 @@ export const POST: RequestHandler = async ({ request, locals: { supabase, supaba
 
 			if (!treeData.data.length) continue;
 
-			const username = usernameResult.data[0].username;
+			username = usernameResult.data[0].username;
 
 			tree = createTree();
 
@@ -58,7 +59,7 @@ export const POST: RequestHandler = async ({ request, locals: { supabase, supaba
 			)
 				throw { status: 400, message: 'Node type not allowed' };
 
-			const node = tree.createNode(parent, parentCategory, title, type, undefined, [username]);
+			const node = tree.createNode(parent, parentCategory, type, [username], title);
 			if (!node) throw { status: 400, message: 'error occured while creating node' };
 
 			const postPromises: any = [
@@ -81,7 +82,7 @@ export const POST: RequestHandler = async ({ request, locals: { supabase, supaba
 		}
 
 		return json(
-			{ message: 'Data submitted successfully', data: { tree: tree.getTree() } },
+			{ message: 'Data submitted successfully', data: { tree: tree.getTree(username) } },
 			{ status: 200 }
 		);
 	} catch (error: any) {

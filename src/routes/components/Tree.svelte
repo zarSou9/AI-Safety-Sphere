@@ -13,6 +13,7 @@
 	import type { PageData } from '../$types';
 	import { slide } from 'svelte/transition';
 	import { quintOut } from 'svelte/easing';
+	import treeSelections from '$lib/stores/local_storage/treeSelections';
 
 	import Node from './Node.svelte';
 	import Poll from './Poll.svelte';
@@ -440,6 +441,21 @@
 		) {
 			let newNode = node.parent?.node.treeNode.fullChildren[nodeIndexFull + dir];
 			if (newNode) {
+				$treeSelections = $treeSelections.filter(
+					(selection) =>
+						!(
+							selection.uuid === node.parent?.node.treeNode.uuid &&
+							selection.catId === newNode.parent_category
+						)
+				);
+				$treeSelections = [
+					...$treeSelections,
+					{
+						uuid: node.parent?.node.treeNode.uuid,
+						selection: newNode.uuid,
+						catId: newNode.parent_category
+					}
+				];
 				node.parent?.node.treeNode.children.splice(nodeIndex, 1, newNode);
 				rehydrateTree();
 				lastNavigatedNode = newNode.uuid;

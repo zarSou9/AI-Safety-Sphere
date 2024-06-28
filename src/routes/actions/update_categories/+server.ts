@@ -38,6 +38,8 @@ export const POST: RequestHandler = async ({ request, locals: { supabase, supaba
 		const uuidValid = Joi.string().validate(uuid);
 		const newCategoriesValid = LinkingCategoriesSchema.validate(newCategories);
 		let tree: TreeInterface;
+		let username;
+
 		if (userIdValid.error || uuidValid.error || newCategoriesValid.error)
 			throw { status: 400, message: 'Bad request: missing or incorrect fields' };
 
@@ -59,7 +61,7 @@ export const POST: RequestHandler = async ({ request, locals: { supabase, supaba
 
 			if (!treeData.data.length) continue;
 
-			const username = usernameResult.data[0].username;
+			username = usernameResult.data[0].username;
 
 			tree = createTree();
 
@@ -93,7 +95,7 @@ export const POST: RequestHandler = async ({ request, locals: { supabase, supaba
 		}
 
 		return json(
-			{ message: 'Data submitted successfully', data: { tree: tree.getTree() } },
+			{ message: 'Data submitted successfully', data: { tree: tree.getTree(username) } },
 			{ status: 200 }
 		);
 	} catch (error: any) {

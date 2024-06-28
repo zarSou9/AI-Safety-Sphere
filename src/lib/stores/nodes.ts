@@ -61,10 +61,33 @@ export function createTree() {
 	): TreeNode | undefined {
 		if (obj.uuid === uuid) return obj;
 		for (let node of obj.children) {
-			if (node?.uuid === uuid) return node;
 			const objFound: TreeNode | undefined = findNodeFromUUID(uuid, node);
 			if (objFound) return objFound;
 		}
+	}
+
+	function pruneTree(
+		user: string | true,
+		node: TreeNode = tree.node,
+		parent: TreeNode | undefined = undefined,
+		childI = 0
+	) {
+		let i = 0;
+		for (let child of node.children) {
+			pruneTree(user, child, node, i);
+			i++;
+		}
+		if (user === true) {
+			if (node.anyonePermissions === 'Cannot view' && parent) parent.children.splice(childI, 1);
+		} else if (
+			!(
+				node.owners.includes(user) ||
+				node?.members?.includes(user) ||
+				node.anyonePermissions !== 'Cannot view' ||
+				!parent
+			)
+		)
+			parent.children.splice(childI, 1);
 	}
 
 	function filterTree(node = tree.node) {
@@ -104,7 +127,8 @@ export function createTree() {
 			tree = JSON.parse(JSON.stringify(t));
 			filterTree();
 		},
-		getTree() {
+		getTree(user?: string | true) {
+			if (user) pruneTree(user);
 			return tree;
 		},
 		getParent(
@@ -135,14 +159,13 @@ export function createTree() {
 		createNode(
 			parent: TreeNode,
 			parent_category: string,
-			title: string = 'untitled',
 			type: NodeTypes,
-			tldr: any = undefined,
-			owners: any = undefined
+			owners: string[],
+			title: string = 'untitled'
 		) {
 			const newNode: TreeNode = {
 				uuid: uuidv4(),
-				data: { title, tldr },
+				data: { title, tldr: undefined },
 				owners,
 				type,
 				parent_category,

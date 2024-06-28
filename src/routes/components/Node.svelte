@@ -2,7 +2,7 @@
 	import { onMount, onDestroy, tick, getContext } from 'svelte';
 	import Edit from '$lib/icons/Edit.svelte';
 	import View from '$lib/icons/View.svelte';
-	import type { TreeInterface, TreeNode, TreeArrayNode } from '$lib/types';
+	import type { TreeInterface, TreeNode, EditPermissionsStore } from '$lib/types';
 	import { get, type Writable } from 'svelte/store';
 	import type { PageData } from '../$types';
 	import { v4 as uuidv4 } from 'uuid';
@@ -47,6 +47,7 @@
 	const quoted: Writable<boolean | null | undefined> = getContext('quotedStore');
 	const aligned: Writable<string | boolean | null | undefined> = getContext('alignedStore');
 	const linkInput: Writable<any> = getContext('linkInputStore');
+	const editPermissions: EditPermissionsStore = getContext('editPermissionsStore');
 
 	export let treeData: TreeNode | undefined;
 	export let shadowColor: string;
@@ -432,6 +433,22 @@
 				else if (action === 'indent') indent();
 				else if (action === 'dedent') dedent();
 				else if (action === 'color') color();
+				else if (action === 'edit-permissions') {
+					$editPermissions.owners = treeData?.owners || [];
+					$editPermissions.members = treeData?.members || [];
+					$editPermissions.type = 'Default';
+					$editPermissions.anyonePermissions = treeData?.anyonePermissions || 'Can view';
+					$editPermissions.memberPermissions = treeData?.memberPermissions || 'Can edit';
+					$editPermissions.visible = true;
+				} else if (action === 'save-permissions') {
+					handlePermissions(
+						$editPermissions.type,
+						$editPermissions.anyonePermissions,
+						$editPermissions.memberPermissions,
+						$editPermissions.members,
+						$editPermissions.owners
+					);
+				}
 
 				nodeAction.set(null);
 			}
@@ -987,6 +1004,47 @@
 			failurePopUp.set('Error: ' + error.message);
 		} finally {
 			posting = false;
+		}
+	}
+	async function handlePermissions(
+		type: string,
+		anyonePermissions: string,
+		memberPermissions: string,
+		members: string[],
+		owners: string[]
+	) {
+		if (posting) await waitForServer();
+		posting = true;
+		$processing = true;
+		try {
+			const response = await fetch('/actions/edit_permissions', {
+				method: 'POST',
+				headers: {
+					'Content-Type': 'application/json'
+				},
+				body: JSON.stringify({
+					userId: data.session?.user.id,
+					uuid: treeData?.uuid,
+					type,
+					anyonePermissions,
+					memberPermissions,
+					members,
+					owners
+				})
+			});
+
+			const result = await response.json();
+
+			if (!response.ok) {
+				throw new Error(result.error || 'Failed to submit data');
+			}
+			$editPermissions.visible = false;
+			successPopUp.set('Permissions Saved!');
+		} catch (error: any) {
+			failurePopUp.set('Error: ' + error.message);
+		} finally {
+			posting = false;
+			$processing = false;
 		}
 	}
 	function waitForServer() {

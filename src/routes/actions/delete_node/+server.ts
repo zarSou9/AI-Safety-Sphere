@@ -8,6 +8,7 @@ export const POST: RequestHandler = async ({ request, locals: { supabase, supaba
 		const { uuid, userId } = await request.json();
 
 		let tree;
+		let username;
 		const userIdValid = Joi.string().validate(userId);
 		const uuidValid = Joi.string().validate(uuid);
 
@@ -32,7 +33,7 @@ export const POST: RequestHandler = async ({ request, locals: { supabase, supaba
 
 			if (!treeData.data.length) continue;
 
-			const username = usernameResult.data[0].username;
+			username = usernameResult.data[0].username;
 
 			tree = createTree();
 
@@ -65,7 +66,7 @@ export const POST: RequestHandler = async ({ request, locals: { supabase, supaba
 		}
 
 		return json(
-			{ message: 'Data submitted successfully', data: { tree: tree.getTree() } },
+			{ message: 'Data submitted successfully', data: { tree: tree.getTree(username) } },
 			{ status: 200 }
 		);
 	} catch (error: any) {

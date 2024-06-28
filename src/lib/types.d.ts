@@ -17,7 +17,7 @@ interface TreeNode {
 	uuid: string;
 	type: NodeTypes;
 	data: { title: string; tldr?: any };
-	owners?: string[];
+	owners: string[];
 	children: TreeNode[];
 	parent_category: string;
 	linking_categories: LinkingCategory[];
@@ -25,6 +25,9 @@ interface TreeNode {
 	left?: number | undefined;
 	fullChildren?: TreeNode[];
 	pinned?: boolean;
+	members?: string[];
+	anyonePermissions?: NodeAnyonePermissions | ThreadAnyonePermissions;
+	memberPermissions?: NodeMemberPermissions | ThreadMemberPermissions;
 }
 
 interface LinkingCategory {
@@ -58,7 +61,7 @@ type CategoryColors =
 interface TreeInterface {
 	setTree(t: Tree): void;
 	setClientTree(t: Tree): void;
-	getTree(): Tree;
+	getTree(user?: string | true): Tree;
 	getParent(
 		uuid: string | undefined,
 		obj?: any
@@ -113,6 +116,40 @@ type ExtraContextStore = Writable<
 		callback: () => void;
 	}[]
 >;
+type EditPermissionsStore = Writable<
+	{
+		visible: boolean;
+		members: string[];
+		owners: string[];
+	} & (NodePermissions | ThreadPermissions)
+>;
+
+type NodeAnyonePermissions = 'Can view' | 'Cannot view';
+type NodeMemberPermissions = 'Can edit' | 'Can view';
+
+type ThreadAnyonePermissions =
+	| 'Can post & reply'
+	| 'Can post'
+	| 'Can reply'
+	| 'Can view'
+	| 'Cannot view';
+type ThreadMemberPermissions =
+	| 'Can delete posts'
+	| 'Can post & reply'
+	| 'Can post'
+	| 'Can reply'
+	| 'Can view';
+
+interface NodePermissions {
+	type: 'Default';
+	anyonePermissions: NodeAnyonePermissions;
+	memberPermissions: NodeMemberPermissions;
+}
+interface ThreadPermissions {
+	type: 'Thread';
+	anyonePermissions: ThreadAnyonePermissions;
+	memberPermissions: ThreadMemberPermissions;
+}
 
 interface ThreadPost {
 	id: string;
@@ -169,5 +206,8 @@ export {
 	NewNodeModalStore,
 	EditThreadInfoStore,
 	ThreadVotes,
-	ExtraContextStore
+	ExtraContextStore,
+	EditPermissionsStore,
+	NodePermissions,
+	ThreadPermissions
 };

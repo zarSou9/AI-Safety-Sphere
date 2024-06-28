@@ -5,18 +5,45 @@ import Joi from 'joi';
 
 export const POST: RequestHandler = async ({ request, locals: { supabase, supabaseService } }) => {
 	try {
-		const requestSchema = Joi.object({
-			uuid: Joi.string(),
-			userId: Joi.string(),
-			pin: Joi.boolean()
-		});
+		const requestSchema = Joi.alternatives().try(
+			Joi.object({
+				uuid: Joi.string(),
+				userId: Joi.string(),
+				members: Joi.array().items(Joi.string()),
+				owners: Joi.array().items(Joi.string()),
+				type: 'Default',
+				anyonePermissions: Joi.alternatives().try('Can view', 'Cannot view'),
+				memberPermissions: Joi.alternatives().try('Can edit', 'Can view')
+			}),
+			Joi.object({
+				uuid: Joi.string(),
+				userId: Joi.string(),
+				members: Joi.array().items(Joi.string()),
+				owners: Joi.array().items(Joi.string()),
+				type: 'Thread',
+				anyonePermissions: Joi.alternatives().try(
+					'Can post & reply',
+					'Can post',
+					'Can reply',
+					'Can view',
+					'Cannot view'
+				),
+				memberPermissions: Joi.alternatives().try(
+					'Can delete posts',
+					'Can post & reply',
+					'Can post',
+					'Can reply',
+					'Can view'
+				)
+			})
+		);
 		const req = await request.json();
 		if (requestSchema.validate(req).error)
 			throw { status: 400, message: 'Bad request: missing or incorrect fields' };
 
-		const { uuid, userId, pin } = req;
+		const { uuid, userId, type, anyonePermissions, memberPermissions, members, owners } = req;
 		let tree;
-		let username;
+		let username: string;
 
 		while (true) {
 			const now = Date.now();
@@ -27,7 +54,7 @@ export const POST: RequestHandler = async ({ request, locals: { supabase, supaba
 				.update({ changing: now })
 				.lt('changing', nowCompare)
 				.select('data');
-			const usernamePromise = supabase.from('Profiles').select('username').eq('user_id', userId);
+			const usernamePromise = supabase.from('Profiles').select('username, user_id');
 
 			const [treeData, usernameResult] = await Promise.all([treeDataPromise, usernamePromise]);
 
@@ -36,29 +63,32 @@ export const POST: RequestHandler = async ({ request, locals: { supabase, supaba
 
 			if (!treeData.data.length) continue;
 
-			username = usernameResult.data[0].username;
+			username = usernameResult.data.find((prof) => prof.user_id === userId)?.username;
+			if (!username) throw { status: 400, message: 'User not found' };
 
 			tree = createTree();
 
 			tree.setTree(treeData.data[0].data);
 
-			const parent = tree.getParent(uuid);
-			if (!parent) throw { status: 400, message: 'Parent node could not be found' };
 			const treeNode = tree.getObjFromId(uuid);
 			if (!treeNode) throw { status: 400, message: 'Parent node could not be found' };
-
-			const owners = parent.node?.owners;
-			if (!owners?.includes(username)) {
+			if (!treeNode.owners?.includes(username)) {
 				throw { status: 400, message: 'Unauthorized' };
 			}
-			if (pin) {
-				const i = parent.node.children.findIndex(
-					(child) => child.parent_category === treeNode.parent_category
-				);
-				parent.node.children.splice(parent.i, 1);
-				parent.node.children.splice(i, 0, treeNode);
-				treeNode.pinned = true;
-			} else treeNode.pinned = false;
+
+			const newMembers = members.filter(
+				(m: string) => !!usernameResult.data.find((prof) => prof.username === m)
+			);
+			const newOwners = owners.filter(
+				(m: string) => !!usernameResult.data.find((prof) => prof.username === m)
+			);
+			if (!newOwners.length) throw { status: 400, message: 'At least 1 owner required' };
+			treeNode.owners = newOwners;
+			treeNode.members = newMembers;
+
+			if (treeNode.type !== type) throw { status: 400, message: 'Conflicting node type' };
+			treeNode.memberPermissions = memberPermissions;
+			treeNode.anyonePermissions = anyonePermissions;
 
 			const postPromises: any = [
 				supabaseService.from('Tree').update({ data: tree.getTree(), changing: 0 }).eq('id', 1)
