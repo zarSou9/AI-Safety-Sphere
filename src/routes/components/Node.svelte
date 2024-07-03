@@ -52,6 +52,7 @@
 	const linkInput: Writable<any> = getContext('linkInputStore');
 	const editPermissions: EditPermissionsStore = getContext('editPermissionsStore');
 	const learnMore: Writable<boolean> = getContext('learnMoreStore');
+	const pageOffset: Writable<number | undefined> = getContext('pageOffsetStore');
 
 	export let treeData: TreeNode;
 	export let shadowColor: string;
@@ -72,9 +73,6 @@
 	let Quill: any;
 	let Delta: any;
 
-	let out = false;
-	let pos = 0;
-	let outPos = 0;
 	let editIconActive = false;
 	let editable = false;
 	let title: string | undefined;
@@ -143,15 +141,6 @@
 			if (eventName === 'selection-change') {
 				if (quill.hasFocus()) updateTools(quill?.getFormat());
 				else updateTools(undefined);
-
-				if (source === 'user' && quill.hasFocus()) {
-					const pos =
-						currentEditor.getBoundingClientRect().top +
-						quill.getBounds(range.index + range.length).bottom;
-					if (pos > viewPort.height) {
-						canvasAction.set('move-page-up');
-					}
-				}
 			} else if (eventName === 'text-change') {
 				if (title === 'Inferential Step' && quill.getText().split('\n').length > 4) {
 					quill.setContents(oldQuill);
@@ -174,17 +163,13 @@
 						const pos =
 							currentEditor.getBoundingClientRect().top +
 							quill.getBounds((delta.ops[0]?.retain ?? 0) + length).bottom;
-						if (pos > viewPort.height + 24) {
-							quill.enable(false);
-							quill.setContents(oldQuill);
-							const quillData = oldQuill.compose(range);
-							setTimeout(() => {
-								quill.setContents(quillData);
-								quill.enable(true);
-								treeAction.set('calibrate-node-height');
-							}, 30);
-						} else if (pos > viewPort.height) {
+
+						$pageOffset = pos - viewPort.height - 64;
+						if ($pageOffset > 0) {
 							canvasAction.set('move-page-up');
+						} else if ($pageOffset + viewPort.height < 0) {
+							$pageOffset += viewPort.height;
+							canvasAction.set('move-page-down');
 						}
 					}
 					saved = false;
@@ -349,7 +334,6 @@
 		if (nodeChannel) data.supabase.removeChannel(nodeChannel);
 		nodeChannel = undefined;
 		window.removeEventListener('keydown', handleKeyDown);
-		out = false;
 		save(true);
 		isSaving = false;
 		sectionsReady = false;
@@ -375,31 +359,7 @@
 	function startListening() {
 		nodeActionUnsubscribe = nodeAction.subscribe((action) => {
 			if (action) {
-				if (action === 'handle-caret-out-of-view') {
-					if (editable && currentQuill) {
-						moved = true;
-						if (currentQuill.hasFocus()) {
-							pos =
-								currentEditor.getBoundingClientRect().top +
-								currentQuill.getBounds(
-									currentQuill.getSelection().index + currentQuill.getSelection().length
-								).bottom;
-							if (pos > viewPort.height || pos < viewPort.top) {
-								outPos = currentQuill.getBounds(
-									currentQuill.getSelection().index + currentQuill.getSelection().length
-								).bottom;
-								currentQuill.blur();
-								out = true;
-							}
-						} else if (out) {
-							pos = currentEditor.getBoundingClientRect().top + outPos;
-							if (pos < viewPort.height && pos > viewPort.top) {
-								currentQuill.focus({ preventScroll: true });
-								out = false;
-							}
-						}
-					}
-				} else if (action === 'save-title') {
+				if (action === 'save-title') {
 					title = get(titleModal).title;
 					changeTitle(title as string);
 				} else if (action === 'expand-node') {

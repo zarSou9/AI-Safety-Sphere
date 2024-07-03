@@ -182,6 +182,8 @@
 	setContext('editPermissionsStore', editPermissions);
 	const learnMore = writable<boolean>(false);
 	setContext('learnMoreStore', learnMore);
+	const pageOffset = writable<number | undefined>(undefined);
+	setContext('pageOffsetStore', pageOffset);
 
 	const tree = createTree();
 	tree.setClientTree(data.props.hier);

@@ -446,7 +446,7 @@
 
 <div
 	role="presentation"
-	class="overflow-hidden bg-[#1f1f1f] rounded-[20px] w-[800px] px-[64px] py-[42px] relative selection:bg-[#6a87b389] {$viewingNode ||
+	class="overflow-clip bg-[#1f1f1f] rounded-[20px] w-[800px] px-[64px] py-[42px] relative selection:bg-[#6a87b389] {$viewingNode ||
 		'max-h-[550px]'}"
 	style={`box-shadow: -2px 2px ${shadowColor}`}
 >

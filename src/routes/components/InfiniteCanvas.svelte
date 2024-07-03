@@ -21,6 +21,7 @@
 	const stratChange: { l: number; t: number; pl: number; pt: number } = getContext('stratChange');
 	const sectionContextE: Writable<any> = getContext('sectionContextEStore');
 	const extraContext: ExtraContextStore = getContext('extraContextStore');
+	const pageOffset: Writable<number | undefined> = getContext('pageOffsetStore');
 
 	const zoomIntensity = 0.016;
 
@@ -110,7 +111,6 @@
 		if (!smoothMoving && !sectionContextOpen) {
 			y = Math.max(Math.min(y - e.deltaY, viewingNodeRect.t), viewingNodeRect.h);
 			canvas.style.transform = `translate(${x}px, ${y}px) scale(${z})`;
-			$nodeAction = 'handle-caret-out-of-view';
 		}
 	}
 
@@ -148,7 +148,9 @@
 						nodeAction.set('expand-node');
 					}, 400);
 				} else if (action === 'move-page-up') {
-					moveToPos(x, y - 110, z, 110);
+					if ($pageOffset) moveToPos(x, y - $pageOffset - 80, z, 110);
+				} else if (action === 'move-page-down') {
+					if ($pageOffset) moveToPos(x, y - $pageOffset + 80, z, 110);
 				} else if (action === 'zoom-out-from-node') {
 					scale(z * 0.8);
 					setTimeout(() => {
@@ -268,9 +270,6 @@
 
 	function shortCuts(e: KeyboardEvent) {
 		const k = e.key;
-		setTimeout(() => {
-			viewPort.scrollTo(0, 0);
-		}, 1);
 		if ($shortCutsEnabled) {
 			if (k === 'h' && (e.ctrlKey || e.metaKey)) {
 				setHome();
@@ -731,7 +730,7 @@
 {/if}
 
 <div
-	class="h-full w-full overflow-hidden bg-[#151515] {grabbed ? 'cursor-grabbing' : ''}"
+	class="h-full w-full overflow-clip bg-[#151515] {grabbed ? 'cursor-grabbing' : ''}"
 	on:wheel={$viewingNode ? scrollEditing : handlePanZoom}
 	on:mousedown={handleGrab}
 	on:mouseup={() => {
