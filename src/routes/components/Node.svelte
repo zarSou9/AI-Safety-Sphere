@@ -1261,9 +1261,9 @@
 					handleSectionTitleContext(e, i);
 				}}
 			>
-				{section.title}:
+				{section.title}
 			</p>
-			<div class="mt-[5px] mb-[5px] overflow-hidden w-[670px]">
+			<div class="mt-[2px] mb-[5px] overflow-hidden w-[670px]">
 				<div bind:this={section.editor} />
 			</div>
 		</div>
