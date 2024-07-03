@@ -22,6 +22,7 @@
 	import CategoriesPopup from '$lib/components/CategoriesPopup.svelte';
 	import EditThreadInfo from '$lib/components/EditThreadInfo.svelte';
 	import EditPermissions from '$lib/components/EditPermissions.svelte';
+	import Profile from '$lib/icons/Profile.svelte';
 
 	import Cross from '$lib/icons/Cross.svelte';
 	import ThreeDots from '$lib/icons/ThreeDots.svelte';
@@ -179,6 +180,8 @@
 		memberPermissions: 'Can edit'
 	});
 	setContext('editPermissionsStore', editPermissions);
+	const learnMore = writable<boolean>(false);
+	setContext('learnMoreStore', learnMore);
 
 	const tree = createTree();
 	tree.setClientTree(data.props.hier);
@@ -287,7 +290,8 @@
 
 {#if profDropdown}
 	<div
-		class="fixed z-[200] top-[46px] right-[8px] w-[63px] rounded-md bg-[#515151] grid text-sm text-[#ebebeb]"
+		class="fixed z-[200] top-[38px] right-[12px] w-[63px] rounded-md bg-[#414141] grid text-sm text-[#ebebeb]"
+		transition:slide={{ duration: 70 }}
 		on:click={() => {
 			profDropdown = false;
 			window.removeEventListener('click', click);
@@ -296,26 +300,21 @@
 		bind:this={profileDropE}
 	>
 		{#if data?.props?.loggedIn}
-			<a
-				href="/settings"
-				class="hover:bg-[#676767] rounded-t-md flex items-center justify-center pt-[3px] pb-[2px]"
-				>Profile</a
-			>
 			<button
 				on:click={signout}
-				class="hover:bg-[#676767] text-red-400 rounded-b-md flex items-center justify-center pb-[4px]"
+				class="hover:bg-[#515151] text-red-400 rounded-md flex items-center justify-center py-[2px]"
 			>
 				Log out
 			</button>
 		{:else}
 			<a
 				href="/login"
-				class="hover:bg-[#676767] rounded-t-md flex items-center justify-center pt-[3px] pb-[2px]"
+				class="hover:bg-[#515151] rounded-t-md flex items-center justify-center pt-[3px] pb-[2px]"
 				>Log in</a
 			>
 			<a
 				href="/signup"
-				class="hover:bg-[#676767] rounded-b-md flex items-center justify-center pt-[3px] pb-[4px]"
+				class="hover:bg-[#515151] rounded-b-md flex items-center justify-center pt-[3px] pb-[4px]"
 				>Sign up</a
 			>
 		{/if}
@@ -406,6 +405,10 @@
 	<InfoModal
 		on:close={() => {
 			infoModalVisible = false;
+		}}
+		on:learn-more={() => {
+			infoModalVisible = false;
+			setTimeout(() => learnMore.set(true), 50);
 		}}
 	/>
 {/if}
@@ -767,7 +770,9 @@
 		>
 			<div class="w-[.6px] h-[26px] bg-[#70747c] mr-[15px] ml-auto" />
 			<button
-				class="flex items-center mr-[12px] rounded-full size-[25px] flex-grow-0 flex-shrink-0 overflow-hidden"
+				class="flex items-center justify-center mr-[12px] rounded-full size-[25px] border-[1px] {profDropdown
+					? 'border-[#cccccc] fill-[#cccccc]'
+					: 'border-[#989898] fill-[#989898]'}  hover:border-[#cccccc] hover:fill-[#cccccc] transition-colors flex-grow-0 flex-shrink-0 overflow-hidden"
 				on:click={() => {
 					if (profDropdown) {
 						profDropdown = false;
@@ -780,7 +785,7 @@
 					}
 				}}
 			>
-				<img src="/images/profile_pic.png" alt="profile" />
+				<Profile size="14px" />
 			</button>
 		</div>
 	</div>

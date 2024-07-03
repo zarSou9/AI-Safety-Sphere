@@ -17,6 +17,8 @@
 	import ToolTip from '$lib/components/ToolTip.svelte';
 	import ThreeDots from '$lib/icons/ThreeDots.svelte';
 	import Vote from '$lib/icons/Vote.svelte';
+	import Info from '$lib/icons/Info.svelte';
+	import FadeElement from '$lib/components/FadeElement.svelte';
 
 	const tree: TreeInterface = getContext('tree');
 	const viewingNode: Writable<any> = getContext('viewingNodeStore');
@@ -25,7 +27,6 @@
 	const shortCutsEnabled: any = getContext('shortCutsEnabledStore');
 	const treeAction: Writable<string | null> = getContext('treeActionStore');
 	const data: PageData = getContext('data');
-	const toolBarShown: Writable<boolean> = getContext('toolBarShownStore');
 	const toolBarThread: Writable<boolean> = getContext('toolBarThreadStore');
 	const successPopUp: Writable<any> = getContext('successPopUpStore');
 	const failurePopUp: Writable<any> = getContext('failurePopUpStore');
@@ -73,7 +74,7 @@
 	});
 
 	function sortPosts() {
-		posts.sort((a, b) => a.vote - b.vote);
+		posts.sort((a, b) => b.vote - a.vote);
 		const ownedPosts = posts.filter((p) => p.owner === username);
 		posts = posts.filter((p) => p.owner !== username);
 		posts = [...ownedPosts, ...posts];
@@ -197,6 +198,7 @@
 			commenting = false;
 			if (!$viewingNode) $shortCutsEnabled = true;
 			posts = result.data;
+			if ($viewingNode) tick().then(() => treeAction.set('calibrate-node-height'));
 			comment = '';
 		} catch (error: any) {
 			failurePopUp.set('Error: ' + error.message);
@@ -258,6 +260,7 @@
 				throw new Error(result.error || 'Failed to submit data');
 			}
 			posts = result.data;
+			if ($viewingNode) tick().then(() => treeAction.set('calibrate-node-height'));
 		} catch (error: any) {
 			failurePopUp.set('Error: ' + error.message);
 			throw error;
@@ -419,8 +422,12 @@
 
 	function autoResize(node: HTMLTextAreaElement) {
 		function resize() {
+			const prevHeight = node.style.height;
 			node.style.height = 'auto';
 			node.style.height = `${node.scrollHeight}px`;
+
+			if ($viewingNode && prevHeight !== node.style.height)
+				tick().then(() => treeAction.set('calibrate-node-height'));
 		}
 
 		node.addEventListener('input', resize);
@@ -438,6 +445,7 @@
 </script>
 
 <div
+	role="presentation"
 	class="overflow-hidden bg-[#1f1f1f] rounded-[20px] w-[800px] px-[64px] py-[42px] relative selection:bg-[#6a87b389] {$viewingNode ||
 		'max-h-[550px]'}"
 	style={`box-shadow: -2px 2px ${shadowColor}`}
@@ -455,8 +463,9 @@
 			<View color={readBtnActive ? '#9c9c9c' : '#595959'} size="36px" />
 		{/if}
 	</button>
-	<p
-		class="text-[35px] font-[500]"
+	<div
+		class="text-[35px] font-[500] relative w-min text-nowrap"
+		role="presentation"
 		on:dblclick={() => {
 			if ($viewingNode && owner) {
 				activateInfoModal();
@@ -465,10 +474,31 @@
 		}}
 	>
 		{treeData.data.title}
-	</p>
+		<div class="absolute top-[11px] left-[calc(100%+4px)] group">
+			<Info color="#808080" size="11px" />
+			<FadeElement className="top-[80%] left-[-3px]" side="custom">
+				<div
+					class="bg-[#3c3c3c] flex flex-col space-y-[3px] px-[10px] py-[7px] rounded-md text-[11px]"
+				>
+					<div class="flex">
+						<p class="font-bold mr-[3px]">Owner{treeData.owners.length === 1 ? '' : 's'}:</p>
+						<p>
+							{#each treeData.owners as owner, i}
+								{owner}{i === treeData.owners.length - 1 ? '' : ', '}
+							{/each}
+						</p>
+					</div>
+					<div class="flex">
+						<p class="font-bold mr-[3px]">Published:</p>
+						<p>{new Date(treeData.created_at).toLocaleDateString()}</p>
+					</div>
+				</div>
+			</FadeElement>
+		</div>
+	</div>
 	{#if treeData.data.tldr}
 		<p
-			class="text-[#bdbdbd] mt-[4px] text-[14px]"
+			class="text-[#bdbdbd] mt-[10px] text-[14px]"
 			on:dblclick={() => {
 				if ($viewingNode && owner) {
 					activateInfoModal();
@@ -481,14 +511,13 @@
 	{/if}
 	{#if commenting}
 		<textarea
-			on:wheel={(e) => {
-				e.preventDefault();
-				e.stopPropagation();
-			}}
+			use:autoResize
 			bind:value={comment}
 			bind:this={commentTextarea}
 			rows="3"
-			class="bg-[#1f1f1f] w-full outline-none border-[1px] mt-[25px] border-[#b7b7b7] rounded-md p-[15px] text-[14px]"
+			class="bg-[#1f1f1f] resize-none w-full outline-none border-[1px] mt-[25px] border-[#b7b7b7] rounded-md p-[15px] text-[14px] {$viewingNode
+				? ''
+				: 'max-h-[305px]'}"
 		/>
 		<div class="flex items-center mt-[10px]">
 			<button
@@ -497,6 +526,7 @@
 					if (!$viewingNode) $shortCutsEnabled = true;
 					commenting = false;
 					comment = '';
+					tick().then(() => treeAction.set('calibrate-node-height'));
 				}}>Cancel</button
 			>
 			<button
@@ -540,7 +570,16 @@
 				{#if owner || username === post.owner}
 					<button
 						on:click={() => {
-							post.openSettings = !post.openSettings;
+							const close = () => {
+								post.openSettings = false;
+								window.removeEventListener('click', close);
+							};
+							if (!post.openSettings) {
+								post.openSettings = true;
+								setTimeout(() => {
+									window.addEventListener('click', close);
+								}, 4);
+							}
 						}}
 						class="absolute top-[12.5px] right-[12.5px] rounded-md transition-colors p-[3px] {post.openSettings
 							? 'bg-[#5f5f5f46]'
@@ -554,19 +593,21 @@
 								transition:fade={{ duration: 50 }}
 								class="absolute right-[calc(100%+2px)] py-[2px] text-[11px] w-[60px] top-0 rounded-md bg-[#3d3d3d] overflow-hidden"
 							>
-								<button
-									on:click={() => {
-										post.editing = true;
-										post.previousValue = post.post;
-									}}
-									class="hover:bg-[#626262] pl-[5px] py-[1px] flex justify-start w-full"
-									>Edit</button
-								>
+								{#if username === post.owner}
+									<button
+										on:click={() => {
+											post.editing = true;
+											post.previousValue = post.post;
+										}}
+										class="hover:bg-[#626262] pl-[5px] mb-[1px] py-[1px] flex justify-start w-full"
+										>Edit
+									</button>
+								{/if}
 								<button
 									on:click={() => {
 										deleteComment(post.id);
 									}}
-									class="hover:bg-[#934a4a] mt-[1px] pl-[5px] py-[1px] flex justify-start w-full"
+									class="hover:bg-[#934a4a] pl-[5px] py-[1px] flex justify-start w-full"
 									>Delete</button
 								>
 							</div>
@@ -625,6 +666,7 @@
 						on:click={() => {
 							updatePost(post.id, post.post);
 							post.editing = false;
+							if ($viewingNode) treeAction.set('calibrate-node-height');
 						}}>Save</button
 					>
 				</div>{/if}

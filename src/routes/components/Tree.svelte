@@ -642,53 +642,53 @@
 											: '380'}px;"
 									>
 										<p class="selection:bg-none">{category.title}</p>
-										{#if node.treeNode.owners?.includes(data.props?.profile?.username)}
-											<FadeElement className="cursor-auto" side="bottom">
-												<div
-													role="presentation"
-													on:click={(e) => e.stopPropagation()}
-													class="flex flex-col items-center w-[180px] bg-[#282828] rounded-[6px] px-[10px] pb-[10px] text-[11.5px] text-[#e4e4e4]"
-												>
-													{#if category.description}
-														<p class="mt-[7px]">{category.description}</p>
-														<div class="bg-[#7c7c7c] h-[.3px] w-full mt-[8px]" />
-													{/if}
-													{#if category.postPermissions === 'Anyone' || node.treeNode.owners.includes(data.props.profile?.username)}
-														<button
-															on:click={() => {
-																if (data.props.loggedIn) {
-																	$newNodeModal.uuid = node.treeNode.uuid;
-																	$newNodeModal.category_id = category.id;
-																	$newNodeModal.allowedTypes = category.nodesAllowed;
-																	$newNodeModal.type = category.nodesAllowed.includes('Default')
-																		? 'Default'
-																		: category.nodesAllowed[0];
-																	$newNodeModal.visible = true;
-																} else loginNotif.set(true);
-															}}
-															class="border-[#3d6297] border-[1px] hover:bg-[#3d6297] transition-colors rounded-[6px] w-full py-[1px] mt-[10px]"
-															>Add Node</button
-														>{/if}
-													{#if node.treeNode.owners?.includes(data.props?.profile?.username)}
-														<button
-															on:click={() => {
-																$categoriesModal = {
-																	visible: true,
-																	uuid: node.treeNode.uuid,
-																	categories: node.treeNode.linking_categories,
-																	uneditableCats: new Set(
-																		node.arrayChildren.map((child) => child.parent_category.id)
-																	),
-																	waiting: false
-																};
-															}}
-															class="border-[#2d7356] border-[1px] hover:bg-[#2d7356] transition-colors rounded-[6px] w-full py-[1px] mt-[6px]"
-															>Edit Categories</button
-														>
-													{/if}
-												</div>
-											</FadeElement>
-										{/if}
+										<FadeElement className="cursor-auto" side="bottom">
+											<div
+												role="presentation"
+												on:click={(e) => e.stopPropagation()}
+												class="flex flex-col items-center w-[180px] bg-[#282828] rounded-[6px] px-[10px] pb-[10px] text-[11.5px] text-[#e4e4e4]"
+											>
+												{#if category.description}
+													<p class="mt-[7px]">{category.description}</p>
+													{#if category.postPermissions === 'Anyone' || node.treeNode.owners.includes(data.props.profile?.username)}<div
+															class="bg-[#7c7c7c] h-[.3px] w-full mt-[8px]"
+														/>{/if}
+												{/if}
+												{#if category.postPermissions === 'Anyone' || node.treeNode.owners.includes(data.props.profile?.username)}
+													<button
+														on:click={() => {
+															if (data.props.loggedIn) {
+																$newNodeModal.uuid = node.treeNode.uuid;
+																$newNodeModal.category_id = category.id;
+																$newNodeModal.allowedTypes = category.nodesAllowed;
+																$newNodeModal.type = category.nodesAllowed.includes('Default')
+																	? 'Default'
+																	: category.nodesAllowed[0];
+																$newNodeModal.visible = true;
+															} else loginNotif.set(true);
+														}}
+														class="border-[#3d6297] border-[1px] hover:bg-[#3d6297] transition-colors rounded-[6px] w-full py-[1px] mt-[10px]"
+														>Add Node</button
+													>{/if}
+												{#if node.treeNode.owners?.includes(data.props?.profile?.username)}
+													<button
+														on:click={() => {
+															$categoriesModal = {
+																visible: true,
+																uuid: node.treeNode.uuid,
+																categories: node.treeNode.linking_categories,
+																uneditableCats: new Set(
+																	node.arrayChildren.map((child) => child.parent_category.id)
+																),
+																waiting: false
+															};
+														}}
+														class="border-[#2d7356] border-[1px] hover:bg-[#2d7356] transition-colors rounded-[6px] w-full py-[1px] mt-[6px]"
+														>Edit Categories</button
+													>
+												{/if}
+											</div>
+										</FadeElement>
 									</div>
 								{/each}
 							</div>

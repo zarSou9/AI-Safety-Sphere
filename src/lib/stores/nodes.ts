@@ -165,6 +165,7 @@ export function createTree() {
 		) {
 			const newNode: TreeNode = {
 				uuid: uuidv4(),
+				created_at: Date.now(),
 				data: { title, tldr: undefined },
 				owners,
 				type,

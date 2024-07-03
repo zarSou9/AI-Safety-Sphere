@@ -31,7 +31,7 @@ export const POST: RequestHandler = async ({ request, locals: { supabase, supaba
 				.eq('uuid', uuid)
 				.select('posts');
 			const usernamePromise = supabase.from('Profiles').select('username').eq('user_id', userId);
-			const treePromise = supabase.from('Tree').select('data').eq('id', 1);
+			const treePromise = supabaseService.from('Tree').select('data').eq('id', 1);
 
 			const [threadData, usernameResult, treeResult] = await Promise.all([
 				threadeDataPromise,

@@ -7,6 +7,7 @@
 
 	import Edit from '$lib/icons/Edit.svelte';
 	import View from '$lib/icons/View.svelte';
+	import Info from '$lib/icons/Info.svelte';
 	import FadeElement from '$lib/components/FadeElement.svelte';
 
 	const tree: TreeInterface = getContext('tree');
@@ -50,8 +51,9 @@
 	const aligned: Writable<string | boolean | null | undefined> = getContext('alignedStore');
 	const linkInput: Writable<any> = getContext('linkInputStore');
 	const editPermissions: EditPermissionsStore = getContext('editPermissionsStore');
+	const learnMore: Writable<boolean> = getContext('learnMoreStore');
 
-	export let treeData: TreeNode | undefined;
+	export let treeData: TreeNode;
 	export let shadowColor: string;
 
 	let sections: any = [
@@ -313,6 +315,14 @@
 			setTimeout(() => {
 				quillsReady.set(true);
 			}, 100);
+		}
+		if (treeData?.uuid === '804b7c8a-fb57-434e-bb82-36a8e71c63a2') {
+			learnMore.subscribe((v) => {
+				if (v) {
+					openNode();
+					learnMore.set(false);
+				}
+			});
 		}
 	});
 	onDestroy(() => {
@@ -1074,17 +1084,20 @@
 			}, 4000);
 		});
 	}
+	function openNode() {
+		editBtnActive = false;
+		loadData();
+		$shortCutsEnabled = false;
+		if (canEdit) editIconActive = true;
+		$viewingNode = treeData?.uuid;
+		startListening();
+		escBtn = true;
+		treeAction.set('find-node-position');
+	}
 
 	function changeEditable() {
 		if (!$viewingNode) {
-			editBtnActive = false;
-			loadData();
-			$shortCutsEnabled = false;
-			if (canEdit) editIconActive = true;
-			$viewingNode = treeData?.uuid;
-			startListening();
-			escBtn = true;
-			treeAction.set('find-node-position');
+			openNode();
 		} else if (canEdit) {
 			if (editable) {
 				editBtnActive = false;
@@ -1209,9 +1222,34 @@
 			<View color={editBtnActive ? '#9c9c9c' : '#595959'} size="36px" />
 		{/if}
 	</button>
-	<p class="ml-[14px] mr-[50px] title mb-[5px]" on:dblclick={editTitle}>
-		{title || 'untitled'}
-	</p>
+	<div
+		class="ml-[14px] mr-[50px] relative title mb-[5px] w-min text-nowrap"
+		role="presentation"
+		on:dblclick={editTitle}
+	>
+		{title}
+		<div class="absolute top-[11px] left-[calc(100%+4px)] group">
+			<Info color="#808080" size="11px" />
+			<FadeElement className="top-[80%] left-[-3px]" side="custom">
+				<div
+					class="bg-[#3c3c3c] flex flex-col space-y-[3px] px-[10px] py-[7px] rounded-md text-[11px]"
+				>
+					<div class="flex">
+						<p class="font-bold mr-[3px]">Owner{treeData.owners.length === 1 ? '' : 's'}:</p>
+						<p>
+							{#each treeData.owners as owner, i}
+								{owner}{i === treeData.owners.length - 1 ? '' : ', '}
+							{/each}
+						</p>
+					</div>
+					<div class="flex">
+						<p class="font-bold mr-[3px]">Published:</p>
+						<p>{new Date(treeData.created_at).toLocaleDateString()}</p>
+					</div>
+				</div>
+			</FadeElement>
+		</div>
+	</div>
 	{#each sections as section, i (section.id)}
 		<div class="relative">
 			<p

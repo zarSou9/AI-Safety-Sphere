@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { onMount } from 'svelte';
+	import { onMount, tick } from 'svelte';
 	import { tweened } from 'svelte/motion';
 	import { cubicOut } from 'svelte/easing';
 	import userCoords from '$lib/stores/local_storage/userCoordinates';
@@ -268,7 +268,9 @@
 
 	function shortCuts(e: KeyboardEvent) {
 		const k = e.key;
-		if (k === 'Tab') e.preventDefault();
+		setTimeout(() => {
+			viewPort.scrollTo(0, 0);
+		}, 1);
 		if ($shortCutsEnabled) {
 			if (k === 'h' && (e.ctrlKey || e.metaKey)) {
 				setHome();

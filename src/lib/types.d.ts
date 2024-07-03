@@ -15,6 +15,7 @@ interface Tree {
 
 interface TreeNode {
 	uuid: string;
+	created_at: number;
 	type: NodeTypes;
 	data: { title: string; tldr?: any };
 	owners: string[];

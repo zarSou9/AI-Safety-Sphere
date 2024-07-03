@@ -60,7 +60,10 @@
 			<p class="italic text-[12px] mt-[6px]">(Reload page if tree is jumbled)</p>
 		</div>
 		<div class="flex w-full text-[13px]">
-			<a class="hover:underline text-[#005eff] mr-auto ml-[20px]" href="/home/docs">Learn more</a>
+			<button
+				on:click={() => dispatch('learn-more')}
+				class="hover:underline text-[#005eff] mr-auto ml-[20px]">Learn more</button
+			>
 			<a class="hover:underline text-[#005eff] ml-auto mr-[20px]" href="/login">Log in</a>
 		</div>
 	</div>
