@@ -49,8 +49,7 @@ export const POST: RequestHandler = async ({
 			const treePostPromise = supabaseService
 				.from('Tree')
 				.update({ data: tree.getTree(), changing: 0 })
-				.eq('changing', now)
-				.select('id');
+				.eq('id', 1);
 			const nodePostPromise = supabaseService
 				.from('Nodes')
 				.update({ title: newTitle })
@@ -63,7 +62,7 @@ export const POST: RequestHandler = async ({
 			if (nodePostResult?.error) throw { status: 400, message: nodePostResult.error.message };
 			if (treePostResult?.error) throw { status: 400, message: treePostResult.error.message };
 
-			if (treePostResult.data.length) break;
+			break;
 		}
 		return json({ message: 'Edit successfully pushed!' }, { status: 200 });
 	} catch (error: any) {

@@ -17,7 +17,7 @@ interface TreeNode {
 	uuid: string;
 	created_at: number;
 	type: NodeTypes;
-	data: { title: string; tldr?: any };
+	data: { title: string; tldr?: any; tldr_title?: string };
 	owners: string[];
 	children: TreeNode[];
 	parent_category: string;

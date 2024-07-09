@@ -45,7 +45,10 @@ export const POST: RequestHandler = async ({ request, locals: { supabase, supaba
 			throw { status: 400, message: 'Unauthorized' };
 		}
 
-		if (content.find((sect: any) => sect.title === sectionTitle))
+		if (
+			content.find((sect: any) => sect.title === sectionTitle) ||
+			treeNode.data.tldr_title === sectionTitle
+		)
 			throw { status: 400, message: 'Sections must be unique' };
 
 		content.splice(after, 0, { delta: { ops: [] }, title: sectionTitle });

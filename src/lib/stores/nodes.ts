@@ -166,7 +166,10 @@ export function createTree() {
 			const newNode: TreeNode = {
 				uuid: uuidv4(),
 				created_at: Date.now(),
-				data: { title, tldr: undefined },
+				data:
+					type === 'Default'
+						? { title, tldr: undefined, tldr_title: 'Inferential Step' }
+						: { title, tldr: undefined },
 				owners,
 				type,
 				parent_category,

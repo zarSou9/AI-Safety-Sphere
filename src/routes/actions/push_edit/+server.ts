@@ -1,9 +1,8 @@
 import type { RequestHandler } from './$types';
 import { json } from '@sveltejs/kit';
-import { delta, tldrDelta } from '$lib/server/schemas';
+import { delta } from '$lib/server/schemas';
 import Joi from 'joi';
 import { createTree } from '$lib/stores/nodes';
-import Delta from 'quill-delta';
 
 export const POST: RequestHandler = async ({ request, locals: { supabase, supabaseService } }) => {
 	try {
@@ -22,10 +21,7 @@ export const POST: RequestHandler = async ({ request, locals: { supabase, supaba
 
 			const last_edit = Date.now();
 
-			const nodePromise = supabase
-				.from('Nodes')
-				.select('tldr, content, active_user')
-				.eq('uuid', uuid);
+			const nodePromise = supabase.from('Nodes').select('content, active_user').eq('uuid', uuid);
 			const usernamePromise = supabase.from('Profiles').select('username').eq('user_id', userId);
 			const treePromise = supabaseService
 				.from('Tree')
@@ -62,60 +58,34 @@ export const POST: RequestHandler = async ({ request, locals: { supabase, supaba
 			if (username !== nodeResult.data[0].active_user)
 				throw { status: 400, message: 'Another user is currently editing this node' };
 
-			let baseValid;
-			if (section === 'Inferential Step') {
-				baseValid = tldrDelta.validate(base);
-				if (baseValid.error)
-					throw { status: 400, message: 'Bad request: missing or incorrect fields' };
+			const content: any[] = nodeResult.data[0].content;
+			const baseValid = delta.validate(base);
+			if (baseValid.error) throw { status: 400, message: baseValid.error.message };
 
-				const dbase = new Delta(base);
-				let i = 0;
-				dbase.eachLine(() => {
-					i += 1;
-				});
-				if (i > 4)
-					throw { status: 400, message: 'The Inferential Step section is limited to 3 lines' };
-
+			if (treeNode.data.tldr_title === section) {
 				treeNode.data.tldr = base;
-				const treePostPromise = supabaseService
-					.from('Tree')
-					.update({ data: tree.getTree(), changing: 0 })
-					.eq('id', 1);
-				const nodePostPromise = supabaseService
-					.from('Nodes')
-					.update({ tldr: base, last_edit })
-					.eq('uuid', uuid);
-
-				const [nodePostResult, treePostResult] = await Promise.all([
-					nodePostPromise,
-					treePostPromise
-				]);
-				if (nodePostResult?.error) throw { status: 400, message: nodePostResult.error.message };
-				if (treePostResult?.error) throw { status: 400, message: treePostResult.error.message };
 			} else {
-				const content = nodeResult.data[0].content;
-				baseValid = delta.validate(base);
-				if (baseValid.error) throw { status: 400, message: baseValid.error.message };
-
-				const sect = content.find((s: any) => s.title === section);
-				if (sect) {
-					sect.delta = base;
-				} else {
-					content.push({ title: section, delta: base });
-				}
-				const nodePostPromise = supabaseService
-					.from('Nodes')
-					.update({ content, last_edit })
-					.eq('uuid', uuid);
-				const treePostPromise = supabaseService.from('Tree').update({ changing: 0 }).eq('id', 1);
-
-				const [nodePostResult, treePostResult] = await Promise.all([
-					nodePostPromise,
-					treePostPromise
-				]);
-				if (nodePostResult?.error) throw { status: 400, message: nodePostResult.error.message };
-				if (treePostResult?.error) throw { status: 400, message: treePostResult.error.message };
+				const sect = content.find((s) => s.title === section);
+				if (!sect) throw { status: 400, message: 'Could not find section' };
+				sect.delta = base;
 			}
+
+			const treePostPromise = supabaseService
+				.from('Tree')
+				.update({ changing: 0, data: tree.getTree() })
+				.eq('id', 1);
+			const nodePostPromise = supabaseService
+				.from('Nodes')
+				.update({ content, last_edit })
+				.eq('uuid', uuid);
+
+			const [nodePostResult, treePostResult] = await Promise.all([
+				nodePostPromise,
+				treePostPromise
+			]);
+			if (nodePostResult?.error) throw { status: 400, message: nodePostResult.error.message };
+			if (treePostResult?.error) throw { status: 400, message: treePostResult.error.message };
+
 			break;
 		}
 

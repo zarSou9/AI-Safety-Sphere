@@ -142,39 +142,29 @@
 				if (quill.hasFocus()) updateTools(quill?.getFormat());
 				else updateTools(undefined);
 			} else if (eventName === 'text-change') {
-				if (title === 'Inferential Step' && quill.getText().split('\n').length > 4) {
-					quill.setContents(oldQuill);
-					failurePopUp.set('The Inferential Step section is limited to 3 new lines');
-					setTimeout(() => quill.blur(), 10);
-				} else if (title === 'Inferential Step' && oldQuill.compose(range).length() > 875) {
-					quill.setContents(oldQuill);
-					failurePopUp.set('The Inferential Step section is limited to 875 characters');
-					setTimeout(() => quill.blur(), 10);
-				} else {
-					if (source !== 'api' && !(range.ops[1]?.delete || range.ops[0]?.delete)) {
-						const delta = range;
-						let length = 0;
-						if (delta.ops[0]?.retain) {
-							const test = new Delta(delta.ops.slice(1));
-							length = test.length();
-						} else {
-							length = delta.length();
-						}
-						const pos =
-							currentEditor.getBoundingClientRect().top +
-							quill.getBounds((delta.ops[0]?.retain ?? 0) + length).bottom;
-
-						$pageOffset = pos - viewPort.height - 64;
-						if ($pageOffset > 0) {
-							canvasAction.set('move-page-up');
-						} else if ($pageOffset + viewPort.height < 0) {
-							$pageOffset += viewPort.height;
-							canvasAction.set('move-page-down');
-						}
+				if (source !== 'api' && !(range.ops[1]?.delete || range.ops[0]?.delete)) {
+					const delta = range;
+					let length = 0;
+					if (delta.ops[0]?.retain) {
+						const test = new Delta(delta.ops.slice(1));
+						length = test.length();
+					} else {
+						length = delta.length();
 					}
-					saved = false;
-					sect.base.ops = oldQuill.compose(range).ops;
+					const pos =
+						currentEditor.getBoundingClientRect().top +
+						quill.getBounds((delta.ops[0]?.retain ?? 0) + length).bottom;
+
+					$pageOffset = pos - viewPort.height - 64;
+					if ($pageOffset > 0) {
+						canvasAction.set('move-page-up');
+					} else if ($pageOffset + viewPort.height < 0) {
+						$pageOffset += viewPort.height;
+						canvasAction.set('move-page-down');
+					}
 				}
+				saved = false;
+				sect.base.ops = oldQuill.compose(range).ops;
 				treeAction.set('calibrate-node-height');
 			}
 		}
@@ -287,10 +277,12 @@
 		TldrQuillOptions.registry = Qregistry;
 		quillOptions.registry = registry;
 
+		sections[0].title = treeData.data.tldr_title;
 		sections[0].quill = new Quill(sections[0].editor, TldrQuillOptions);
+		sections[0].base = new Delta(treeData?.data.tldr);
 
 		title = treeData?.data.title;
-		base = new Delta(treeData?.data.tldr);
+		base = sections[0].base;
 		currentQuill = sections[0].quill;
 		currentQuill.setContents(base);
 
@@ -375,9 +367,7 @@
 					newSection($sectionModal.title, $sectionModal.after);
 				} else if (action === 'start-new-section') {
 					const newSects = [];
-					for (let sect of sections) {
-						newSects.push(sect.title);
-					}
+					for (let sect of sections) newSects.push(sect.title);
 					$sectionModal.sections = newSects;
 					$sectionModal.visible = true;
 				} else if (action === 'save-section-title') {
@@ -460,8 +450,6 @@
 	}
 	function updateQuillData(bases: any) {
 		emptyQuills();
-		sections[0].base = new Delta(bases[0]);
-		bases.splice(0, 1);
 		for (let b of bases) {
 			sections.push({ base: new Delta(b.delta), title: b.title, history: [], id: uuidv4() });
 		}
@@ -566,7 +554,7 @@
 							}
 						}
 					}
-					const bases = JSON.parse(JSON.stringify([nodeData[0].tldr, ...nodeData[0].content]));
+					const bases = JSON.parse(JSON.stringify(nodeData[0].content));
 					updateQuillData(bases);
 					if (nodeReady) {
 						fillQuills();
@@ -784,7 +772,7 @@
 				throw new Error(result.error || 'Failed to submit data');
 			}
 		} catch (error: any) {
-			failurePopUp.set('Error: ' + error.message);
+			if (error.message !== 'TypeError: fetch failed') failurePopUp.set('Error: ' + error.message);
 		}
 		posting = false;
 	}
@@ -1081,7 +1069,7 @@
 					.eq('uuid', treeData?.uuid)
 					.then(({ data: nodeData }) => {
 						if (nodeData) {
-							const bases = JSON.parse(JSON.stringify([nodeData[0].tldr, ...nodeData[0].content]));
+							const bases = JSON.parse(JSON.stringify(nodeData[0].content));
 							updateQuillData(bases);
 							fillQuills().then(() => {
 								activateUser().then(
@@ -1116,7 +1104,7 @@
 		}
 	}
 	function editSectionTitle(i: number, currentTitle: string) {
-		if (i && editable && canEdit) {
+		if (editable && canEdit) {
 			$sectionTitleModal.title = currentTitle;
 			$sectionTitleModal.i = i;
 			$sectionTitleModal.visible = true;
@@ -1133,9 +1121,12 @@
 </script>
 
 <div
-	class="grid bg-[#1f1f1f] rounded-[20px] w-[800px] px-[50px] py-[42px] relative selection:bg-[#6a87b389]"
+	class="grid bg-[#1f1f1f] rounded-[20px] w-[800px] overflow-clip px-[50px] py-[42px] relative selection:bg-[#6a87b389] {$viewingNode
+		? ''
+		: 'max-h-[405px]'}"
 	style={`box-shadow: -2px 2px ${shadowColor}`}
 >
+	<div class="bg-[#1f1f1f] absolute bottom-0 left-[30px] right-[30px] h-[42px] z-[1]" />
 	{#if escBtn}
 		<button
 			on:click={escapeNode}
