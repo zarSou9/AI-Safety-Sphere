@@ -67,9 +67,7 @@ export const POST: RequestHandler = async ({ request, locals: { supabase, supaba
 			];
 			if (type === 'Default')
 				postPromises.push(
-					supabaseService
-						.from('Nodes')
-						.insert({ uuid: node.uuid, title, tldr: { ops: [] }, created_at: Date.now() })
+					supabaseService.from('Nodes').insert({ uuid: node.uuid, title, created_at: Date.now() })
 				);
 			else if (type === 'Thread')
 				postPromises.push(

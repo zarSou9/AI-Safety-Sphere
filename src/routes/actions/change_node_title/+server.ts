@@ -10,12 +10,13 @@ export const POST: RequestHandler = async ({
 	try {
 		const { uuid, newTitle, userId } = await request.json();
 
-		const newTitleValid = Joi.string().max(28).validate(newTitle);
+		const newTitleValid = Joi.string().max(32).validate(newTitle);
 		const uuidValid = Joi.string().validate(uuid);
 		const userIdValid = Joi.string().validate(userId);
 
 		if (newTitleValid.error || uuidValid.error || userIdValid.error)
 			throw { status: 400, message: 'Bad request: missing or incorrect fields' };
+
 		while (true) {
 			const now = Date.now();
 			const nowCompare = now - 10000;
